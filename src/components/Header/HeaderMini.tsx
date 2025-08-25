@@ -5,9 +5,6 @@ import clsx from "clsx";
 
 import { LogoLink } from "../Links";
 import Navigation from "./Horizantal-nav";
-import WishlistButton from "./WishlistButton";
-import UserInfoButton from "./UserInfoButton";
-import CartButton from "./CartButton";
 import routes from "../../routes";
 import styles from "@/main.module.css";
 import { RootState } from "../../Redux/store";
@@ -19,6 +16,9 @@ import { scrollToTop } from "../../lib/helpers";
 import { Phone, Send } from "lucide-react";
 
 import type { HeaderProps } from "../../types/Common";
+import { WishlistButton, UserInfoButton, CartButton } from "./HeaderActionsSvg"; // (файлын нэрийг өөрт таарахаар)
+import { useHistoryNavigate } from "../../Hooks/use-navigate";
+import { useWishListCount } from "../../Hooks/use-layout-data";
 
 type SocialLinksProps = { isMobile?: boolean };
 
@@ -26,6 +26,8 @@ const HeaderMini: FC<HeaderProps> = (props) => {
   const { isMobile } = props;
   const { data } = useSelector((state: RootState) => state.layouts);
   const { setLoading, showDrawer } = useDrawerCtx();
+  const { historyNavigate } = useHistoryNavigate();
+  const wishList = useWishListCount();
 
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -55,7 +57,7 @@ const HeaderMini: FC<HeaderProps> = (props) => {
     <header
       className={clsx(
         "sticky top-0 z-50 w-full text-sm",
-        "bg-white/85 dark:bg-gray-900/80 backdrop-blur supports-backdrop-blur:bg-white/70",
+        "bg-white/15 dark:bg-gray-900/80 ",
         "border-b border-black/10 dark:border-white/10"
       )}
     >
@@ -81,7 +83,7 @@ const HeaderMini: FC<HeaderProps> = (props) => {
       </div>
 
       {/* Main row */}
-      <div className={clsx(styles.mainContainer, isMobile ? "px-2" : "")}>
+      <div className={clsx(styles.headerContainer, isMobile ? "px-2" : "")}>
         <div className="flex items-center justify-between py-2 md:py-3">
           {/* Left side: burger + logo + search */}
           <div className="flex items-center gap-3 md:gap-6">
@@ -99,13 +101,33 @@ const HeaderMini: FC<HeaderProps> = (props) => {
           {/* Right side: actions */}
           <div className="flex items-center gap-2 md:gap-4">
             <SearchForm />
-            <WishlistButton isMobile={isMobile} />
+            <WishlistButton
+              count={wishList?.wishListCount}
+              onClick={() => {
+                scrollTo({ top: 0, behavior: "smooth" });
+                historyNavigate("/wishlist");
+              }}
+            />
             <UserInfoButton
               isAuthenticated={props.isAuthenticated}
-              userInfo={props.userInfo}
-              isMobile={isMobile}
+              userName={
+                props.userInfo?.userInfo?.userData?.name ??
+                props.userInfo?.userInfo?.userData?.login
+              }
+              onClick={() => {
+                scrollTo({ top: 0, behavior: "smooth" });
+                historyNavigate(
+                  props.isAuthenticated ? "/account/profile" : "/auth/login"
+                );
+              }}
             />
-            <CartButton {...props} isMobile={isMobile} />
+            <CartButton
+              totalItems={props?.cartTotalItems}
+              onClick={() => {
+                scrollTo({ top: 0, behavior: "smooth" });
+                historyNavigate("/checkout");
+              }}
+            />
           </div>
         </div>
 

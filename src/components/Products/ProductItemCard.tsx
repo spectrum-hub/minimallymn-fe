@@ -70,12 +70,12 @@ const ProductItemCard: FC<ProductItemProps> = ({
     <div
       className={` ${
         isMobile ? "" : " group "
-      } relative rounded-lg bg-white w-full shadow-md 
+      } relative bg-white w-full shadow 
           transition-all hover:shadow-lg `}
     >
       <ProductLink
         item={item}
-        className="relative rounded-lg
+        className="relative rounded
         flex flex-col justify-end h-full w-full "
         returnTo={`${location.pathname}/${location.search}`}
       >
@@ -101,11 +101,11 @@ const ProductItemCard: FC<ProductItemProps> = ({
         </div>
 
         <div className="p-2 h-16 ">
-          <h3 className="mt-1 text-black line-clamp-1 font-medium  text-xs md:text-[13px]">
+          <h3 className="mt-1 text-black line-clamp-1 uppercase text-xs md:text-[13px]">
             {item.name}
           </h3>
           <div className="mt-2 flex items-baseline gap-2 text-xs md:text-sm">
-            <span className=" font-bold text-black">
+            <span className=" font-medium text-black">
               {Number(price) > 0 ? `${price.toLocaleString()}₮` : ""}
             </span>
             {originalPrice && (

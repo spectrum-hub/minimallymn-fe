@@ -165,13 +165,12 @@ const MainLayout: FC<Props> = ({ children }) => {
 
   return (
     <ErrorBoundary fallback={<Spin fullscreen />}>
+      <Header {...headerParams} />
       <div
         className={`min-h-screen flex flex-col ${
           isMobile ? "bg-gray-200" : "bg-gray-100"
         }`}
       >
-        <Header {...headerParams} />
-
         <main className="px-1 py-1 pb-20 shadow-md">
           <Suspense fallback={<LoadingSpinner />}>{children}</Suspense>
         </main>
