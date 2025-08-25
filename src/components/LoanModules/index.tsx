@@ -1,14 +1,9 @@
 import { FC, ReactNode, useMemo } from "react";
-import { useDrawerCtx } from "../../Hooks/use-modal-drawer";
 import StorepaySchedule from "./StorepaySchedule";
 import PocketZeroSchedule from "./PocketZeroSchedule";
 
 // Replace lucide with a tiny inline SVG for a unified look
-const ChevronRight: FC<{ className?: string }> = ({ className }) => (
-  <svg viewBox="0 0 24 24" aria-hidden className={className}>
-    <path fill="currentColor" d="M9 6l6 6-6 6" />
-  </svg>
-);
+
 
 type LoanService = {
   minimumPrice: number;
@@ -28,42 +23,36 @@ const loanServices: Record<ServiceTypes, LoanService> = {
   storepay: {
     minimumPrice: 100000,
     poweredBy: "powered by Storepay",
-    description: "Storepay үйлчилгээг ашиглан төлбөрөө 4 хуваан төлөх боломжтой",
+    description:
+      "Storepay үйлчилгээг ашиглан төлбөрөө 4 хуваан төлөх боломжтой",
     icon: "storepays.png",
     content: (price) => <StorepaySchedule price={price} />,
   },
   pocketzero: {
     minimumPrice: 100000,
     poweredBy: "powered by PocketZero",
-    description: "PocketZERO Та 30-90 хоногийн хугацаатай зээлээр авах боломжтой.",
+    description:
+      "PocketZERO Та 30-90 хоногийн хугацаатай зээлээр авах боломжтой.",
     icon: "svPocket-zero.png",
     content: (price) => <PocketZeroSchedule price={price} />,
   },
 };
 
 const LoanModules: FC<Props> = ({ productPrice }) => {
-  const drawerCtx = useDrawerCtx();
 
   const available = useMemo(
-    () => Object.entries(loanServices).filter(([, s]) => productPrice >= s.minimumPrice),
+    () =>
+      Object.entries(loanServices).filter(
+        ([, s]) => productPrice >= s.minimumPrice
+      ),
     [productPrice]
   );
 
   if (available.length === 0) return null;
 
-  const openSchedule = (serviceKey: ServiceTypes) => {
-    drawerCtx.showDrawer({
-      title: "Төлөлтийн хуваарь",
-      placement: "right",
-      content: loanServices[serviceKey].content(productPrice),
-      width: "380px",
-    });
-    drawerCtx.setLoading(false);
-  };
-
   return (
     <section
-      className="w-full text-[13px] md:text-sm text-neutral-700 dark:text-neutral-300"
+      className="mb-4 w-full text-[13px] md:text-sm text-neutral-700 dark:text-neutral-300"
       aria-labelledby="loan-services-title"
     >
       <h2
@@ -75,9 +64,8 @@ const LoanModules: FC<Props> = ({ productPrice }) => {
 
       <div className="flex flex-col items-center md:items-start gap-2">
         {available.map(([key, s]) => (
-          <button
+          <div
             key={key}
-            onClick={() => openSchedule(key as ServiceTypes)}
             className="group w-full max-w-[720px] md:max-w-[560px] lg:max-w-[480px]
                        flex items-center gap-3 px-3 py-2  text-left
                        bg-white/90 dark:bg-neutral-900/80 backdrop-blur
@@ -101,12 +89,7 @@ const LoanModules: FC<Props> = ({ productPrice }) => {
                 {s.poweredBy}
               </p>
             </div>
-
-            <ChevronRight
-              className="w-5 h-5 text-neutral-400 group-hover:text-neutral-700 dark:group-hover:text-neutral-200
-                         transition-transform duration-200 translate-x-0 group-hover:translate-x-0.5"
-            />
-          </button>
+          </div>
         ))}
       </div>
     </section>

@@ -1,7 +1,14 @@
 import { Spin } from "antd";
-import { Truck } from "lucide-react";
+import { FC, useMemo } from "react";
 import { Cart } from "../../types/Cart";
 import { useHistoryNavigate } from "../../Hooks/use-navigate";
+
+// Inline truck icon for monochrome look
+const TruckIcon: FC<{ className?: string }> = ({ className }) => (
+  <svg viewBox="0 0 24 24" aria-hidden className={className}>
+    <path fill="currentColor" d="M3 6h11v8h-1.5a2.5 2.5 0 1 0 0 5H18a2.5 2.5 0 1 0 0-5h1v-3.2L17.6 8H16V6h2.7L22 10.8V14h1v2h-1.1a2.5 2.5 0 0 1-4.9 0H12a2.5 2.5 0 0 1-4.9 0H3V6Z" />
+  </svg>
+);
 
 interface PaymentInfoItemProps {
   label?: string;
@@ -9,14 +16,12 @@ interface PaymentInfoItemProps {
   className?: string;
 }
 
-const PaymentInfoItem = ({ label, value, className }: PaymentInfoItemProps) => {
-  return (
-    <div className={`flex justify-between items-center ${className}`}>
-      <span className="text-gray-600 dark:text-gray-300">{label}</span>
-      <span className="font-medium dark:text-white">{value}</span>
-    </div>
-  );
-};
+const Row: FC<PaymentInfoItemProps> = ({ label, value, className }) => (
+  <div className={["flex items-center justify-between", className].join(" ")}> 
+    <span className="text-neutral-600 dark:text-neutral-300 text-[13px]">{label}</span>
+    <span className="text-neutral-900 dark:text-white text-[13px] font-medium">{value}</span>
+  </div>
+);
 
 interface PaymentInfoProps {
   cartItem?: Cart | object;
@@ -25,105 +30,74 @@ interface PaymentInfoProps {
   nextPath?: string;
 }
 
-const PaymentInfo = ({
-  cartItem,
-  cartLoading,
-  nextPath,
-  showNextButton = true,
-}: PaymentInfoProps) => {
-    const { historyNavigate } = useHistoryNavigate();
-    
-  const cartTotalItems = (cartItem as Cart)?.orderLines?.reduce(
-    (acc, item) => acc + (item.quantity ?? 0),
-    0
-  );
+const PaymentInfo: FC<PaymentInfoProps> = ({ cartItem, cartLoading, nextPath, showNextButton = true }) => {
+  const { historyNavigate } = useHistoryNavigate();
 
-  const deliveryList = () => {
-    const deliveries: {
-      label: string | undefined;
-      value: string | undefined;
-    }[] = [];
+  const cart = cartItem as Cart | undefined;
 
-    (cartItem as Cart)?.selectedDeliveriers?.forEach?.((delivery) => {
-      deliveries.push({
-        label: delivery.product?.name,
-        value: `${delivery?.priceTotal?.toLocaleString()}₮`,
-      });
-    });
-    return deliveries;
-  };
+  const cartTotalItems = useMemo(() => (cart?.orderLines ?? []).reduce((acc, it) => acc + (it.quantity ?? 0), 0), [cart]);
+
+  const deliveries = useMemo(() => {
+    return (cart?.selectedDeliveriers ?? []).map((d) => ({
+      label: d.product?.name,
+      value: `${d?.priceTotal?.toLocaleString?.() ?? 0}₮`,
+    }));
+  }, [cart]);
 
   const items = [
-    {
-      label: "Захиалгын дугаар",
-      value: `#${(cartItem as Cart)?.name}`,
-    },
-    {
-      label: "Барааны тоо",
-      value: cartTotalItems ?? 0,
-    },
-    {
-      label: "Барааны нийт үнэ",
-      value: `${(cartItem as Cart)?.amountTotal?.toLocaleString() ?? "0"}₮`,
-    },
-    {
-      label: "НӨАТ",
-      value: "0₮",
-    },
-    ...deliveryList()
+    { label: "Захиалгын дугаар", value: cart?.name ? `#${cart.name}` : "-" },
+    { label: "Барааны тоо", value: cartTotalItems ?? 0 },
+    { label: "Барааны нийт үнэ", value: `${cart?.amountTotal?.toLocaleString?.() ?? "0"}₮` },
+    { label: "НӨАТ", value: "0₮" },
+    ...deliveries,
   ];
 
   return (
-    <div
-      className={`
-      bg-white dark:bg-gray-800 rounded shadow-lg 
-        dark:shadow-gray-800/20 p-8 h-fit `}
+    <section
+      className="bg-white/90 dark:bg-neutral-900/80 backdrop-blur border border-neutral-200 dark:border-neutral-800
+                  p-5 md:p-6 text-sm text-neutral-800 dark:text-neutral-200 h-fit"
+      aria-labelledby="payment-info-title"
     >
-      <h2 className="font-bold mb-2 border-b ">
+      <h2 id="payment-info-title" className="text-[14px] font-semibold text-neutral-900 dark:text-white pb-3 mb-4 border-b border-neutral-200 dark:border-neutral-800">
         Төлбөрийн мэдээлэл
       </h2>
 
-      <div className="space-y-4">
-        {items.map((item, index) => (
-          <PaymentInfoItem key={index} {...item} />
+      <div className="space-y-3">
+        {items.map((it, i) => (
+          <Row key={i} {...it} />
         ))}
 
-        <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-6">
-          <PaymentInfoItem
+        <div className="pt-4 mt-2 border-t border-neutral-200 dark:border-neutral-800">
+          <Row
             label="Нийт"
-            value={`${(
-              (cartItem as Cart)?.amountTotal ?? 0
-            ).toLocaleString()}₮`}
-            className="font-bold"
+            value={`${(cart?.amountTotal ?? 0).toLocaleString()}₮`}
+            className="text-[15px] font-semibold"
           />
         </div>
       </div>
 
-      <div className="mt-8 space-y-4">
-        <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
-          <Truck className="w-5 h-5" strokeWidth={1.5} />
+      <div className="mt-6 space-y-3">
+        <div className="flex items-center gap-2 text-[13px] text-neutral-600 dark:text-neutral-300">
+          <TruckIcon className="w-4 h-4" />
           <span>Хүргэлт 24 цагийн дотор хүргэгдэнэ</span>
         </div>
 
-        {showNextButton ? (
-          <Spin spinning={cartLoading}>
-            {nextPath ? (
-              <button
-                className={`
-              w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white
-              py-3 px-6 rounded-xl font-semibold hover:opacity-90 
-              transition-opacity shadow-lg shadow-purple-500/25 
-              hover:shadow-xl hover:shadow-purple-500/30
-            `}
-                onClick={() => historyNavigate(nextPath)}
-              >
-                Худалдан авах
-              </button>
-            ) : null}
+        {showNextButton && nextPath ? (
+          <Spin spinning={cartLoading} size="small">
+            <button
+              type="button"
+              onClick={() => historyNavigate(nextPath)}
+              className="w-full h-10 px-4 rounded-md bg-black text-white text-[13px] font-medium
+                         hover:bg-black/90 active:scale-[0.98] transition
+                         focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
+              aria-busy={cartLoading}
+            >
+              Худалдан авах
+            </button>
           </Spin>
         ) : null}
       </div>
-    </div>
+    </section>
   );
 };
 

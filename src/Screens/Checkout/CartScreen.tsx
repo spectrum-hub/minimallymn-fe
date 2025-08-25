@@ -2,13 +2,6 @@ import { ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Spin } from "antd";
 
-/**
- * 
- * 
- * imports 
- * 
- */
-
 import ContentContainer from "../../components/ContentContainer";
 import CartItemList from "../../components/cart/CartItemList";
 import PaymentInfo from "../../components/Checkout/PaymentInfo";
@@ -37,21 +30,7 @@ function CheckoutScreen() {
     <Spin spinning={loading}>
       <ContentContainer className="py-6">
         <div className="flex justify-between items-center mb-6">
-          <h1
-            className={`
-            text-xl md:text-2xl font-bold dark:text-white 
-            text-gray-900 flex items-center gap-3 
-          `}
-          >
-            <ShoppingCart className="w-6 h-6 md:w-8 md:h-8" strokeWidth={1.5} />
-            <span
-              className={`
-                bg-gradient-to-r from-purple-600 to-pink-600 
-                bg-clip-text text-transparent `}
-            >
-              Таны сагс
-            </span>
-          </h1>
+          <ShoppingCart className="w-6 h-6 md:w-8 md:h-8" strokeWidth={1.5} />
         </div>
 
         <div className="grid lg:grid-cols-3 gap-2">

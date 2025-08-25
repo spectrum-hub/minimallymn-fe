@@ -92,16 +92,12 @@ function CartItems({ screen = "cart" }: Readonly<Props>) {
                     isCartScreen ? "md:text-[16px]" : "md:text-[12px]"
                   } ${styles.cartItemLink}`}
                 >
-                  <span>{item?.lineName}</span>
-                  <span
-                    className={`${
-                      isCartScreen ? "text-lg" : "text-sm"
-                    } font-bold dark:text-white text-purple-600`}
-                  >
+                  <p>{item?.lineName}</p>
+                  <p>
                     {item.priceSubtotal
                       ? `${item.priceSubtotal.toLocaleString()}₮`
                       : null}
-                  </span>
+                  </p>
                 </NavLink>
                 <button
                   onClick={(e) => {

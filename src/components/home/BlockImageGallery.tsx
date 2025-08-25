@@ -25,15 +25,12 @@ const BlockImageGallery: FC<Props> = ({ block }) => {
         "
       />
       <SwiperComponent
-        // install Swiper modules
         modules={[Navigation, Pagination, Scrollbar, A11y, Thumbs]}
         spaceBetween={1}
         slidesPerView={1}
         navigation
         pagination
-        // onSwiper={(swiper) => console.log(swiper)}
-        // onSlideChange={() => console.log("slide change")}
-        className=" h-full max-h-[600px] rounded-2xl shadow-xl"
+        className=" h-full max-h-[600px] shadow"
       >
         {(images ?? []).map((image, index) => (
           <SwiperSlide key={index}>
