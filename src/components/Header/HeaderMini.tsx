@@ -1,23 +1,46 @@
-import { LogoLink } from "../Links";
+import { FC, useMemo, useState } from "react";
 import { matchPath, useLocation } from "react-router";
-import { FC, useMemo } from "react";
+import { useSelector } from "react-redux";
+import clsx from "clsx";
+
+import { LogoLink } from "../Links";
 import Navigation from "./Horizantal-nav";
-import { HeaderProps } from "../../types/Common";
 import WishlistButton from "./WishlistButton";
 import UserInfoButton from "./UserInfoButton";
 import CartButton from "./CartButton";
 import routes from "../../routes";
 import styles from "@/main.module.css";
 import { RootState } from "../../Redux/store";
-import { useSelector } from "react-redux";
-
 import SearchForm from "./SearchForm";
+import HorizantalCategories from "../HorizantalCategories";
+import { useDrawerCtx } from "../../Hooks/use-modal-drawer";
+import { scrollToTop } from "../../lib/helpers";
+
 import { Phone, Send } from "lucide-react";
 
-const HeaderMini: FC<HeaderProps> = (props) => {
-  const isMobile = props?.isMobile;
+import type { HeaderProps } from "../../types/Common";
 
+type SocialLinksProps = { isMobile?: boolean };
+
+const HeaderMini: FC<HeaderProps> = (props) => {
+  const { isMobile } = props;
   const { data } = useSelector((state: RootState) => state.layouts);
+  const { setLoading, showDrawer } = useDrawerCtx();
+
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleToggleCategories = () => {
+    scrollToTop();
+    setMenuOpen(true);
+    setLoading(true);
+    showDrawer({
+      title: "",
+      placement: "left",
+      width: "320",
+      content: <HorizantalCategories />,
+    });
+    setLoading(false);
+  };
 
   const pathname = useLocation()?.pathname;
   const showNavigation = useMemo(() => {
@@ -29,57 +52,53 @@ const HeaderMini: FC<HeaderProps> = (props) => {
   }, [pathname]);
 
   return (
-    <div
-      className={`sticky top-0 w-full shadow-sm z-50 text-sm bg-transparent ${
-        isMobile ? "px-0" : "px-4 "
-      } `}
+    <header
+      className={clsx(
+        "sticky top-0 z-50 w-full text-sm",
+        "bg-white/85 dark:bg-gray-900/80 backdrop-blur supports-backdrop-blur:bg-white/70",
+        "border-b border-black/10 dark:border-white/10"
+      )}
     >
+      {/* Top strip */}
       <div
-        className={`
-          py-2 flex justify-between items-center 
-          text-sm text-gray-600 dark:text-gray-300 
-          dark:bg-gray-800  ${styles.mainContainer} 
-          ${isMobile ? "pt-6 px-4 w-full bg-[#28133f] text-white" : " "}`}
+        className={clsx(
+          styles.mainContainer,
+          "hidden md:flex items-center justify-between py-2 text-[13px] text-gray-600 dark:text-gray-300"
+        )}
       >
-        <span className="text-xs md:font-medium ">
-          Antmall.mn-д тавтай морил!
-        </span>
-
-        <div className="flex gap-4 ">
-          <span className="flex  items-center">
+        <span>Antmall.mn-д тавтай морил!</span>
+        <div className="flex items-center gap-4">
+          <span className="flex items-center">
             <Phone size={14} />
-            <b className="ml-1  text-sm ">7200-5588</b>
+            <b className="ml-1">7200-5588</b>
           </span>
-          <span className=" hidden md:flex  items-center">
+          <span className="hidden lg:flex items-center">
             <Send size={14} />
-            <b className="ml-1  text-sm ">info@antmall.mn</b>
+            <b className="ml-1">info@antmall.mn</b>
           </span>
-          <SocialLinks isMobile={isMobile} />
+          <SocialLinks />
         </div>
       </div>
 
-      {/* Main Header */}
+      {/* Main row */}
+      <div className={clsx(styles.mainContainer, isMobile ? "px-2" : "")}>
+        <div className="flex items-center justify-between py-2 md:py-3">
+          {/* Left side: burger + logo + search */}
+          <div className="flex items-center gap-3 md:gap-6">
+            <MenuToggle open={menuOpen} onClick={handleToggleCategories} />
 
-      <div
-        className={`${styles.mainContainer} ${isMobile ? "px-1 w-full  " : ""}`}
-      >
-        <div className="py-4 flex items-center justify-between gap-6">
-          {/* Logo */}
-          <LogoLink>
-            <img
-              src="/antmall.svg"
-              alt="Antmall Logo"
-              className={` h-8 md:h-10 transition-transform duration-300 hover:scale-105 ${
-                isMobile ? "pl-4" : ""
-              } `}
-            />
-          </LogoLink>
+            <LogoLink>
+              <img
+                src="/antmall.svg"
+                alt="Antmall Logo"
+                className="h-10 md:h-12 transition-transform duration-300 hover:scale-[1.05]"
+              />
+            </LogoLink>
+          </div>
 
-          {/* Search Form */}
-          {!isMobile ? <SearchForm /> : null}
-
-          {/* Action Buttons */}
-          <div className="flex items-center space-x-4">
+          {/* Right side: actions */}
+          <div className="flex items-center gap-2 md:gap-4">
+            <SearchForm />
             <WishlistButton isMobile={isMobile} />
             <UserInfoButton
               isAuthenticated={props.isAuthenticated}
@@ -90,49 +109,97 @@ const HeaderMini: FC<HeaderProps> = (props) => {
           </div>
         </div>
 
-        {/* Navigation */}
+        {/* Nav */}
         {showNavigation ? (
-          <div className=" border-t border-gray-200 dark:border-gray-700 pt-2 overflow-auto custom-overflow ">
-            <Navigation menus={data?.websiteBlocks?.menus} />
+          <div className="pt-1 pb-2 overflow-auto custom-overflow">
+            <div className="border-t border-black/10 dark:border-white/10 pt-2">
+              <Navigation menus={data?.websiteBlocks?.menus} />
+            </div>
           </div>
         ) : null}
       </div>
-    </div>
+    </header>
   );
 };
 
 export default HeaderMini;
 
-type SocialLinksProps = {
-  isMobile?: boolean;
-};
-
 const SocialLinks: FC<SocialLinksProps> = ({ isMobile }) => {
-  if (isMobile) {
-    return;
-  }
+  if (isMobile) return null;
   return (
-    <div className="flex gap-1">
+    <div className="flex gap-2">
       <a
         href="https://www.facebook.com/AntMall.mn"
-        className="h-5 w-5 hover:shadow-md  p-0 m-0"
+        className="h-5 w-5 grid place-items-center rounded-full hover:bg-black/5"
         target="_blank"
         rel="noopener noreferrer"
+        aria-label="facebook"
       >
-        <img src={"/images/facebook.png"} alt="facebook.com" className="h-5" />
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden
+        >
+          <path d="M22 12a10 10 0 1 0-11.6 9.9v-7h-2.2V12h2.2V9.8c0-2.2 1.3-3.4 3.3-3.4.95 0 1.9.17 1.9.17v2.1h-1.1c-1 0-1.3.63-1.3 1.3V12h2.2l-.35 2.9h-1.85v7A10 10 0 0 0 22 12Z" />
+        </svg>
       </a>
       <a
         href="https://www.instagram.com/antmall_official/"
+        className="h-5 w-5 grid place-items-center rounded-full hover:bg-black/5"
         target="_blank"
         rel="noopener noreferrer"
-        className="h-5 w-5 hover:shadow-md p-0 m-0"
+        aria-label="instagram"
       >
-        <img
-          src={"/images/instagram.png"}
-          alt="instagram.com"
-          className="h-5"
-        />
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden
+        >
+          <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2.2A2.8 2.8 0 1 0 12 17.8 2.8 2.8 0 0 0 12 9.2Zm5.55-1.65a1.05 1.05 0 1 1 0 2.1 1.05 1.05 0 0 1 0-2.1Z" />
+        </svg>
       </a>
     </div>
+  );
+};
+
+const MenuToggle: FC<{
+  open: boolean;
+  onClick: () => void;
+  className?: string;
+}> = ({ open, onClick, className }) => {
+  return (
+    <button
+      onClick={onClick}
+      aria-label={open ? "Close menu" : "Open menu"}
+      aria-pressed={open}
+      className={clsx(
+        "relative h-9 w-9 grid place-items-center rounded-full",
+        "outline-none ring-0 hover:bg-black/5 active:scale-95 transition",
+        className
+      )}
+    >
+      <span
+        className={clsx(
+          "absolute block h-[2px] w-6 bg-current transition-transform duration-300 ease-in-out",
+          open ? "translate-y-0 rotate-45" : "-translate-y-2 rotate-0"
+        )}
+      />
+      <span
+        className={clsx(
+          "absolute block h-[2px] w-6 bg-current transition-all duration-300 ease-in-out",
+          open ? "opacity-0 scale-x-0" : "opacity-100 scale-x-100"
+        )}
+      />
+      <span
+        className={clsx(
+          "absolute block h-[2px] w-6 bg-current transition-transform duration-300 ease-in-out",
+          open ? "translate-y-0 -rotate-45" : "translate-y-2 rotate-0"
+        )}
+      />
+    </button>
   );
 };

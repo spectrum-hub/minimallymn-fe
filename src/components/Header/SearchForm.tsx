@@ -1,83 +1,115 @@
-import { SearchIcon, X as XIcon } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { Search as SearchIcon, X as XIcon } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { searchFormSchema } from "../../lib/form-schemas";
 import { useSearchParams } from "react-router";
+import { searchFormSchema } from "../../lib/form-schemas";
 import { useHistoryNavigate } from "../../Hooks/use-navigate";
 
 interface FormSubmit {
   searchString: string;
 }
 
+/**
+ * Zara-like search field
+ * - Underline-only input, no box/rounded corners
+ * - Thin line that thickens on focus
+ * - Right-aligned icon buttons (clear + submit)
+ * - Uppercase, wide tracking placeholder
+ * - Keyboard shortcut: press "/" to focus
+ */
 const SearchForm = () => {
   const [searchParams] = useSearchParams();
-
   const { historyNavigate } = useHistoryNavigate();
-
   const searchValue = searchParams.get("search") ?? "";
 
-  const { control, handleSubmit, resetField } = useForm<FormSubmit>({
+  const { control, handleSubmit, resetField, watch } = useForm<FormSubmit>({
     resolver: yupResolver(searchFormSchema),
-    defaultValues: {
-      searchString: searchValue,
-    },
+    defaultValues: { searchString: searchValue },
+    mode: "onSubmit",
   });
+
+  const currentValue = watch("searchString", searchValue);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  // "/" to focus (common ecomm shortcut)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   const onSubmit = async (data: FormSubmit) => {
     try {
-      historyNavigate(`/products?search=${data.searchString}`);
+      const q = (data.searchString || "").trim();
+      if (!q) {
+        historyNavigate("/products");
+        return;
+      }
+      historyNavigate(`/products?search=${encodeURIComponent(q)}`);
     } catch (err) {
       console.log(err);
-    } finally {
-      console.log("error");
     }
   };
 
+  const clearSearch = () => {
+    resetField("searchString", { defaultValue: "" });
+    historyNavigate("/products");
+    inputRef.current?.focus();
+  };
+
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="flex-1 max-w-md relative"
-    >
-      <div className="relative flex items-center w-full">
-        <SearchIcon className="absolute left-2 h-5 w-5 text-gray-500" />
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+      <div className="relative w-full">
         <Controller
           control={control}
-          name={"searchString"}
-          render={({ field: { onChange } }) => (
+          name="searchString"
+          render={({ field }) => (
             <input
+              {...field}
+              ref={(el) => {
+                field.ref(el);
+                inputRef.current = el;
+              }}
               type="search"
-              onChange={onChange}
-              placeholder="Хайх ..."
-              className="w-full pl-10 pr-24 py-2.5 bg-white  
-              border border-gray-300  rounded shadow-sm focus:outline-none 
-              focus:ring-2 focus:ring-purple-500 focus:border-transparent 
-              transition-all duration-200 placeholder-gray-400 
-              text-gray-900 over:border-gray-400 mx-auto h-12 my-4 text-lg "
+              placeholder="Хайх"
+              className="peer w-full bg-transparent text-[15px] md:text-base tracking-wide md:tracking-wider
+                         text-gray-900 dark:text-gray-100 placeholder-gray-400 
+                         outline-none border-0 border-b border-black/20 dark:border-white/20
+                         focus:border-b-2 focus:border-black dark:focus:border-white
+                         transition-[border] duration-200 py-2 md:py-2.5 pr-20"
             />
           )}
         />
 
-        {searchValue && searchValue.length > 0 && (
+        {/* Clear button */}
+        {currentValue?.length ? (
           <button
             type="button"
-            onClick={() => {
-              resetField("searchString");
-              historyNavigate("/products");
-            }}
-            className="absolute right-20 bg-gray-200 dark:bg-gray-600 rounded-full p-1 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 transition-colors duration-200"
+            onClick={clearSearch}
+            className="absolute right-10 top-1/2 -translate-y-1/2 p-1 rounded-full
+                       text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white
+                       focus:outline-none"
             aria-label="Clear search"
           >
             <XIcon className="h-4 w-4" />
           </button>
-        )}
+        ) : null}
+
+        {/* Submit button */}
         <button
           type="submit"
-          className="
-            absolute right-2  px-3 py-1 text-sm rounded-md  
-            transition-colors duration-200 focus:outline-none 
-            focus:ring-2 border "
+          className="absolute right-0 top-1/2 -translate-y-1/2 p-1.5
+                     text-gray-700 hover:text-black dark:text-gray-200 dark:hover:text-white
+                     focus:outline-none"
+          aria-label="Search"
         >
-          Хайх
+          <SearchIcon className="h-5 w-5" />
         </button>
       </div>
     </form>

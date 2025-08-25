@@ -1,10 +1,6 @@
 import { NavLink } from "react-router";
-import { useDrawerCtx } from "../../Hooks/use-modal-drawer";
-import { AlignRightOutlined, AlignLeftOutlined } from "@ant-design/icons";
-import { Suspense, useState } from "react";
 import { LayoutMenus } from "../../types/Blocks";
 import useWindowWidth from "../../Hooks/use-window-width";
-import HorizantalCategories from "../HorizantalCategories";
 import { scrollToTop } from "../../lib/helpers";
 
 function moveItemToStart(
@@ -34,51 +30,10 @@ interface NavigationProps {
 }
 
 const Navigation: React.FC<NavigationProps> = ({ menus }) => {
-  const { setLoading, showDrawer } = useDrawerCtx();
-  const [isHovered, setIsHovered] = useState(false);
   const { isMobile } = useWindowWidth();
-
-  const handleShowCategories = () => {
-    scrollToTop();
-    setLoading(true);
-    showDrawer({
-      title: "",
-      placement: "left",
-      width: "300",
-      content: (
-        <Suspense>
-          <HorizantalCategories />
-        </Suspense>
-      ),
-    });
-    setLoading(false);
-  };
 
   return (
     <ul className={`flex items-center space-x-1 `}>
-      {!isMobile ? (
-        <li>
-          <button
-            onClick={handleShowCategories}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            className="
-              rounded-md flex gap-2 items-center px-4 py-2 transition-all duration-300
-              hover:border-black bg-gradient-to-r from-orange-300 to-orange-500
-              hover:shadow-lg text-white active:bg-blue-900 
-              shadow-md uppercase text-xs md:text-[12px] mr-2 
-            "
-          >
-            {isHovered ? (
-              <AlignLeftOutlined className="text-lg" />
-            ) : (
-              <AlignRightOutlined className="text-lg" />
-            )}
-            <span className="font-semibold text-white">Ангилал</span>
-          </button>
-        </li>
-      ) : null}
-
       {(isMobile
         ? moveItemToStart(menus, "Зээлийн хүсэлт илгээх")
         : menus ?? []
