@@ -98,7 +98,7 @@ const Carousel: FC<BlockProductsProps> = ({ block }) => {
             },
           },
           1024: {
-            slidesPerView: 5,
+            slidesPerView: 4,
             spaceBetween: 10,
             grid: {
               fill: "row",
