@@ -1,0 +1,345 @@
+@import url("https://fonts.googleapis.com/css2?family=Commissioner:wght@100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+* {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
+
+:root {
+  color-scheme: dark;
+  --primary: 222.2 47.4% 11.2%; /* HSL value for #28133f */
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 100% 50%;
+  --destructive-foreground: 210 40% 98%;
+  --ring: 215 20.2% 65.1%;
+  --radius: 0.5rem;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 47.4% 11.2%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+}
+
+.dark {
+  --warning: 48 96% 89%;
+  --warning-foreground: 38 92% 50%;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+/* Swiper custom styles */
+.swiper-button-next,
+.swiper-button-prev {
+  color: white !important;
+  background: rgba(0, 0, 0, 0.2);
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50%;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 20px !important;
+}
+
+.swiper-pagination-bullet {
+  background: white !important;
+  opacity: 0.5 !important;
+}
+
+.swiper-pagination-bullet-active {
+  opacity: 1 !important;
+  transform: scale(1.2);
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+select {
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>')
+    no-repeat right 0.5rem center;
+  background-size: 1rem;
+}
+
+.swiper-slide {
+  display: flex !important;
+  justify-content: center;
+}
+
+/* Ant Design Dark Mode Overrides */
+.dark .ant-input,
+.dark .ant-input-password {
+  background-color: #1f2937;
+  border-color: #374151;
+}
+
+.dark .ant-input-prefix {
+  color: #9ca3af;
+}
+
+.dark .ant-btn-default {
+  background-color: #1f2937;
+  border-color: #374151;
+  color: #e5e7eb;
+}
+
+.dark .ant-checkbox-wrapper {
+  color: #e5e7eb;
+}
+
+.dark .ant-btn-default:hover {
+  background-color: #374151;
+  border-color: #4b5563;
+}
+
+/* Safe area padding for mobile devices with notches */
+@supports (padding: max(0px)) {
+  .pb-safe {
+    padding-bottom: max(0.1rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* Prevent text selection on navigation items */
+.bottom-nav {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+.custom-overflow {
+  scrollbar-width: 1px;
+  scrollbar-color: #868686 #f2f2f2;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f2f2f2;
+  border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #000;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.blog-content h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 18px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  color: black;
+}
+
+b {
+  font-weight: 500;
+}
+
+.underline-hover {
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.underline-hover::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: currentColor;
+  transition: width 0.4s ease;
+  top: 22px;
+}
+
+.underline-hover:hover::after {
+  top: 22px;
+  width: 40%;
+}
+
+button,
+a {
+  touch-action: manipulation;
+}
+
+.ant-otp-input {
+  height: 60px;
+  width: 60px;
+  font-size: 22px;
+}
+
+.ant-otp {
+  margin: 0 auto;
+  width: 100%;
+  background: rgb(255, 255, 255);
+  height: 64px !important;
+  text-align: center;
+  justify-items: center;
+  padding: 5px;
+  justify-content: center;
+}
+.input-class {
+  font-size: 18px !important;
+  padding: 8px 6px !important;
+}
+
+.table-loan-response tr td {
+  padding: 6px;
+  border: 1px solid rgb(221, 221, 221);
+}
+
+blockquote,
+dl,
+dd,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+figure,
+p,
+pre {
+  margin: 0;
+  text-wrap: auto;
+  word-wrap: break-word;
+}
+
+.form-payment-delivery-address .ant-form-item-label {
+  padding: 0px;
+  font-size: 16px !important;
+  position: relative;
+}
+
+.form-address-title {
+  margin-bottom:10px;
+  margin-top:10px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.payment-pay-button{
+  position: sticky !important;
+  bottom: 0;
+  z-index: 10;
+}
+
+table *{
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
+table.pocket-zero-response-table tbody tr td {
+  padding: 4px;
+  border: 1px solid rgb(158, 158, 158);
+  font-size: 14px;
+  text-align: left;
+}
+
+table.pocket-zero-response-table tbody tr th {
+  padding: 2px;
+  border: 1px solid rgb(158, 158, 158);
+  text-align: left;
+  
+  /* font-family: system-ui !important; */
+  font-size: 12px;
+}

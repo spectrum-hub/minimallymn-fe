@@ -1,0 +1,10 @@
+.title {
+    @apply font-bold text-sm uppercase border-b border-gray-300 pb-2;
+}
+
+.itemContainer {
+    @apply bg-white p-6 max-w-3xl shadow rounded-md space-y-4
+}
+.itemsGrid {
+    @apply grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3
+}

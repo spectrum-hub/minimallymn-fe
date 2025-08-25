@@ -1,0 +1,21 @@
+.productsGrid {
+  @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2;
+}
+
+.clearButton {
+  @apply text-red-500 text-sm px-2 h-[24px] border-none hover:border transition-all rounded hover:bg-red-500 border-[1px] hover:text-white
+}
+.containerItem {
+  @apply flex my-4 bg-white w-full p-4 rounded-md shadow-sm justify-between
+}
+
+.containerItemHeader {
+  @apply  my-4 bg-white w-full p-4 rounded-md shadow-sm justify-between
+}
+.containerSubHeader {
+  @apply  flex
+}
+
+.containerActions {
+  @apply m-0
+}

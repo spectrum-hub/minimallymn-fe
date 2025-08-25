@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">antmall.mn</string>
+    <string name="title_activity_main">antmall.mn</string>
+    <string name="package_name">com.amall.shopping</string>
+    <string name="custom_url_scheme">com.amall.shopping</string>
+</resources>

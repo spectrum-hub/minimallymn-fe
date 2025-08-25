@@ -1,0 +1,12 @@
+.cartButton {
+  @apply relative flex items-center space-x-1 text-sm p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300 ;
+}
+.showCartIcon {
+  @apply   text-gray-600 dark:text-gray-300 group-hover:text-purple-600 transition-colors duration-300
+}
+.cartText {
+  @apply hidden sm:inline text-gray-600 dark:text-gray-300 group-hover:text-purple-600 transition-colors duration-300
+}
+.orderLineImage {
+  @apply mr-4 w-10 h-10 md:w-20 md:h-14 object-contain rounded-xl
+}

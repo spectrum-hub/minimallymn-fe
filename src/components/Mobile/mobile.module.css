@@ -1,0 +1,7 @@
+.navNotification {
+  @apply absolute top-2 ml-4 bg-red-500 leading-[15px] text-center text-white text-[11px] w-4 h-4 rounded-full;
+}
+
+.button {
+  @apply relative flex flex-col items-center justify-center w-full h-full text-center space-y-1 transition-colors;
+}

@@ -1,0 +1,29 @@
+/* file cart.module.css */
+
+.cart_item_container {
+  @apply bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-800/20 p-4 flex items-center gap-4 hover:shadow-md transition-shadow duration-300;
+}
+
+.cart_image {
+  @apply object-cover rounded-xl transition-transform duration-300 group-hover:scale-105;
+}
+
+.cart_update_btn {
+  @apply p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors;
+}
+
+.cartQuantity {
+  @apply w-8 text-center text-sm border rounded p-1 dark:text-white;
+}
+
+.cartItemRemove {
+  @apply p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-red-500 transition-colors;
+}
+
+.cartImageDivider {
+  @apply absolute inset-0 bg-black/0 group-hover:bg-black/10 rounded-xl transition-colors duration-300;
+}
+
+.cartItemLink {
+  @apply text-sm font-semibold dark:text-white mb-2 flex flex-col
+}
