@@ -26,7 +26,6 @@ import ErrorBoundary from "../ErrorBoundary";
 import LoadingSpinner from "../LoadingSpinner";
 import Footer from "./Footer";
 import { FloatButton, Spin } from "antd";
-import { MLink } from "../Links";
 import FBMessenger from "../FBMessenger";
 
 // Lazy-loaded components for better performance
@@ -179,15 +178,7 @@ const MainLayout: FC<Props> = ({ children }) => {
             <BottomNavbar />
           </Suspense>
         ) : (
-          <>
-            <Footer footerData={footer ?? null} />
-
-            <div className="copyright bg-[#2f0f46] text-gray-300 text-sm p-4 text-center  ">
-              <FooterLinkContentLinks />
-              Minimally.mn © 2023-{new Date().getFullYear()} Зохиогчийн эрх
-              хамгаалагдсан
-            </div>
-          </>
+          <Footer footerData={footer ?? null} />
         )}
         {isMobile ? null : (
           <FloatButton.BackTop visibilityHeight={100} shape={"square"} />
@@ -198,34 +189,4 @@ const MainLayout: FC<Props> = ({ children }) => {
   );
 };
 
-export default MainLayout;
-
-const FooterLinkContentLinks: FC = () => {
-  const links = [
-    {
-      pathname: "/contents/terms-and-conditions-of-service",
-      label: "Үйлчилгээний журам болон нөхцөл",
-    },
-    {
-      pathname: "/contents/privacy-policy",
-      label: "Нууцлалын бодлого",
-    },
-    {
-      pathname: "/contents/frequently-asked-questions",
-      label: "Түгээмэл асуултууд",
-    },
-  ];
-
-  return (
-    <ul className="flex flex-wrap justify-center gap-2 text-center my-6 text-[15px]">
-      {links.map((link, index) => (
-        <li key={link.pathname} className="flex items-center gap-2">
-          <MLink className="underline-hover" {...link} />
-          {index < links.length - 1 && (
-            <span className="mx-1 text-gray-400">|</span>
-          )}
-        </li>
-      ))}
-    </ul>
-  );
-};
+export default MainLayout; 

@@ -83,48 +83,9 @@ const ProfileScreen: React.FC = () => {
         email: email,
       });
 
-      // Хэрэв утгууд тухайн сонголтод байхгүй бол хоослох
-      // if (
-      //   city_id &&
-      //   district_id &&
-      //   !locationsTyped[city_id]?.sumDuureg[district_id]
-      // ) {
-      //   setValue("district_id", "");
-      //   setValue("baghoroo_id", "");
-      // } else if (
-      //   city_id &&
-      //   district_id &&
-      //   baghoroo_id &&
-      //   !locationsTyped[city_id]?.sumDuureg[district_id]?.baghoroo[baghoroo_id]
-      // ) {
-      //   setValue("baghoroo_id", "");
-      // }
     }
   }, [data, email, name, reset, setValue, street]);
-
-  // City өөрчлөгдөхөд district болон baghoroo-г хоослох
-  // useEffect(() => {
-  //   if (
-  //     selectedCityId &&
-  //     !locationsTyped[selectedCityId]?.sumDuureg[selectedDistrictId]
-  //   ) {
-  //     setValue("district_id", "");
-  //     setValue("baghoroo_id", "");
-  //   }
-  // }, [selectedCityId, selectedDistrictId, setValue]);
-
-  // District өөрчлөгдөхөд baghoroo-г хоослох
-  // useEffect(() => {
-  //   if (
-  //     selectedCityId &&
-  //     selectedDistrictId &&
-  //     !locationsTyped[selectedCityId]?.sumDuureg[selectedDistrictId]?.baghoroo[
-  //       watch("baghoroo_id")
-  //     ]
-  //   ) {
-  //     setValue("baghoroo_id", "");
-  //   }
-  // }, [selectedDistrictId, selectedCityId, setValue, watch]);
+ 
 
   const onSubmit = async (formData: FormType) => {
     setIsSubmitting(true);
@@ -217,111 +178,6 @@ const ProfileScreen: React.FC = () => {
             )}
           />
         </div>
-
-        {/* <div className={styles.itemContainer}>
-          <h2 className={styles.title}>Хүргэлтийн хаяг</h2>
-          <div className={styles.itemsGrid}>
-            <Controller
-              control={control}
-              name="city_id"
-              render={({ field, fieldState }) => (
-                <PSelect<FormType>
-                  field={field}
-                  fieldState={fieldState}
-                  label="Хот/Аймаг"
-                  htmlFor="city"
-                  options={Object.entries(locationsTyped).map(
-                    ([key, value]) => ({
-                      label: value.label,
-                      value: key,
-                    })
-                  )}
-                  onChange={() => {
-                    setValue("district_id", "");
-                    setValue("baghoroo_id", "");
-                  }}
-                />
-              )}
-            />
-
-            <Controller
-              control={control}
-              name="district_id"
-              render={({ field, fieldState }) => (
-                <PSelect<FormType>
-                  field={field}
-                  fieldState={fieldState}
-                  label="Дүүрэг / Сум"
-                  htmlFor="district"
-                  disabled={!selectedCityId}
-                  options={
-                    selectedCityId
-                      ? Object.entries(
-                          locationsTyped[selectedCityId]?.sumDuureg || {}
-                        ).map(([key, value]) => ({
-                          label: value.label,
-                          value: key,
-                        }))
-                      : []
-                  }
-                  onChange={() => setValue("baghoroo_id", "")}
-                />
-              )}
-            />
-
-            <Controller
-              control={control}
-              name="baghoroo_id"
-              render={({ field, fieldState }) => (
-                <PSelect<FormType>
-                  field={field}
-                  fieldState={fieldState}
-                  label="Баг / Хороо"
-                  htmlFor="baghoroo"
-                  disabled={!selectedDistrictId}
-                  options={
-                    selectedCityId && selectedDistrictId
-                      ? Object.entries(
-                          locationsTyped[selectedCityId]?.sumDuureg[
-                            selectedDistrictId
-                          ]?.baghoroo || {}
-                        ).map(([key, value]) => ({
-                          label: value.label,
-                          value: key,
-                        }))
-                      : []
-                  }
-                />
-              )}
-            />
-          </div>
-
-          <Controller
-            control={control}
-            name="street"
-            render={({ field, fieldState }) => (
-              <Form.Item
-                label="Дэлгэрэнгүй хаяг"
-                layout="vertical"
-                help={fieldState.error?.message}
-                validateStatus={fieldState.error ? "error" : ""}
-                htmlFor="street"
-                style={{ marginTop: 0 }}
-              >
-                <Input.TextArea
-                  value={
-                    String(field.value) === "false" ? "" : String(field.value)
-                  }
-                  onChange={field.onChange}
-                  id="street"
-                  className="w-full"
-                  rows={4}
-                  placeholder="Хаягаа оруулна уу"
-                />
-              </Form.Item>
-            )}
-          />
-        </div> */}
 
         <div className="p-1 max-w-3xl flex justify-end">
           <Button

@@ -120,15 +120,6 @@ const CartActionButtons: FC<Props> = ({
           </Button>
         </div>
       ) : null}
-      <a
-        className="my-2 shadow w-full block p-2 rounded text-center border text-sm"
-        href={
-          "https://docs.google.com/forms/d/e/1FAIpQLSffoQ2lsSwEwpXqkVCq2rVzPJdl4Imlt9eHZBdeTb1bOzNmUQ/viewform"
-        }
-        target={"_blank"}
-      >
-        Зээлээр авах хүсэлт илгээх
-      </a>
     </div>
   );
 };

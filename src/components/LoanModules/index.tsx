@@ -1,21 +1,24 @@
-import { ChevronRight } from "lucide-react";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useMemo } from "react";
 import { useDrawerCtx } from "../../Hooks/use-modal-drawer";
 import StorepaySchedule from "./StorepaySchedule";
-import LendMnSchedule from "./LendMnSchedule";
 import PocketZeroSchedule from "./PocketZeroSchedule";
+
+// Replace lucide with a tiny inline SVG for a unified look
+const ChevronRight: FC<{ className?: string }> = ({ className }) => (
+  <svg viewBox="0 0 24 24" aria-hidden className={className}>
+    <path fill="currentColor" d="M9 6l6 6-6 6" />
+  </svg>
+);
 
 type LoanService = {
   minimumPrice: number;
   poweredBy: string;
   description: string;
-  icon: string;
-  className: string;
-  textClassName: string;
+  icon: string; // path to brand logo (raster ok)
   content: (price: number) => ReactNode;
 };
 
-type ServiceTypes = "storepay" | "pocketzero" | "lendmn";
+type ServiceTypes = "storepay" | "pocketzero";
 
 interface Props {
   productPrice: number;
@@ -25,91 +28,88 @@ const loanServices: Record<ServiceTypes, LoanService> = {
   storepay: {
     minimumPrice: 100000,
     poweredBy: "powered by Storepay",
-    description:
-      "Storepay үйлчилгээг ашиглан төлбөрөө 4 хуваан төлөх боломжтой",
+    description: "Storepay үйлчилгээг ашиглан төлбөрөө 4 хуваан төлөх боломжтой",
     icon: "storepays.png",
-    className: "hover:border-blue-400",
-    textClassName: "group-hover:text-blue-500 group-hover:bg-blue-100",
     content: (price) => <StorepaySchedule price={price} />,
   },
   pocketzero: {
     minimumPrice: 100000,
     poweredBy: "powered by PocketZero",
-    description:
-      "PocketZERO Та 30-90 хоногийн хугацаатай зээлээр авах боломжтой.",
+    description: "PocketZERO Та 30-90 хоногийн хугацаатай зээлээр авах боломжтой.",
     icon: "svPocket-zero.png",
-    className: "hover:border-red-400",
-    textClassName: "group-hover:text-red-500 group-hover:bg-red-100",
     content: (price) => <PocketZeroSchedule price={price} />,
-  },
-  lendmn: {
-    minimumPrice: 100000,
-    poweredBy: "powered by LendMn",
-    description:
-      "60 хоногт урьдчилгаагүй, шимтгэлгүй, Хүссэнээ аваад Хүслээрээ төл",
-    icon: "lendmn.webp",
-    className: "hover:border-orange-400",
-    textClassName: "group-hover:text-orange-500 group-hover:bg-orange-100",
-    content: (price) => <LendMnSchedule price={price} />,
   },
 };
 
 const LoanModules: FC<Props> = ({ productPrice }) => {
   const drawerCtx = useDrawerCtx();
 
-  const handleLoanService = (serviceKey: ServiceTypes) => {
+  const available = useMemo(
+    () => Object.entries(loanServices).filter(([, s]) => productPrice >= s.minimumPrice),
+    [productPrice]
+  );
+
+  if (available.length === 0) return null;
+
+  const openSchedule = (serviceKey: ServiceTypes) => {
     drawerCtx.showDrawer({
       title: "Төлөлтийн хуваарь",
       placement: "right",
       content: loanServices[serviceKey].content(productPrice),
-      width: "380px"
+      width: "380px",
     });
     drawerCtx.setLoading(false);
   };
 
-  const availableServices = Object.entries(loanServices).filter(
-    ([, service]) => productPrice >= service.minimumPrice
-  );
-
-  if (availableServices.length === 0) return null;
-
   return (
-    <div className="flex flex-col justify-start gap-2">
-      <h2>Онлайн зээлийн үйлчилгээ</h2>
-      {availableServices.map(([serviceKey, service]) => (
-        <button
-          key={serviceKey}
-          id={serviceKey}
-          onClick={() => handleLoanService(serviceKey as ServiceTypes)}
-          className={`
-            flex items-center gap-2 bg-white border p-2 
-            text-sm max-w-[440px] text-left transition-transform 
-            duration-200 ease-in-out hover:shadow-lg hover:scale-103 
-            group rounded-md ${service.className} `}
-        >
-          <img
-            src={`/${service.icon}`}
-            alt={service.poweredBy}
-            className={` h-11 w-12 rounded object-contain 
-              transition-transform duration-200 
-              group-hover:scale-110 `}
-          />
-          <div className="flex-1">
-            <p className="text-[13px] my-0 p-0 leading-4">
-              {service.description}
-            </p>
-            <p className="text-[13px] my-0 text-blue-900">
-              {service.poweredBy}
-            </p>
-          </div>
-          <ChevronRight
-            className={`w-7 h-7 text-blue-400 transition-all 
-              duration-200 group-hover:rounded-full 
-              ${service.textClassName}`}
-          />
-        </button>
-      ))}
-    </div>
+    <section
+      className="w-full text-[13px] md:text-sm text-neutral-700 dark:text-neutral-300"
+      aria-labelledby="loan-services-title"
+    >
+      <h2
+        id="loan-services-title"
+        className="mb-2 tracking-wide uppercase text-[11px] text-neutral-500 dark:text-neutral-400 text-center md:text-left"
+      >
+        Зээлийн үйлчилгээ
+      </h2>
+
+      <div className="flex flex-col items-center md:items-start gap-2">
+        {available.map(([key, s]) => (
+          <button
+            key={key}
+            onClick={() => openSchedule(key as ServiceTypes)}
+            className="group w-full max-w-[720px] md:max-w-[560px] lg:max-w-[480px]
+                       flex items-center gap-3 px-3 py-2  text-left
+                       bg-white/90 dark:bg-neutral-900/80 backdrop-blur
+                       border border-neutral-200 dark:border-neutral-800
+                       hover:bg-neutral-50 dark:hover:bg-neutral-800
+                       focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20 dark:focus-visible:ring-white/20
+                       transition-colors"
+          >
+            <img
+              src={`/${s.icon}`}
+              alt={s.poweredBy}
+              className="h-8 w-10 object-contain rounded-sm opacity-90 group-hover:opacity-100 transition"
+              loading="lazy"
+            />
+
+            <div className="flex-1 min-w-0">
+              <p className="m-0 leading-5 text-[13px] text-neutral-800 dark:text-neutral-100 ">
+                {s.description}
+              </p>
+              <p className="m-0 leading-4 text-[12px] text-neutral-500 dark:text-neutral-400">
+                {s.poweredBy}
+              </p>
+            </div>
+
+            <ChevronRight
+              className="w-5 h-5 text-neutral-400 group-hover:text-neutral-700 dark:group-hover:text-neutral-200
+                         transition-transform duration-200 translate-x-0 group-hover:translate-x-0.5"
+            />
+          </button>
+        ))}
+      </div>
+    </section>
   );
 };
 

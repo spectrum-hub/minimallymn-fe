@@ -26,7 +26,7 @@ export const DrawerProvider: React.FC<DrawerProviderProps> = ({ children }) => {
     }) => {
       setTitle(config.title); // Set the title
       setContent(config.content); // Set the content
-      setPlacement(config.placement ?? "left"); // Use provided placement or default to "left"
+      setPlacement(config.placement ?? "right"); // Use provided placement or default to "left"
       setIsOpen(true); // Open the drawer
       setLoading(true); // Set loading to true
       setWidth(config?.width);
@@ -77,13 +77,13 @@ export const DrawerProvider: React.FC<DrawerProviderProps> = ({ children }) => {
         title={
           <div className="flex w-full justify-between items-center ">
             <img
-              src="./assets/logo.png"
+              src="/assets/logo.png"
               alt="Minimally Logo"
               className="h-6 md:h-8 dark:hidden transition-transform duration-300 hover:scale-105"
             />
             <Button
               size={"small"}
-              type={"primary"}
+              type={"link"}
               onClick={() => closeDrawer()}
             >
               <X size={16} />

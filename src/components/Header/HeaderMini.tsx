@@ -88,7 +88,7 @@ const HeaderMini: FC<HeaderProps> = (props) => {
 
             <LogoLink>
               <img
-                src="./assets/logo.png"
+                src="/assets/logo.png"
                 alt="Minimally Logo"
                 className="h-10 md:h-16 transition-transform duration-300 hover:scale-[1.05]"
               />
