@@ -18,20 +18,20 @@ const WishlistButton: FC<{
       }}
     >
       {isMobile ? (
-        <Heart className=" border-2 rounded-full p-1 w-8 h-8 text-red-500 group-hover:text-red-500 transition-colors duration-300 " />
+        <Heart className=" border-2 rounded-full p-1 w-8 h-8 transition-colors duration-300 " />
       ) : (
-        <Heart className="w-5 h-5 text-red-500   group-hover:text-red-500 transition-colors duration-300" />
+        <Heart className="w-5 h-5 transition-colors duration-300" />
       )}
 
       {wishList?.wishListCount > 0 ? (
         <span
-          className={` absolute -top-[-0px] -right-[1px] bg-red-500 text-white text-[11px] font-bold w-4 h-4  rounded-full flex items-center justify-center `}
+          className={` absolute -top-[-0px] -right-[1px]  text-white text-[11px] font-bold w-4 h-4  rounded-full flex items-center justify-center `}
         >
           {wishList?.wishListCount}
         </span>
       ) : null}
 
-      <span className="hidden sm:inline text-gray-600 dark:text-gray-300 group-hover:text-purple-600 transition-colors duration-300">
+      <span className="hidden sm:inline text-gray-600 dark:text-gray-300 transition-colors duration-300">
         Хадгалсан
       </span>
     </button>
