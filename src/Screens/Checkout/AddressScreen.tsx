@@ -320,7 +320,7 @@ const CheckoutScreen: React.FC = () => {
   console.log("selectedPaymentCode", selectedPaymentCode);
   return (
     <div className="form-payment-delivery-address py-2 bg-gradient-to-b from-gray-50 to-white px-0">
-      <div className="grid lg:grid-cols-3 gap-4 max-w-7xl mx-auto">
+      <div className="grid lg:grid-cols-3 gap-4  mx-auto">
         <div className="lg:col-span-2">
           <FormProvider {...formMethods}>
             <form

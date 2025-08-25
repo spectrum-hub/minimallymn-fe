@@ -18,7 +18,7 @@ const BlockImageGallery: FC<Props> = ({ block }) => {
   const images = imageFinder(block);
 
   return (
-    <section className={`${block.attributes.class} max-w-7xl mx-auto`}>
+    <section className={`${block.attributes.class}  mx-auto`}>
       <div
         className="absolute left-1 top-[50%] z-10
           bg-gray-400  

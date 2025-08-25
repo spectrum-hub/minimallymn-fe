@@ -18,7 +18,7 @@ const EmptySearch: React.FC<Props> = ({ screen = "products" }) => {
   const Icon = screen === "wishlist" ? Heart : Search;
 
   return (
-    <section className="products max-w-7xl mx-auto my-8">
+    <section className="products  mx-auto my-8">
       <div className="flex shadow justify-center flex-col w-full bg-white p-2 rounded-md items-center py-20">
         <Icon className="mb-4" size={46} />
         <h2 className="my-4">{text}</h2>

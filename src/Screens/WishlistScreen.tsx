@@ -56,7 +56,7 @@ const WishListScreen = () => {
   }
 
   return (
-    <section className="products max-w-7xl mx-auto p-4">
+    <section className="products  mx-auto p-4">
       <h2 className="my-4 mt-20 font-bold text-xl">Хүслийн жагсаалт</h2>
       {!products || products.length === 0 ? (
         <EmptySearch screen={"wishlist"} />

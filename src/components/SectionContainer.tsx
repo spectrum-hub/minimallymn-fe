@@ -7,7 +7,7 @@ interface ContainerProps {
 
 const SectionContainer: React.FC<ContainerProps> = ({ children, className }) => {
   return (
-    <section className={`max-w-7xl mx-auto container ${className}`}>
+    <section className={` mx-auto container ${className}`}>
       {children}
     </section>
   );

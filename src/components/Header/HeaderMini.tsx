@@ -63,10 +63,9 @@ const HeaderMini: FC<HeaderProps> = (props) => {
     >
       {/* Top strip */}
       <div
-        className={clsx(
-          styles.mainContainer,
+        className={
           "hidden md:flex items-center justify-between py-2 text-[13px] text-gray-600 dark:text-gray-300"
-        )}
+        }
       >
         <span>Antmall.mn-д тавтай морил!</span>
         <div className="flex items-center gap-4">

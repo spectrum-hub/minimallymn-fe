@@ -86,7 +86,7 @@ const BlockSEmbedCode: FC<BlockProductsProps> = ({ block }) => {
   if (error) {
     console.error("GraphQL Error:", error);
     return (
-      <div className="max-w-7xl mx-auto my-4 text-red-500">
+      <div className=" mx-auto my-4 text-red-500">
         Error loading Facebook Live data: {error.message}
       </div>
     );
@@ -95,7 +95,7 @@ const BlockSEmbedCode: FC<BlockProductsProps> = ({ block }) => {
   // Handle loading state
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto my-4 flex justify-center">
+      <div className=" mx-auto my-4 flex justify-center">
         <Spin size="large" />
       </div>
     );
@@ -107,7 +107,7 @@ const BlockSEmbedCode: FC<BlockProductsProps> = ({ block }) => {
     <section
       className={`${
         block?.data_name ?? "facebook-live"
-      } max-w-7xl mx-auto my-4`}
+      }  mx-auto my-4`}
     >
       {(facebookLiveList?.length ?? 0) > 0 ? (
         <SwiperComponent

@@ -11,7 +11,7 @@ const FooterComponent: React.FC<FooterProps> = () => {
       className=" bg-black text-white
        w-full p-4  text-sm  shadow-lg py-9 "
     >
-      <div className="max-w-7xl mx-auto">
+      <div className=" mx-auto">
         <div className="flex flex-row flex-wrap gap-6 justify-between">
           <div>
             <a

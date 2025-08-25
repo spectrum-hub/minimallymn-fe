@@ -159,7 +159,7 @@ const MarketplaceProductsScreen: React.FC = () => {
   if (!products) return <p>Бараа бүтээгдэхүүн олдсонгүй</p>;
 
   return (
-    <section className="products max-w-7xl mx-auto">
+    <section className="products  mx-auto">
       <div className="flex flex-row gap-4">
         <div className="w-full">
           <div className={styles.containerItemHeader}>

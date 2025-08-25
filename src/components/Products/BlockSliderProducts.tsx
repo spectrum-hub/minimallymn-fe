@@ -59,7 +59,7 @@ const Carousel: FC<BlockProductsProps> = ({ block }) => {
   if (error) return <p>Error : {error.message}</p>;
 
   return (
-    <section className={`${block?.data_name} max-w-7xl mx-auto my-4 `}>
+    <section className={`${block?.data_name}  mx-auto my-4 `}>
       {/* <p>{block?.data_name}</p> */}
       {renderCategoryTitle()}
       <SwiperComponent

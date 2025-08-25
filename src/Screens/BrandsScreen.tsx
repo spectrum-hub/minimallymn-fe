@@ -57,7 +57,7 @@ function BrandsScreen() {
   };
 
   return (
-    <section className="products max-w-7xl mx-auto ">
+    <section className="products  mx-auto ">
       <h1 className="text-center md:text-left text-md md:text-2xl 
       font-bold font-sans  text-gray-800 my-5">
         Брендүүд

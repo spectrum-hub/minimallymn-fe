@@ -86,7 +86,7 @@ function ContentsScreen() {
 
   return (
     <AccountLayout>
-      <section className="products max-w-7xl mx-auto">
+      <section className="products  mx-auto">
         <div className="w-full bg-white p-4">
           <h1 className="my-4 text-center text-md md:text-lg">
             {contentDetail?.name}

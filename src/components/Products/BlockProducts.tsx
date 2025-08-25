@@ -43,7 +43,7 @@ const BlockProducts: FC<BlockProductsProps> = ({ block }) => {
   if (error) return <p>Error : {error.message}</p>;
 
   return (
-    <section className={`${block?.data_name} max-w-7xl mx-auto `}>
+    <section className={`${block?.data_name}  mx-auto `}>
       <h2 className="text-3xl font-bold mb-8">Featured Products</h2>
       <div
         className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 

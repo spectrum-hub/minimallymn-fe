@@ -144,7 +144,7 @@ const RenderChildren = ({
           return (
             <div
               key={index}
-              className={` w-full max-w-7xl rounded-md text-center m-auto p-0 `}
+              className={` w-full  rounded-md text-center m-auto p-0 `}
             >
               <ReactPlayer
                 url={block.attributes?.["data-oe-expression"]}

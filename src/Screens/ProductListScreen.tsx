@@ -251,7 +251,7 @@ const ProductListScreen: React.FC = () => {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <section className="products max-w-7xl mx-auto">
+    <section className="products  mx-auto">
       <Categories />
       <div className="flex flex-row gap-4">
         <Attributes attributes={data?.products?.attributes} loading={loading} />

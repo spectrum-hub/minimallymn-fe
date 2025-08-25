@@ -34,7 +34,7 @@ const AccountLayout: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <section
-      className={`${styles.mainContainer} flex flex-col md:flex-row gap-4 pt-4 `}
+      className={` flex flex-col md:flex-row gap-4 pt-4 `}
     >
       <aside
         className={`

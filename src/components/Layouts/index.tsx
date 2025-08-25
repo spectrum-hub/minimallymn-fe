@@ -171,7 +171,7 @@ const MainLayout: FC<Props> = ({ children }) => {
           isMobile ? "bg-gray-200" : "bg-gray-100"
         }`}
       >
-        <main className="px-1 py-1 pb-20 shadow-md">
+        <main className="px-1 py-1 pb-20 max-w-5xl mx-auto flex-grow w-full">
           <Suspense fallback={<LoadingSpinner />}>{children}</Suspense>
         </main>
         {isMobile ? (

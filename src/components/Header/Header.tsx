@@ -39,7 +39,7 @@ const Header: FC<HeaderProps> = (props) => {
         className={`
           py-2 flex justify-between items-center 
           text-sm text-gray-600 dark:text-gray-300 
-          dark:bg-gray-800  ${styles.mainContainer} 
+          dark:bg-gray-800  ${styles.} 
           ${
             isMobile
               ? "pt-6 px-4 w-full bg-[#28133f] text-white"
@@ -66,7 +66,7 @@ const Header: FC<HeaderProps> = (props) => {
       {/* Main Header */}
 
       <div
-        className={`${styles.mainContainer} ${
+        className={`${styles.} ${
           isMobile ? "px-1 w-full bg-white " : "bg-white "
         }`}
       >
