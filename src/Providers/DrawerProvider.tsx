@@ -77,8 +77,8 @@ export const DrawerProvider: React.FC<DrawerProviderProps> = ({ children }) => {
         title={
           <div className="flex w-full justify-between items-center ">
             <img
-              src="/antmall.svg"
-              alt="Antmall Logo"
+              src="./assets/logo.png"
+              alt="Minimally Logo"
               className="h-6 md:h-8 dark:hidden transition-transform duration-300 hover:scale-105"
             />
             <Button

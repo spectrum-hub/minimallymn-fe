@@ -57,25 +57,23 @@ const HeaderMini: FC<HeaderProps> = (props) => {
     <header
       className={clsx(
         "sticky top-0 z-50 w-full text-sm",
-        "bg-white/15 dark:bg-gray-900/80 ",
-        "border-b border-black/10 dark:border-white/10"
+        "bg-white"
       )}
     >
-      {/* Top strip */}
       <div
         className={
           "hidden md:flex items-center justify-between py-2 text-[13px] text-gray-600 dark:text-gray-300"
         }
       >
-        <span>Antmall.mn-д тавтай морил!</span>
+        <span></span>
         <div className="flex items-center gap-4">
           <span className="flex items-center">
             <Phone size={14} />
-            <b className="ml-1">7200-5588</b>
+            <b className="ml-1">77777-77777</b>
           </span>
           <span className="hidden lg:flex items-center">
             <Send size={14} />
-            <b className="ml-1">info@antmall.mn</b>
+            <b className="ml-1">info@minimally.mn</b>
           </span>
           <SocialLinks />
         </div>
@@ -90,9 +88,9 @@ const HeaderMini: FC<HeaderProps> = (props) => {
 
             <LogoLink>
               <img
-                src="/antmall.svg"
-                alt="Antmall Logo"
-                className="h-10 md:h-12 transition-transform duration-300 hover:scale-[1.05]"
+                src="./assets/logo.png"
+                alt="Minimally Logo"
+                className="h-10 md:h-16 transition-transform duration-300 hover:scale-[1.05]"
               />
             </LogoLink>
           </div>
@@ -150,7 +148,7 @@ const SocialLinks: FC<SocialLinksProps> = ({ isMobile }) => {
   return (
     <div className="flex gap-2">
       <a
-        href="https://www.facebook.com/AntMall.mn"
+        href="https://www.facebook.com/Minimally.mn"
         className="h-5 w-5 grid place-items-center rounded-full hover:bg-black/5"
         target="_blank"
         rel="noopener noreferrer"
@@ -167,7 +165,7 @@ const SocialLinks: FC<SocialLinksProps> = ({ isMobile }) => {
         </svg>
       </a>
       <a
-        href="https://www.instagram.com/antmall_official/"
+        href="https://www.instagram.com/Minimally_official/"
         className="h-5 w-5 grid place-items-center rounded-full hover:bg-black/5"
         target="_blank"
         rel="noopener noreferrer"
@@ -206,19 +204,19 @@ const MenuToggle: FC<{
       <span
         className={clsx(
           "absolute block h-[2px] w-6 bg-current transition-transform duration-300 ease-in-out",
-          open ? "translate-y-0 rotate-45" : "-translate-y-2 rotate-0"
+          "-translate-y-2 rotate-0"
         )}
       />
       <span
         className={clsx(
           "absolute block h-[2px] w-6 bg-current transition-all duration-300 ease-in-out",
-          open ? "opacity-0 scale-x-0" : "opacity-100 scale-x-100"
+          "opacity-100 scale-x-100"
         )}
       />
       <span
         className={clsx(
           "absolute block h-[2px] w-6 bg-current transition-transform duration-300 ease-in-out",
-          open ? "translate-y-0 -rotate-45" : "translate-y-2 rotate-0"
+          "translate-y-2 rotate-0"
         )}
       />
     </button>

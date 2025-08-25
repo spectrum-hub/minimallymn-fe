@@ -11,7 +11,7 @@ interface FormSubmit {
 
 const providers = [
   { label: "Amazon", value: "amazon", icon: "🟠" },
-  { label: "Antmall.mn", value: "antmall", icon: "⚫" },
+  { label: "Minimally.mn", value: "Minimally", icon: "⚫" },
   // { label: "Taobao", value: "taobao", icon: "🔴" },
   // { label: "J.ZAO", value: "jzao", icon: "🟥" },
   // { label: "IKEA", value: "ikea", icon: "🟡" },

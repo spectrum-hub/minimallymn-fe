@@ -258,7 +258,7 @@ const ProductListScreen: React.FC = () => {
         <div className="w-full">
           <div className={styles.containerItemHeader}>
             <div className={styles.containerSubHeader}>
-              <h2 className="text-md md:text-2xl text-gray-900 w-full mb-2">
+              <h2 className="text-md text-gray-900 w-full mb-2">
                 Бараа бүтээгдэхүүн
               </h2>
               <SortOrderList

@@ -4,10 +4,9 @@ interface FooterProps {
   footerData?: FooterBlock | null;
 }
 
- 
 const FooterComponent: React.FC<FooterProps> = () => {
   return (
-    <footer 
+    <footer
       className=" bg-black text-white
        w-full p-4  text-sm  shadow-lg py-9 "
     >
@@ -22,41 +21,10 @@ const FooterComponent: React.FC<FooterProps> = () => {
             >
               <img
                 src="/logoLight.png"
-                alt="Antmall Logo"
+                alt="Minimally Logo"
                 className="w-40 mt-2 transition-transform duration-300 hover:scale-105"
               />
             </a>
-
-            <div className="my-6 flex flex-col gap-1">
-              <a
-                href="https://apps.apple.com/us/app/antmall-mn/id6741709406?uo=2"
-                target={"_blank"}
-                aria-label="appstore antmall"
-              >
-                <img
-                  src="/images/ios-app-logo.png"
-                  alt="Antmall Logo"
-                  className="
-                   border border-gray-500 rounded-full
-                   w-40 mt-2 transition-transform 
-                   duration-300 hover:scale-105"
-                />
-              </a>
-              <a
-                href="https://play.google.com/store/apps/details?id=com.amall.shopping&hl=en"
-                target={"_blank"}
-                aria-label="android antmall"
-              >
-                <img
-                  src="/images/android-app-logo.png"
-                  alt="Antmall Logo"
-                  className="
-                  border border-gray-500 rounded-full
-                  w-40 mt-2 transition-transform 
-                  duration-300 hover:scale-105"
-                />
-              </a>
-            </div>
           </div>
 
           <div className="max-w-96">
@@ -77,7 +45,7 @@ const FooterComponent: React.FC<FooterProps> = () => {
                 <b>Цагийн хуваарь:</b> Өдөр бүр 10:00 - 19:00 цаг
               </li>
               <li>
-                <b>Цахим шуудан:</b> sales@antmall.mn
+                <b>Цахим шуудан:</b> sales@minimally.mn
               </li>
               <li>
                 <b> Хаяг:</b> Улаанбаатар, Хан-Уул дүүрэг, 15-р хороо, Их Наяд
@@ -88,7 +56,7 @@ const FooterComponent: React.FC<FooterProps> = () => {
 
             <div className="flex my-4 gap-2">
               <a
-                href="https://www.facebook.com/AntMall.mn"
+                href="https://www.facebook.com/minimally.mn"
                 className="h-8"
                 target="_blank"
               >
@@ -99,7 +67,7 @@ const FooterComponent: React.FC<FooterProps> = () => {
                 />
               </a>
               <a
-                href="https://www.instagram.com/antmall_official/"
+                href="https://www.instagram.com/minimally_official/"
                 target="_blank"
                 className="h-8"
               >

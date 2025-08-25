@@ -55,22 +55,16 @@ const RenderCategories: React.FC = () => {
               <NavLink
                 to={{ search: `category=${id}` }}
                 className={`
-                  border rounded-lg h-10 px-2 py-1 w-28 text-center
-                hover:bg-gray-300 ${
+                  border rounded h-8 px-2 w-36 text-center
+                hover:bg-gray-300 mx-1 line-clamp-1 ${
                   Number(categoryId) === id ? "bg-gray-300 text-black" : ""
                 }
                 `}
               >
-                {/* <img
-                  src={categoryImageUrl(id)}
-                  alt={name}
-                  className="object-cover h-12 md:h-20 rounded-xl max-w-20 bg-gray-400"
-                  loading="lazy"
-                /> */}
                 <span
                   className={`
                     text-xs text-gray-900
-                    text-center leading-8
+                    text-center leading-8 line-clamp-1 
                   `}
                 >
                   {name}

@@ -184,7 +184,7 @@ const MainLayout: FC<Props> = ({ children }) => {
 
             <div className="copyright bg-[#2f0f46] text-gray-300 text-sm p-4 text-center  ">
               <FooterLinkContentLinks />
-              Antmall.mn © 2023-{new Date().getFullYear()} Зохиогчийн эрх
+              Minimally.mn © 2023-{new Date().getFullYear()} Зохиогчийн эрх
               хамгаалагдсан
             </div>
           </>

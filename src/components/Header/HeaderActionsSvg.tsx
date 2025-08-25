@@ -160,32 +160,4 @@ export const CartButton: FC<{ totalItems?: number; onClick?: () => void }> = ({
     <CartIcon />
   </IconStackButton>
 );
-
-/* --------------------------------------------- */
-/* HOW TO USE in your HeaderMini:                */
-/* --------------------------------------------- */
-/**
- * 1) Remove lucide-react imports from HeaderMini and sub-buttons.
- * 2) Import these components:
- *    import { WishlistButton, UserInfoButton, CartButton, PhoneIcon, SendIcon } from "./HeaderActionsSvg";
- * 3) Replace JSX:
- *    <WishlistButton count={wishList?.wishListCount} onClick={() => historyNavigate("/wishlist")} />
- *    <UserInfoButton isAuthenticated={isAuthenticated} userName={userData?.name ?? userData?.login} onClick={() => historyNavigate(isAuthenticated ? "/account/profile" : "/auth/login")} />
- *    <CartButton totalItems={cartTotalItems} onClick={() => historyNavigate("/checkout")} />
- * 4) For top strip contact icons, use <PhoneIcon/> and <SendIcon/> inline with text — both are SVG and follow currentColor.
- */
-
-/* Example snippet for top strip (replace lucide):
-  <span className="flex items-center gap-1 text-sm">
-    <PhoneIcon /> <b>7200-5588</b>
-  </span>
-  <span className="hidden lg:flex items-center gap-1 text-sm">
-    <SendIcon /> <b>info@antmall.mn</b>
-  </span>
-*/
-
-/* Optional: compact variant (smaller icon + tighter spacing)
-  <IconStackButton className="px-1" label="Сагс">
-    <CartIcon className="w-5 h-5"/>
-  </IconStackButton>
-*/
+ 

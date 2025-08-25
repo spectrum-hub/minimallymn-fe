@@ -49,7 +49,7 @@ const NotificationCtx: React.FC<{ children: React.ReactNode }> = ({
 
   const contextValue = useMemo(
     () => ({
-      name: "Antmall.mn",
+      name: "Minimally.mn",
       openNotification, // Expose the function
     }),
     [openNotification]

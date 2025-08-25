@@ -97,30 +97,3 @@ const StorepayLoanCheck: FC<{
 };
 
 export default StorepayLoanCheck;
-
-/***
- 
-    const r = {
-    __typename: "ReturnResponse",
-        status: "success",
-        message: "Амжилттай",
-        result: {
-            value: false,
-            data: {
-            loanId: 2794225,
-            status: "canceled",
-            amount: "385000.0",
-            description: "Antmall.mn order: 190, Total: 385000.0",
-            storeId: 14817,
-            number: "L4128514431",
-            isExist: true,
-            isConfirmed: false,
-            },
-            msgList: [],
-            attrs: {},
-            status: "Success",
-        },
-    };
-
- 
- ***/
