@@ -80,7 +80,7 @@ const BlockSEmbedCode: FC<BlockProductsProps> = ({ block }) => {
   );
 
   const reelWidth = "100%";
-  const reelHeight = "382px";
+  const reelHeight = "500px";
 
   // Handle error state
   if (error) {
@@ -119,15 +119,15 @@ const BlockSEmbedCode: FC<BlockProductsProps> = ({ block }) => {
           autoplay={{ delay: 5000, disableOnInteraction: false }}
           breakpoints={{
             400: {
-              slidesPerView: 2,
+              slidesPerView: 1,
               spaceBetween: 4,
             },
             768: {
-              slidesPerView: 4,
+              slidesPerView: 1,
               spaceBetween: 4,
             },
             1024: {
-              slidesPerView: 5,
+              slidesPerView: 1,
               spaceBetween: 4,
             },
           }}
