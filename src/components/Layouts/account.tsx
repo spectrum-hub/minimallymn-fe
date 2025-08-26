@@ -1,4 +1,3 @@
-import styles from "@/main.module.css";
 import React from "react";
 import { NavLink, matchPath, useLocation } from "react-router";
 import { User, Files, MessageCircleQuestion, LogOut } from "lucide-react";

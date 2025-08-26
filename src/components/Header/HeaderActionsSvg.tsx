@@ -117,10 +117,9 @@ export const IconStackButton: FC<IconStackButtonProps> = ({
 
 // WishlistButton
 export const WishlistButton: FC<{
-  isMobile?: boolean;
   count?: number;
   onClick?: () => void;
-}> = ({ isMobile, count, onClick }) => (
+}> = ({ count, onClick }) => (
   <IconStackButton
     label="Хадгалсан"
     onClick={onClick}

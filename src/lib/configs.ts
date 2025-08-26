@@ -1,5 +1,5 @@
 export const websiteId = "1";
-export const baseURL = "https://odoo-admin.antmall.mn";
+export const baseURL = "https://minim-admini.minimally.mn/";
 // export const baseURL = "http://172.31.221.212:8069";
  
 export const categoryImageUrl = (id: number) =>
