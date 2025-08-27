@@ -69,7 +69,7 @@ const HeaderMini: FC<HeaderProps> = (props) => {
         <div className="flex items-center gap-4">
           <span className="flex items-center">
             <Phone size={14} />
-            <b className="ml-1">77777-77777</b>
+            <b className="ml-1">8043-1000, 8042-1000</b>
           </span>
           <span className="hidden lg:flex items-center">
             <Send size={14} />

@@ -1,12 +1,21 @@
 import { FC } from "react";
 import { Swiper as SwiperComponent, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import {
+  Keyboard,
+  Scrollbar,
+  Navigation,
+  Pagination,
+} from "swiper/modules";
 import { gql } from "@apollo/client";
 import { Spin } from "antd";
 import Iframe from "react-iframe";
 import useGqlQuery from "../../Hooks/Query";
 import { Block } from "../../types/Blocks";
 import { websiteId } from "../../lib/configs";
+
+import "swiper/css/scrollbar";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 // Define the GraphQL query
 export const FacebookLiveListQuery = gql`
@@ -69,6 +78,7 @@ interface BlockProductsProps {
 }
 
 const BlockSEmbedCode: FC<BlockProductsProps> = ({ block }) => {
+
   const { loading, error, data } = useGqlQuery<FacebookLiveListResponse>(
     FacebookLiveListQuery,
     {
@@ -80,7 +90,7 @@ const BlockSEmbedCode: FC<BlockProductsProps> = ({ block }) => {
   );
 
   const reelWidth = "100%";
-  const reelHeight = "500px";
+  const reelHeight = "600px";
 
   // Handle error state
   if (error) {
@@ -104,14 +114,17 @@ const BlockSEmbedCode: FC<BlockProductsProps> = ({ block }) => {
   const facebookLiveList = data?.facebookLiveList?.facebookLiveList;
 
   return (
-    <section
-      className={`${
-        block?.data_name ?? "facebook-live"
-      }  mx-auto my-4`}
-    >
+    <section className={`${block?.data_name ?? "facebook-live"}  mx-auto my-4`}>
       {(facebookLiveList?.length ?? 0) > 0 ? (
         <SwiperComponent
-          modules={[Navigation, Pagination, Autoplay]}
+          modules={[
+            Keyboard,
+            Scrollbar,
+            Navigation,
+            Pagination,
+            Navigation,
+            Pagination,
+          ]}
           spaceBetween={4}
           slidesPerView={1}
           navigation
@@ -147,6 +160,7 @@ const BlockSEmbedCode: FC<BlockProductsProps> = ({ block }) => {
                   borderRadius: 10,
                 }}
               />
+              
             </SwiperSlide>
           ))}
         </SwiperComponent>

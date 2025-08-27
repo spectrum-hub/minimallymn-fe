@@ -11,6 +11,12 @@ interface FooterProps {
  * - Compact typography, muted colors
  * - Smooth hover effects
  * - Centered on mobile, spread on desktop
+ * 
+ * Дэлгүүрийн цагийн хуваарь: 
+Өдөр бүр 10:00-18:30
+🏠: Нарны замын Доктор болон Миний дэлгүүр 2-ын дунд Luxhouse-5 Худалдааны төвийн 2 давхарт
+☎️: 8043-1000, 8042-1000
+ Та бүхэн цахим залилангаас сэргийлж зөвхөн пэйж дээр байгаа утсаар болон чатаар захиалгаа өгөөрэй. Баярлалаа
  */
 const FooterComponent: FC<FooterProps> = () => {
   return (
@@ -34,8 +40,8 @@ const FooterComponent: FC<FooterProps> = () => {
               Бидний тухай
             </h2>
             <p className="leading-relaxed text-[13px]">
-              Бид танд бараа бүтээгдэхүүнийг төлбөрийн олон төрлийн нөхцөлөөр илүү
-              хялбараар худалдан авах боломжийг олгож байна.
+              Бид танд бараа бүтээгдэхүүнийг төлбөрийн олон төрлийн нөхцөлөөр
+              илүү хялбараар худалдан авах боломжийг олгож байна.
             </p>
           </div>
 
@@ -46,18 +52,22 @@ const FooterComponent: FC<FooterProps> = () => {
             </h2>
             <ul className="space-y-1 text-[13px] leading-6">
               <li>
-                <span className="font-medium">Утас:</span> 7777-7777
+                <span className="font-medium">Утас:</span> 8043-1000, 8042-1000
               </li>
               <li>
-                <span className="font-medium">Цагийн хуваарь:</span> Өдөр бүр 10:00 - 19:00
+                <span className="font-medium">Цагийн хуваарь:</span> Өдөр бүр
+                10:00 - 18:30{" "}
               </li>
               <li>
-                <span className="font-medium">Цахим шуудан:</span> sales@minimally.mn
+                <span className="font-medium">Цахим шуудан:</span>{" "}
+                sales@minimally.mn
               </li>
               <li>
-                <span className="font-medium">Хаяг:</span> Улаанбаатар, Хан-Уул дүүрэг, Зүүн 1 давхар
+                <span className="font-medium">Хаяг:</span> Нарны замын Доктор
+                болон Миний дэлгүүр 2-ын дунд Luxhouse-5 Худалдааны төвийн 2
+                давхарт
               </li>
-              <li className="italic opacity-80">Minimally -тай ХАМТ ИРЭЭДҮЙГ НЭЭЦГЭЭЕ!</li>
+              <li className="italic opacity-80">Minimally -тай ХАМТ</li>
             </ul>
 
             {/* Social */}
@@ -68,7 +78,11 @@ const FooterComponent: FC<FooterProps> = () => {
                 rel="noopener noreferrer"
                 className="opacity-70 hover:opacity-100 transition"
               >
-                <img src="/images/facebook.png" alt="facebook.com" className="h-5" />
+                <img
+                  src="/images/facebook.png"
+                  alt="facebook.com"
+                  className="h-5"
+                />
               </a>
               <a
                 href="https://www.instagram.com/minimally_official/"
@@ -76,7 +90,11 @@ const FooterComponent: FC<FooterProps> = () => {
                 rel="noopener noreferrer"
                 className="opacity-70 hover:opacity-100 transition"
               >
-                <img src="/images/instagram.png" alt="instagram.com" className="h-5" />
+                <img
+                  src="/images/instagram.png"
+                  alt="instagram.com"
+                  className="h-5"
+                />
               </a>
             </div>
           </div>
