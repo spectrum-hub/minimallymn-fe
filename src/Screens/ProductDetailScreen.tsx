@@ -55,6 +55,7 @@ const DescriptionSale = ({ description }: { description?: string }) => {
 function groupByAttributeValues(
   itemDetail?: NProductDetail
 ): GroupedAttrbutesProps {
+  
   const parentProducts = itemDetail?.parentProducts ?? [];
   const groupedByAttributes: GroupedAttrbutesProps = {};
 
