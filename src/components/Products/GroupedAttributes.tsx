@@ -44,7 +44,17 @@ const GroupedAttributes: React.FC<Props> = ({
         setSelectedAttributes(initialAttributes);
       }
     }
-  }, [initialVariantProductId, parentProducts]);
+    // 🔥 шинэ логик: attribute group нь 1 л утгатай бол автоматаар сонгоно
+    Object.entries(groupedAttributes).forEach(([attributeId, attributes]) => {
+      if (attributes?.values?.length === 1) {
+        const onlyValue = attributes.values[0];
+        setSelectedAttributes((prev) => ({
+          ...prev,
+          [Number(attributeId)]: onlyValue.id,
+        }));
+      }
+    });
+  }, [groupedAttributes, initialVariantProductId, parentProducts]);
 
   const handleSelect = (attributeId: number, valueId: number) => {
     setSelectedAttributes((prev) => ({
@@ -85,8 +95,8 @@ const GroupedAttributes: React.FC<Props> = ({
       const paramsObj = Object.fromEntries(searchParams.entries());
 
       setSearchParams({
-        attributeId: selectedVariant.id.toString(),
         ...paramsObj,
+        attributeId: selectedVariant.id.toString(),
       });
     }
   }, [
@@ -146,16 +156,6 @@ const GroupedAttributes: React.FC<Props> = ({
           </div>
         </div>
       ))}
-
-      {/* Сонгогдсон бүтээгдэхүүн ID */}
-      {/* <div className="mt-4 p-2 bg-gray-100 rounded-md">
-        <strong>Сонгогдсон бүтээгдэхүүн:</strong>
-        <pre>
-          {selectedVariant
-            ? JSON.stringify(selectedVariant.id, null, 2)
-            : "Сонгоогүй байна"}
-        </pre>
-      </div> */}
     </div>
   );
 };
