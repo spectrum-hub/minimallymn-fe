@@ -118,7 +118,7 @@ const GroupedAttributes: React.FC<Props> = ({
         <div key={attributeId} className="my-4">
           <TitleLined title={attributes?.attribute?.name} />
 
-          <div className="flex gap-2 my-0 attribute-buttons">
+          <div className="flex flex-wrap  gap-2 my-0 attribute-buttons">
             {attributes?.values?.map((attr) => {
               const isSelected =
                 selectedAttributes[Number(attributeId)] === attr.id;
@@ -132,7 +132,7 @@ const GroupedAttributes: React.FC<Props> = ({
                   className={`add-price-${attr.id} ${
                     attr.attributeId?.displayType === "color"
                       ? ` flex flex-col justify-center items-center gap-1 
-                          md:gap-2 h-full max-w-[90px] p-1 `
+                          md:gap-2 h-full max-w-[120px] p-1 `
                       : ` `
                   }`}
                 >
@@ -141,7 +141,7 @@ const GroupedAttributes: React.FC<Props> = ({
                       <img
                         src={imageBaseUrl(attr.productVariantId, "image_512")}
                         alt={attr.name}
-                        className="h-14 md:h-20 object-contain block"
+                        className="h-14 md:h-20 object-contain block "
                       />
                       <span className="text-xs text-wrap text-center leading-[17px] block">
                         {attr.name}
