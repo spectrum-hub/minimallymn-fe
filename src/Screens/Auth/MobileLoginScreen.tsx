@@ -120,117 +120,159 @@ const MobileLoginScreen: FC = () => {
   };
 
   return (
-    <Spin spinning={loading}>
-      <div className="flex items-center justify-center p-4">
-        <div className="max-w-md mt-2 md:mt-6 w-full bg-white p-6 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold text-center mb-4">
-            Нууц үг сэргээх
-          </h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8 sm:px-6">
+      <div className="w-full max-w-sm">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
+              Нууц үг сэргээх
+            </h1>
+            <p className="text-xs sm:text-sm text-gray-600 mt-2">
+              Утасны дугаараар нууц үг сэргээх
+            </p>
+          </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="">
-            <Controller
-              control={control}
-              name="phone"
-              render={({ field, fieldState }) => (
-                <div className="flex flex-col gap-2">
-                  <label htmlFor="phone" className="text-sm font-medium  ">
-                    Гар утасны дугаар
-                  </label>
-                  <Input
-                    id="phone"
-                    {...field}
-                    placeholder="Утасны дугаар"
-                    prefix={<Phone className="text-gray-400" />}
-                    status={fieldState.invalid ? "error" : ""}
-                    size="large"
-                    className="input-class"
-                  />
-                </div>
-              )}
-            />
+          <Spin spinning={loading} tip="" className="relative">
+            {loading && <div className="absolute inset-0 bg-white/80 backdrop-blur-sm rounded-2xl z-10" />}
 
-            {formName === "login_by_otp" ? (
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <Controller
                 control={control}
-                name={"verify_code"}
+                name="phone"
                 render={({ field, fieldState }) => (
-                  <div className="flex flex-col gap-4 my-4 items-center w-full">
-                    <span className="text-sm text-center my-4 text-gray-600">
-                      Таны гар утсанд илгээсэн нэг удаагийн нууц үгийг оруулна
-                      уу
-                    </span>
-                    <Input.OTP
-                      length={4}
-                      onChange={(e) => {
-                        const onlyNumber = e.replace(/\D/g, "");
-                        console.log(onlyNumber);
-                        if (e !== onlyNumber) return;
-                        field.onChange(e);
-                      }}
-                      size={"large"}
-                      className="otp-input"
-                      style={
-                        isMobile
-                          ? {
-                              width: "90%",
-                              height: 50,
+                  <div className="space-y-2">
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                      Утасны дугаар
+                    </label>
+                    <div className="relative">
+                      <Input
+                        id="phone"
+                        {...field}
+                        placeholder="99123456"
+                        prefix={
+                          <Phone
+                            size={18}
+                            className={
+                              fieldState.invalid ? "text-red-400" : "text-gray-400"
                             }
-                          : {}
-                      }
-                    />
-                    {fieldState.invalid && (
-                      <span id="phone-error" className="text-red-500 text-sm">
-                        {fieldState.error?.message}
-                      </span>
+                          />
+                        }
+                        status={fieldState.invalid ? "error" : ""}
+                        disabled={loading}
+                        size="large"
+                        className={`rounded-xl border-gray-200 ${
+                          fieldState.invalid 
+                            ? 'border-red-300 focus:border-red-500' 
+                            : 'hover:border-gray-300 focus:border-blue-500'
+                        }`}
+                        style={{
+                          height: isMobile ? 52 : 48,
+                          fontSize: isMobile ? 18 : 16,
+                        }}
+                      />
+                    </div>
+                    {fieldState?.error?.message && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {fieldState.error.message}
+                      </p>
                     )}
-                    <Button
-                      loading={loading}
-                      size={"small"}
-                      type={"link"}
-                      disabled={false}
-                      onClick={() => handleResendOtp(getValues("phone"))}
-                      className="float-right"
-                    >
-                      Дахин илгээх
-                    </Button>
                   </div>
                 )}
               />
-            ) : null}
 
-            {!loading && formAction?.message && (
-              <Alert
-                message={formAction?.message}
-                type={formAction?.success ? "success" : "error"}
-                showIcon
-                className="my-2"
-              />
-            )}
+              {formName === "login_by_otp" && (
+                <Controller
+                  control={control}
+                  name={"verify_code"}
+                  render={({ field, fieldState }) => (
+                    <div className="space-y-4">
+                      <div className="text-center">
+                        <p className="text-sm text-gray-600 mb-4">
+                          Таны гар утсанд илгээсэн нэг удаагийн нууц үгийг оруулна уу
+                        </p>
+                      </div>
+                      <div className="flex justify-center">
+                        <Input.OTP
+                          length={4}
+                          onChange={(e) => {
+                            const onlyNumber = e.replace(/\D/g, "");
+                            if (e !== onlyNumber) return;
+                            field.onChange(e);
+                          }}
+                          size="large"
+                          className="otp-input"
+                          style={{
+                            width: "100%",
+                            height: isMobile ? 56 : 52,
+                          }}
+                        />
+                      </div>
+                      {fieldState.invalid && (
+                        <p className="text-red-500 text-xs text-center">
+                          {fieldState.error?.message}
+                        </p>
+                      )}
+                      <div className="text-center">
+                        <button
+                          type="button"
+                          onClick={() => handleResendOtp(getValues("phone"))}
+                          disabled={loading}
+                          className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200 disabled:opacity-50"
+                        >
+                          Дахин илгээх
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                />
+              )}
 
-            <Button
-              type={"primary"}
-              htmlType="submit"
-              loading={loading}
-              className="w-full py-6 mt-4 text-[16px]"
-              size="large"
-            >
-              Нууц үг сэргээх
-            </Button>
-          </form>
+              {!loading && formAction?.message && (
+                <div className={`p-4 rounded-xl text-sm ${
+                  formAction?.success 
+                    ? 'bg-green-50 text-green-700 border border-green-200' 
+                    : 'bg-red-50 text-red-700 border border-red-200'
+                }`}>
+                  {formAction.message}
+                </div>
+              )}
 
-          <div className="my-6 text-md gap-2 flex flex-col md:flex-row justify-center items-center ">
-            <span className="text-sm">Шинэ хэрэглэгч болох</span>
-            <button
-              onClick={navigateRegister}
-              className=" text-blue-500 font-semibold md:text-sm text-lg border w-full my-2 py-2 rounded-md md:border-none md:w-auto "
-              disabled={loading}
-            >
-              Бүртгүүлэх
-            </button>
-          </div>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 border-none rounded-xl font-medium text-white shadow-sm"
+                size="large"
+                style={{
+                  height: isMobile ? 56 : 48,
+                  fontSize: isMobile ? 18 : 16,
+                }}
+              >
+                {formName === "login_by_otp" 
+                  ? (loading ? 'Шалгаж байна...' : 'Баталгаажуулах')
+                  : (loading ? 'Илгээж байна...' : 'Нууц үг сэргээх')
+                }
+              </Button>
+            </form>
+
+            <div className="mt-8 pt-6 border-t border-gray-100">
+              <div className="text-center">
+                <p className="text-sm text-gray-600 mb-4">
+                  Шинэ хэрэглэгч бол
+                </p>
+                <button
+                  onClick={navigateRegister}
+                  disabled={loading}
+                  className="w-full py-3 px-4 text-blue-600 font-medium text-sm border border-blue-200 rounded-xl hover:bg-blue-50 transition-colors duration-200 disabled:opacity-50"
+                >
+                  Бүртгүүлэх
+                </button>
+              </div>
+            </div>
+          </Spin>
         </div>
       </div>
-    </Spin>
+    </div>
   );
 };
 

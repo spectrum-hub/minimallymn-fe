@@ -78,152 +78,160 @@ const AuthScreen: FC<{
   };
 
   return (
-    <Spin spinning={loading}>
-      <div
-        className={`
-          flex items-center justify-center ${isDrawer ? " " : " p-0 md:p-4 "}
-        `}
-      >
-        <div className="max-w-md mt-2 md:mt-6 w-full bg-white p-6 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold text-center mb-4">Нэвтрэх</h2>
+    <div className={`min-h-screen flex items-center justify-center bg-gray-50 ${isDrawer ? 'min-h-full bg-transparent' : 'px-4 py-8 sm:px-6'}`}>
+      <div className="w-full max-w-sm">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Нэвтрэх</h1>
+            <p className="text-xs sm:text-sm text-gray-600 mt-2">Өөрийн бүртгэлдээ нэвтрэх</p>
+          </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <Controller
-              control={control}
-              name="phone"
-              render={({ field, fieldState }) => (
-                <div>
-                  <label htmlFor="phone" className="text-sm font-medium">
-                    Утас
-                  </label>
-                  <Input
-                    id="phone"
-                    {...field}
-                    placeholder="Утасны дугаар"
-                    prefix={
-                      <Phone
-                        size={20}
-                        className={
-                          fieldState.invalid ? "text-red-400" : "text-gray-400"
+          <Spin spinning={loading} tip="" className="relative">
+            {loading && <div className="absolute inset-0 bg-white/80 backdrop-blur-sm rounded-2xl z-10" />}
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 sm:space-y-6">
+              <Controller
+                control={control}
+                name="phone"
+                render={({ field, fieldState }) => (
+                  <div className="space-y-2">
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                      Утасны дугаар
+                    </label>
+                    <div className="relative">
+                      <Input
+                        id="phone"
+                        {...field}
+                        placeholder="99123456"
+                        prefix={
+                          <Phone
+                            size={18}
+                            className={
+                              fieldState.invalid ? "text-red-400" : "text-gray-400"
+                            }
+                          />
                         }
+                        status={fieldState.invalid ? "error" : ""}
+                        disabled={loading}
+                        size="large"
+                        className={`rounded-xl border-gray-200 ${
+                          fieldState.invalid 
+                            ? 'border-red-300 focus:border-red-500' 
+                            : 'hover:border-gray-300 focus:border-blue-500'
+                        }`}
+                        style={{
+                          height: isMobile ? 52 : 48,
+                          fontSize: isMobile ? 18 : 16,
+                        }}
                       />
-                    }
-                    status={fieldState.invalid ? "error" : ""}
-                    disabled={loading}
-                    size={isMobile ? undefined : "large"}
-                    style={
-                      isMobile
-                        ? {
-                            height: 50,
-                            fontSize: 20,
-                          }
-                        : {}
-                    }
-                  />
-
-                  <span className="text-red-500 font-bold text-xs ">
-                    {fieldState?.error?.message}
-                  </span>
-                </div>
-              )}
-            />
-
-            <Controller
-              control={control}
-              name="password"
-              render={({ field, fieldState }) => (
-                <div>
-                  <label htmlFor="pass" className="text-sm font-medium">
-                    Нууц үг
-                  </label>
-                  <Input.Password
-                    id="pass"
-                    {...field}
-                    placeholder="Нууц үг"
-                    prefix={
-                      <Lock
-                        size={20}
-                        className={
-                          fieldState.invalid ? "text-red-400" : "text-gray-400 "
-                        }
-                      />
-                    }
-                    status={fieldState.invalid ? "error" : ""}
-                    disabled={loading}
-                    size={isMobile ? undefined : "large"}
-                    style={
-                      isMobile
-                        ? {
-                            height: 50,
-                            fontSize: 20,
-                          }
-                        : {}
-                    }
-                  />
-                  <span className="text-red-500 font-bold text-xs ">
-                    {fieldState?.error?.message}
-                  </span>
-                </div>
-              )}
-            />
-
-            {!loading && authState?.message && (
-              <Alert
-                message={authState?.message}
-                type={authState.error ? "error" : "success"}
-                showIcon
+                    </div>
+                    {fieldState?.error?.message && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {fieldState.error.message}
+                      </p>
+                    )}
+                  </div>
+                )}
               />
-            )}
 
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              className="w-full"
-              size={isMobile ? undefined : "large"}
-              style={
-                isMobile
-                  ? {
-                      height: 50,
-                      fontSize: 20,
-                    }
-                  : {}
-              }
-            >
-              Нэвтрэх
-            </Button>
-          </form>
+              <Controller
+                control={control}
+                name="password"
+                render={({ field, fieldState }) => (
+                  <div className="space-y-2">
+                    <label htmlFor="pass" className="block text-sm font-medium text-gray-700">
+                      Нууц үг
+                    </label>
+                    <div className="relative">
+                      <Input.Password
+                        id="pass"
+                        {...field}
+                        placeholder="••••••••"
+                        prefix={
+                          <Lock
+                            size={18}
+                            className={
+                              fieldState.invalid ? "text-red-400" : "text-gray-400"
+                            }
+                          />
+                        }
+                        status={fieldState.invalid ? "error" : ""}
+                        disabled={loading}
+                        size="large"
+                        className={`rounded-xl border-gray-200 ${
+                          fieldState.invalid 
+                            ? 'border-red-300 focus:border-red-500' 
+                            : 'hover:border-gray-300 focus:border-blue-500'
+                        }`}
+                        style={{
+                          height: isMobile ? 52 : 48,
+                          fontSize: isMobile ? 18 : 16,
+                        }}
+                      />
+                    </div>
+                    {fieldState?.error?.message && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {fieldState.error.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              />
 
-          <div
-            className="mx-auto text-sm  my-2 flex w-full 
-            md:flex-row gap-0 justify-end items-center 
-            flex-col
-          "
-          >
-            <span>Нууц үгээ мартсан бол</span>
-            <Button
-              type="link"
-              className="font-bold text-2xl md:text-sm"
-              onClick={() => navigateLink("reset")}
-              loading={loading}
-            >
-              энд дарна уу
-            </Button>
-          </div>
+              {!loading && authState?.message && (
+                <div className={`p-4 rounded-xl text-sm ${
+                  authState.error 
+                    ? 'bg-red-50 text-red-700 border border-red-200' 
+                    : 'bg-green-50 text-green-700 border border-green-200'
+                }`}>
+                  {authState.message}
+                </div>
+              )}
 
-          <div className="my-6 text-md gap-2 flex flex-col md:flex-row justify-center items-center ">
-            <span className="text-sm">Шинэ хэрэглэгч болох</span>
-            <button
-              onClick={() => navigateLink("register")}
-              className=" text-blue-500 font-semibold md:text-sm text-lg border w-full my-2 py-2 rounded-md md:border-none md:w-auto "
-              disabled={loading}
-            >
-              Бүртгүүлэх
-            </button>
-          </div>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 border-none rounded-xl font-medium text-white"
+                size="large"
+                style={{
+                  height: 48,
+                  fontSize: 16,
+                }}
+              >
+                {loading ? 'Нэвтэрч байна...' : 'Нэвтрэх'}
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <button
+                type="button"
+                onClick={() => navigateLink("reset")}
+                disabled={loading}
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200"
+              >
+                Нууц үгээ мартсан уу?
+              </button>
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-gray-100">
+              <div className="text-center">
+                <p className="text-sm text-gray-600 mb-4">
+                  Шинэ хэрэглэгч бол
+                </p>
+                <button
+                  onClick={() => navigateLink("register")}
+                  disabled={loading}
+                  className="w-full py-3 px-4 text-blue-600 font-medium text-sm border border-blue-200 rounded-xl hover:bg-blue-50 transition-colors duration-200 disabled:opacity-50"
+                >
+                  Бүртгүүлэх
+                </button>
+              </div>
+            </div>
+          </Spin>
         </div>
       </div>
-    </Spin>
+    </div>
   );
 };
 
