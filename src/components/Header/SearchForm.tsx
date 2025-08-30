@@ -10,6 +10,10 @@ interface FormSubmit {
   searchString: string;
 }
 
+interface SearchFormProps {
+  onSearch?: () => void;
+}
+
 /**
  * Zara-like search field
  * - Underline-only input, no box/rounded corners
@@ -18,7 +22,7 @@ interface FormSubmit {
  * - Uppercase, wide tracking placeholder
  * - Keyboard shortcut: press "/" to focus
  */
-const SearchForm = () => {
+const SearchForm = ({ onSearch }: SearchFormProps = {}) => {
   const [searchParams] = useSearchParams();
   const { historyNavigate } = useHistoryNavigate();
   const searchValue = searchParams.get("search") ?? "";
@@ -49,9 +53,11 @@ const SearchForm = () => {
       const q = (data.searchString || "").trim();
       if (!q) {
         historyNavigate("/products");
-        return;
+      } else {
+        historyNavigate(`/products?search=${encodeURIComponent(q)}`);
       }
-      historyNavigate(`/products?search=${encodeURIComponent(q)}`);
+      // Call the onSearch callback if provided
+      onSearch?.();
     } catch (err) {
       console.log(err);
     }
@@ -61,6 +67,8 @@ const SearchForm = () => {
     resetField("searchString", { defaultValue: "" });
     historyNavigate("/products");
     inputRef.current?.focus();
+    // Call the onSearch callback if provided
+    onSearch?.();
   };
 
   return (
