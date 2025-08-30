@@ -43,7 +43,7 @@ const shakeAnimation = {
 };
 
 const DescriptionSale = ({ description }: { description?: string }) => {
-  if (!description) return null;
+  if (!description || description === "false") return null;
   return (
     <div
       className="text-sm bg-white p-4"

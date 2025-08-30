@@ -6,30 +6,57 @@ import clsx from "clsx";
  * Keep all icons visually balanced and consistent.
  */
 export const HeartIcon: FC<{ className?: string }> = ({ className }) => (
-  <svg viewBox="0 0 24 24" aria-hidden className={clsx("w-6 h-6", className)}>
+  <svg viewBox="0 0 24 24" aria-hidden className={clsx("w-6 h-6", className)} fill="none">
     <path
-      fill="currentColor"
-      d="M12 21s-6.7-4.1-9.3-7.4C.4 10.9 1.3 7.8 3.9 6.3a5 5 0 0 1 6 .8l.1.1.1-.1a5 5 0 0 1 6-.8c2.6 1.5 3.5 4.6 1.2 7.3C18.7 16.9 12 21 12 21z"
+      d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
 
 export const UserIcon: FC<{ className?: string }> = ({ className }) => (
-  <svg viewBox="0 0 24 24" aria-hidden className={clsx("w-6 h-6", className)}>
-    <path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5z" />
-    <path fill="currentColor" d="M4 20a8 8 0 0 1 16 0v1H4z" />
+  <svg viewBox="0 0 24 24" aria-hidden className={clsx("w-6 h-6", className)} fill="none">
+    <circle
+      cx="12"
+      cy="8"
+      r="4"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    />
+    <path
+      d="M6 20.5c0-4.4 2.7-8 6-8s6 3.6 6 8"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
   </svg>
 );
 
 export const CartIcon: FC<{ className?: string }> = ({ className }) => (
-  <svg viewBox="0 0 24 24" aria-hidden className={clsx("w-6 h-6", className)}>
+  <svg viewBox="0 0 24 24" aria-hidden className={clsx("w-6 h-6", className)} fill="none">
     <path
-      fill="currentColor"
-      d="M7 20a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm9 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"
+      d="M3 3h2l1.68 10.39A2 2 0 0 0 8.65 15h8.7A2 2 0 0 0 19.3 13.39L21 6H6"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
-    <path
-      fill="currentColor"
-      d="M3 3h2l2.2 10.3A2 2 0 0 0 9.2 15h7.9a2 2 0 0 0 2-1.6L21 7H6.3"
+    <circle
+      cx="8"
+      cy="19"
+      r="1.5"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    />
+    <circle
+      cx="18"
+      cy="19"
+      r="1.5"
+      stroke="currentColor"
+      strokeWidth="1.5"
     />
   </svg>
 );
@@ -106,7 +133,9 @@ export const IconStackButton: FC<IconStackButtonProps> = ({
           </span>
         )}
       </span>
-      <span className="mt-[-2px] text-[11px] tracking-wide uppercase">{label}</span>
+      <span className="mt-[-2px] text-[11px] tracking-wide uppercase">
+        {label}
+      </span>
     </button>
   );
 };
@@ -159,4 +188,3 @@ export const CartButton: FC<{ totalItems?: number; onClick?: () => void }> = ({
     <CartIcon />
   </IconStackButton>
 );
- 
