@@ -26,11 +26,9 @@ const HeaderMini: FC<HeaderProps> = (props) => {
   const { setLoading, showDrawer, closeDrawer } = useDrawerCtx();
   const { historyNavigate } = useHistoryNavigate();
   const wishList = useWishListCount();
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleToggleCategories = () => {
     scrollToTop();
-    setMenuOpen(true);
     setLoading(true);
     showDrawer({
       title: "",
