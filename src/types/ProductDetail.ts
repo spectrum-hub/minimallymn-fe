@@ -31,6 +31,10 @@ interface ProductTemplateAttributeValue {
   productAttributeValueId: ProductAttributeValue;
 }
 
+interface ProductVariantImageIds {
+  id: number;
+  img_type?: string;
+}
 export interface ParentProduct {
   qtyAvailable: number;
   id: number;
@@ -40,6 +44,7 @@ export interface ParentProduct {
   listPrice: number;
   price: number | null;
   productTemplateAttributeValueIds: ProductTemplateAttributeValue[];
+  productVariantImageIds?: ProductVariantImageIds[];
 }
 
 interface ProductPlatformImage {

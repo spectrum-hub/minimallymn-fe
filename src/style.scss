@@ -2,14 +2,13 @@ $base: #263238;
 $lite: #fff;
 $brand: #ff3d00;
 $size: 48px;
- 
 
-.slick-dots, 
-.slick-next, 
+.slick-dots,
+.slick-next,
 .slick-prev {
-  position:relative !important;
+  position: relative !important;
 }
-.slick-dots{
+.slick-dots {
   bottom: 0px !important;
 }
 
@@ -4079,4 +4078,37 @@ $size: 48px;
     filter: blur(3px);
     transform: skew(-4deg);
   }
+}
+
+/* глобал CSS-тээ нэмнэ */
+.product-html img,
+.product-html video,
+.product-html iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.product-html {
+  width: 100% !important;
+  max-width: none !important;
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    display: block; /* уртааш overflow-г зөв харуулах */
+    overflow-x: auto;
+  }
+  
+  p, div, span {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}
+
+.product-html * {
+  word-wrap: break-word;
+  overflow-wrap: anywhere; /* удаан үг/URL-ууд мөр тасалж багтана */
+  width: 100% !important;
+  max-width: none !important;
 }

@@ -174,6 +174,9 @@ export const PRODUCT_DETAIL = gql`
       productImages {
         id
         productVariantId
+        sequence
+        name
+        videoUrl
       }
       parentProducts {
         qtyAvailable
@@ -183,6 +186,9 @@ export const PRODUCT_DETAIL = gql`
         combinationIndices
         listPrice
         price
+        productVariantImageIds {
+          id
+        }
         productTemplateAttributeValueIds {
           productAttributeValueId {
             id
