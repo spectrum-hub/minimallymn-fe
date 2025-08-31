@@ -3,7 +3,6 @@ import { Swiper as SwiperType } from "swiper";
 import { Swiper as SwiperComponent, SwiperSlide } from "swiper/react";
 import { Image } from "antd";
 import { imageBaseUrl, productAdditionalImage } from "../../lib/configs";
-
 import {
   A11y,
   Navigation,
@@ -13,10 +12,13 @@ import {
 } from "swiper/modules";
 import { NProductDetail } from "../../types/ProductDetail";
 
-type ImageType = "main" | "variant" | "additional";
+type ImageKind = "main" | "variant" | "additional";
+
 interface VImage {
-  id?: number;
-  img_type: string;
+  id: number;
+  kind: ImageKind;
+  // Хэрэв GraphQL-д sequence орж ирдэг бол ашиглана (product.image.sequence)
+  sequence?: number;
 }
 
 interface Props {
@@ -28,54 +30,100 @@ const ImageSlider: FC<Props> = ({ item, selectedProductId }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
 
   const imagesArray: VImage[] = useMemo(() => {
-    const mainImage = {
-      id: item?.id,
-      img_type: "main",
+    if (!item) return [];
+
+    // main image (product.template image_*)
+    const main: VImage[] = item.id ? [{ id: item.id, kind: "main" }] : [];
+
+    // template-н нэмэлт зургууд (product.image)
+    const mainAdditional: VImage[] =
+      item.productImages?.map((img) => ({
+        id: Number(img.id),
+        kind: "additional",
+        sequence: img?.sequence,
+      })) ?? [];
+
+    // бүх variant-н main зураг (product.product image_*) — selected байхгүй үед ашиглана
+    const allVariantMain: VImage[] =
+      item.parentProducts?.map((p) => ({
+        id: Number(p.id),
+        kind: "variant",
+      })) ?? [];
+
+    // variant-н additional (product.image) — selected байвал зөвхөн тэр variant, үгүй бол бүгд
+    const variantAdditional: VImage[] =
+      (selectedProductId
+        ? item.parentProducts
+            ?.filter((p) => Number(p.id) === Number(selectedProductId))
+            .flatMap((p) =>
+              (p.productVariantImageIds ?? []).map((img) => ({
+                id: Number(img.id),
+                kind: "additional" as const,
+              }))
+            )
+        : item.parentProducts?.flatMap((p) =>
+            (p.productVariantImageIds ?? []).map((img) => ({
+              id: Number(img.id),
+              kind: "additional" as const,
+            }))
+          )) ?? [];
+
+    // selected байвал тэр variant-н main зургийг нэгээр нь
+    const selectedVariantMain: VImage[] =
+      selectedProductId && selectedProductId > 0
+        ? [{ id: selectedProductId, kind: "variant" }]
+        : [];
+
+    // Давхардлыг арилга (kind+id-гаар)
+    const uniqueByKey = (arr: VImage[]) => {
+      const seen = new Set<string>();
+      return arr.filter((x) => {
+        const key = `${x.kind}:${x.id}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
     };
 
-    const mainAdditionalImage =
-      item?.productImages?.flatMap((image) => ({
-        id: image.id,
-        img_type: "additional",
-      })) ?? [];
+    // sequence байгаа бол нэмэлт зургуудыг эрэмбэл
+    const sortAdditional = (arr: VImage[]) =>
+      [...arr].sort((a, b) => (a.sequence ?? 0) - (b.sequence ?? 0));
 
-    const variantImages =
-      item?.parentProducts.flatMap((parent) => ({
-        id: parent.id,
-        img_type: "variant",
-      })) ?? [];
+    const ordered = selectedProductId
+      ? uniqueByKey([
+          ...selectedVariantMain,
+          ...variantAdditional,
+          ...main,
+          ...mainAdditional,
+        ])
+      : uniqueByKey([
+          ...main,
+          ...mainAdditional,
+          ...allVariantMain,
+          ...variantAdditional,
+        ]);
 
-    const variantAdditionalImages = selectedProductId
-      ? item?.parentProducts
-          .filter((parent) => parent.id === selectedProductId)
-          .flatMap((parent) =>
-            (parent.productVariantImageIds ?? []).map((img) => ({
-              id: img.id,
-              img_type: "additional",
-            }))
-          )
-      : item?.parentProducts.flatMap((parent) =>
-          (parent.productVariantImageIds ?? []).map((img) => ({
-            id: img.id,
-            img_type: "additional",
-          }))
-        ) ?? [];
+    // additional-уудаа sequence-ээрээ дотроос нь эрэмбэлнэ
+    const additional = sortAdditional(
+      ordered.filter((x) => x.kind === "additional")
+    );
+    const rest = ordered.filter((x) => x.kind !== "additional");
 
-    if (selectedProductId) {
-      return [
-        ...variantImages.filter((v) => v.id === selectedProductId),
-        ...(variantAdditionalImages ?? []),
-      ];
-    }
-
-    // Return the images in the desired order
-    return [
-      mainImage,
-      ...mainAdditionalImage,
-      ...variantImages,
-      ...(variantAdditionalImages ?? []),
-    ];
+    return [...rest, ...additional];
   }, [item, selectedProductId]);
+
+  const getSrc = (img: VImage, size: "image_1920" | "image_512") =>
+    img.kind === "additional"
+      ? productAdditionalImage(img.id, size)
+      : imageBaseUrl(img.id, size);
+
+  if (!imagesArray.length) {
+    return (
+      <div className="bg-white rounded-md p-8 text-center text-gray-500">
+        Зураг олдсонгүй
+      </div>
+    );
+  }
 
   return (
     <Suspense fallback={<></>}>
@@ -86,29 +134,25 @@ const ImageSlider: FC<Props> = ({ item, selectedProductId }) => {
         navigation
         pagination={{ clickable: true }}
         scrollbar={false}
-        autoHeight={true} // ⬅️ нэмэв
-        className="bg-white rounded-md" // ⬅️ h-full, max-h-ыг авлаа
+        autoHeight
+        className="bg-white rounded-md"
+        observer
+        observeParents
         thumbs={{
           swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
         }}
         nested
       >
-        {(imagesArray ?? []).map((image, index) => (
-          <SwiperSlide key={index} className="flex items-center justify-center">
-            <div
-              className="max-h-[480px] overflow-auto flex items-center justify-center
-            h-96
-            "
-            >
+        {imagesArray.map((image) => (
+          <SwiperSlide
+            key={`${image.kind}-${image.id}`}
+            className="flex items-center justify-center"
+          >
+            <div className="max-h-[480px] overflow-auto flex items-center justify-center h-96">
               <Image
-                src={
-                  ["main", "variant"].includes(image.img_type)
-                    ? imageBaseUrl(image?.id, "image_1920")
-                    : productAdditionalImage(image?.id, "image_1920") ?? ""
-                }
+                src={getSrc(image, "image_1920") ?? ""}
                 alt={item?.name ?? ""}
-                className="mx-auto w-full h-auto object-contain p-8 rounded-md" // ⬅️ h-auto
-                // height="100%"  ⬅️ авч хаясан
+                className="mx-auto w-full h-auto object-contain p-8 rounded-md"
                 loading="lazy"
                 preview
               />
@@ -117,31 +161,28 @@ const ImageSlider: FC<Props> = ({ item, selectedProductId }) => {
         ))}
       </SwiperComponent>
 
-      {(imagesArray ?? [])?.length > 1 && (
+      {imagesArray.length > 1 && (
         <SwiperComponent
           modules={[Thumbs]}
           watchSlidesProgress
-          onSwiper={(swiper) => setThumbsSwiper(swiper)}
+          onSwiper={setThumbsSwiper}
           spaceBetween={4}
           slidesPerView={8}
+          breakpoints={{
+            0: { slidesPerView: 6, spaceBetween: 4 },
+            640: { slidesPerView: 8, spaceBetween: 6 },
+            1024: { slidesPerView: 10, spaceBetween: 8 },
+          }}
           className="my-4"
         >
-          {(imagesArray ?? []).map((image, index) => (
-            <SwiperSlide key={index}>
+          {imagesArray.map((image) => (
+            <SwiperSlide key={`thumb-${image.kind}-${image.id}`}>
               <img
-                src={
-                  ["main", "variant"].includes(image.img_type as ImageType)
-                    ? imageBaseUrl(image?.id, "image_512")
-                    : productAdditionalImage(image?.id, "image_512") ?? ""
-                }
+                src={getSrc(image, "image_512") ?? ""}
                 alt={item?.name ?? ""}
-                className="
-                h-[54px] w-[48px] 
-                md:h-[70px] md:w-[64px] 
-                object-cover transition-transform 
-                duration-300 group-hover:scale-105 bg-white 
-                ml-1 cursor-pointer p-0.5
-                "
+                className="h-[54px] w-[54px] md:h-[64px] md:w-[64px] 
+                object-cover transition-transform duration-300 
+                group-hover:scale-105 bg-white rounded-md ml-1 cursor-pointer p-0.5"
                 loading="lazy"
               />
             </SwiperSlide>

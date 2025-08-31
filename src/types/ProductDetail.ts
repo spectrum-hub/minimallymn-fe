@@ -2,6 +2,7 @@ import { CommerceDescription } from "./Marketplace";
 import { PublicCategIds } from "./Products";
 
 interface ProductImage {
+  sequence: number;
   id: number;
   productVariantId: number;
   img_type?: string;
