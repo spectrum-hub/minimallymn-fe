@@ -143,7 +143,11 @@ const GroupedAttributes: React.FC<Props> = ({
                         alt={attr.name}
                         className="h-14 md:h-20 object-contain block "
                       />
-                      <span className="text-xs text-wrap text-center leading-[17px] block">
+                      <span className="
+                        text-xs text-wrap text-center 
+                        leading-[15px] block h-8
+                        line-clamp-2 max-w-20
+                        ">
                         {attr.name}
                       </span>
                     </>
