@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "antd";
 import { useSearchParams } from "react-router";
 import { imageBaseUrl } from "../../lib/configs";
@@ -24,68 +24,81 @@ const GroupedAttributes: React.FC<Props> = ({
     Record<number, number | null>
   >({});
 
+  // Анхны сонголт: URL-д ирсэн variant + 1 утгатай аттрибутуудыг нэг дор сонгоно
   useEffect(() => {
-    if (initialVariantProductId && (parentProducts ?? [])?.length > 0) {
+    let next: Record<number, number> = {};
+
+    // a) URL-ийн variant-тай тааруулж attribute-value-г сэргээх
+    if (initialVariantProductId && (parentProducts ?? []).length > 0) {
       const initialVariant = parentProducts?.find(
         (product) => Number(product.id) === Number(initialVariantProductId)
       );
 
       if (initialVariant) {
-        const initialAttributes =
-          initialVariant.productTemplateAttributeValueIds.reduce(
-            (acc, attr) => {
-              acc[attr.productAttributeValueId.attributeId.id] =
-                attr.productAttributeValueId.id;
-              return acc;
-            },
-            {} as Record<number, number>
-          );
-
-        setSelectedAttributes(initialAttributes);
+        next = initialVariant.productTemplateAttributeValueIds.reduce(
+          (acc, attr) => {
+            acc[attr.productAttributeValueId.attributeId.id] =
+              attr.productAttributeValueId.id;
+            return acc;
+          },
+          {} as Record<number, number>
+        );
       }
     }
-    // 🔥 шинэ логик: attribute group нь 1 л утгатай бол автоматаар сонгоно
-    Object.entries(groupedAttributes).forEach(([attributeId, attributes]) => {
+
+    // b) Нэг л утгатай аттрибутуудыг автоматаар сонгох
+    for (const [attributeId, attributes] of Object.entries(groupedAttributes)) {
       if (attributes?.values?.length === 1) {
         const onlyValue = attributes.values[0];
-        setSelectedAttributes((prev) => ({
-          ...prev,
-          [Number(attributeId)]: onlyValue.id,
-        }));
+        next[Number(attributeId)] = onlyValue.id;
       }
+    }
+
+    // next-т өөрчлөлт байгаа үед л state шинэчлэх
+    setSelectedAttributes((prev) => {
+      const sameLen =
+        Object.keys(next).length === Object.keys(prev).length;
+      const sameVals =
+        sameLen &&
+        Object.entries(next).every(([k, v]) => prev[Number(k)] === v);
+      return sameVals ? prev : { ...prev, ...next };
     });
   }, [groupedAttributes, initialVariantProductId, parentProducts]);
 
+  // Сонголтын логик:
+  // - URL-д attributeId байвал: ижил утгыг дахин дарсан ч унтраахгүй (заавал нэг нь идэвхтэй).
+  // - Эс тэгвээс: toggle хэвээр (дахин дарвал null болгоно).
   const handleSelect = (attributeId: number, valueId: number) => {
-    setSelectedAttributes((prev) => ({
-      ...prev,
-      [attributeId]: prev[attributeId] === valueId ? null : valueId,
-    }));
+    setSelectedAttributes((prev) => {
+      const isSame = prev[attributeId] === valueId;
+
+      if (initialVariantProductId) {
+        // URL-ээр ирсэн үед: дахин дарвал унтраахгүй
+        return isSame ? prev : { ...prev, [attributeId]: valueId };
+      }
+
+      // Эсрэг тохиолдолд: toggle
+      return { ...prev, [attributeId]: isSame ? null : valueId };
+    });
   };
 
-  const findSelectedVariant = (
-    selectedAttributes: Record<number, number | null>,
-    parentProducts?: ParentProduct[]
-  ) => {
-    return parentProducts?.find((product) => {
-      const productAttributeValues =
-        product.productTemplateAttributeValueIds.map(
-          (attr) => attr.productAttributeValueId.id
-        );
-
+  // Сонгосон аттрибутуудтай яг таарах variant-ыг олох
+  const selectedVariant = useMemo(() => {
+    if (!parentProducts || !Object.keys(selectedAttributes).length) return undefined;
+    return parentProducts.find((product) => {
+      const productAttributeValues = product.productTemplateAttributeValueIds.map(
+        (attr) => attr.productAttributeValueId.id
+      );
       return Object.values(selectedAttributes).every(
         (selectedValueId) =>
           selectedValueId && productAttributeValues.includes(selectedValueId)
       );
     });
-  };
+  }, [parentProducts, selectedAttributes]);
 
-  const selectedVariant = findSelectedVariant(
-    selectedAttributes,
-    parentProducts
-  );
   const totalAttributes = Object.keys(groupedAttributes).length;
 
+  // Бүх аттрибут сонгогдсон үед URL-ийн attributeId-г sync хийх
   useEffect(() => {
     if (
       selectedVariant?.id &&
@@ -93,17 +106,16 @@ const GroupedAttributes: React.FC<Props> = ({
       (parentProducts ?? []).length > 0
     ) {
       const paramsObj = Object.fromEntries(searchParams.entries());
-
-      setSearchParams({
-        ...paramsObj,
-        attributeId: selectedVariant.id.toString(),
-      });
+      const nextId = String(selectedVariant.id);
+      if (paramsObj.attributeId !== nextId) {
+        setSearchParams({ ...paramsObj, attributeId: nextId });
+      }
     }
   }, [
     parentProducts,
     searchParams,
     selectedAttributes,
-    selectedVariant,
+    selectedVariant?.id,
     setSearchParams,
     totalAttributes,
   ]);
@@ -118,10 +130,13 @@ const GroupedAttributes: React.FC<Props> = ({
         <div key={attributeId} className="my-4">
           <TitleLined title={attributes?.attribute?.name} />
 
-          <div className="flex flex-wrap  gap-2 my-0 attribute-buttons">
+          <div className="flex flex-wrap gap-2 my-0 attribute-buttons">
             {attributes?.values?.map((attr) => {
               const isSelected =
                 selectedAttributes[Number(attributeId)] === attr.id;
+
+              const isColor = attr.attributeId?.displayType === "color";
+
               return (
                 <Button
                   key={attr.id}
@@ -130,24 +145,25 @@ const GroupedAttributes: React.FC<Props> = ({
                   aria-label={`Select ${attr.name} variant`}
                   type={isSelected ? "primary" : "default"}
                   className={`add-price-${attr.id} ${
-                    attr.attributeId?.displayType === "color"
-                      ? ` flex flex-col justify-center items-center gap-1 
-                          md:gap-2 h-full max-w-[120px] p-1 `
-                      : ` `
+                    isColor
+                      ? `flex flex-col justify-center items-center gap-1 md:gap-2 h-full max-w-[120px] p-1`
+                      : ``
                   }`}
                 >
-                  {attr.attributeId.displayType === "color" ? (
+                  {isColor ? (
                     <>
                       <img
                         src={imageBaseUrl(attr.productVariantId, "image_512")}
                         alt={attr.name}
-                        className="h-14 md:h-20 object-contain block "
+                        className="h-14 md:h-20 object-contain block"
                       />
-                      <span className="
-                        text-xs text-wrap text-center 
-                        leading-[15px] block h-8
-                        line-clamp-2 max-w-20
-                        ">
+                      <span
+                        className="
+                          text-xs text-wrap text-center
+                          leading-[15px] block h-8
+                          line-clamp-2 max-w-20
+                        "
+                      >
                         {attr.name}
                       </span>
                     </>
@@ -173,9 +189,9 @@ interface TitleLinedProps {
 
 const TitleLined: React.FC<TitleLinedProps> = ({ title, className }) => {
   return (
-    <div className="flex items-center gap-2 my-1 ">
+    <div className="flex items-center gap-2 my-1">
       <h3
-        className={`text-sm text-gray-600 font-bold whitespace-nowrap ${className}`}
+        className={`text-sm text-gray-600 font-bold whitespace-nowrap ${className ?? ""}`}
       >
         {title}
       </h3>
