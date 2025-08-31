@@ -167,7 +167,7 @@ const ImageSlider: FC<Props> = ({ item, selectedProductId }) => {
           watchSlidesProgress
           onSwiper={setThumbsSwiper}
           spaceBetween={4}
-          slidesPerView={8}
+          slidesPerView={6}
           breakpoints={{
             0: { slidesPerView: 6, spaceBetween: 4 },
             640: { slidesPerView: 8, spaceBetween: 6 },
@@ -182,7 +182,7 @@ const ImageSlider: FC<Props> = ({ item, selectedProductId }) => {
                 alt={item?.name ?? ""}
                 className="h-[54px] w-[54px] md:h-[64px] md:w-[64px] 
                 object-cover transition-transform duration-300 
-                group-hover:scale-105 bg-white rounded-md ml-1 cursor-pointer p-0.5"
+                group-hover:scale-105 bg-white ml-1 cursor-pointer p-0.5"
                 loading="lazy"
               />
             </SwiperSlide>
