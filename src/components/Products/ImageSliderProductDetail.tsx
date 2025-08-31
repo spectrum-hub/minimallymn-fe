@@ -2,7 +2,11 @@ import { FC, Suspense, useMemo, useState } from "react";
 import { Swiper as SwiperType } from "swiper";
 import { Swiper as SwiperComponent, SwiperSlide } from "swiper/react";
 import { Image } from "antd";
-import { imageBaseUrl, productAdditionalImage } from "../../lib/configs";
+import {
+  imageBaseUrl,
+  nimageBaseUrl,
+  productAdditionalImage,
+} from "../../lib/configs";
 import {
   A11y,
   Navigation,
@@ -93,8 +97,8 @@ const ImageSlider: FC<Props> = ({ item, selectedProductId }) => {
       ? uniqueByKey([
           ...selectedVariantMain,
           ...variantAdditional,
-          ...main,
           ...mainAdditional,
+          ...allVariantMain,
         ])
       : uniqueByKey([
           ...main,
@@ -112,10 +116,15 @@ const ImageSlider: FC<Props> = ({ item, selectedProductId }) => {
     return [...rest, ...additional];
   }, [item, selectedProductId]);
 
-  const getSrc = (img: VImage, size: "image_1920" | "image_512") =>
-    img.kind === "additional"
-      ? productAdditionalImage(img.id, size)
-      : imageBaseUrl(img.id, size);
+  const getSrc = (img: VImage, size: "image_1920" | "image_512") => {
+    if (img.kind === "additional") {
+      return productAdditionalImage(img.id, size);
+    } else if (img.kind === "main") {
+      return nimageBaseUrl(img.id, size);
+    } else {
+      return imageBaseUrl(img.id, size);
+    }
+  };
 
   if (!imagesArray.length) {
     return (
