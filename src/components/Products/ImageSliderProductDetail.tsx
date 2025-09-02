@@ -157,7 +157,7 @@ const ImageSlider: FC<Props> = ({ item, selectedProductId }) => {
             key={`${image.kind}-${image.id}`}
             className="flex items-center justify-center"
           >
-            <div className="max-h-[480px] overflow-auto flex items-center justify-center h-96">
+            <div className="max-h-[600px]  flex items-center justify-center h-96">
               <Image
                 src={getSrc(image, "image_1920") ?? ""}
                 alt={item?.name ?? ""}
