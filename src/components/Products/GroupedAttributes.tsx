@@ -25,6 +25,7 @@ const GroupedAttributes: React.FC<Props> = ({
   >({});
 
   // Анхны сонголт: URL-д ирсэн variant + 1 утгатай аттрибутуудыг нэг дор сонгоно
+  
   useEffect(() => {
     let next: Record<number, number> = {};
 

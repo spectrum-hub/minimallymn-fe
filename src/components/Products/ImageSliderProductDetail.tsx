@@ -47,12 +47,12 @@ const ImageSlider: FC<Props> = ({ item, selectedProductId }) => {
         sequence: img?.sequence,
       })) ?? [];
 
-    // бүх variant-н main зураг (product.product image_*) — selected байхгүй үед ашиглана
-    const allVariantMain: VImage[] =
-      item.parentProducts?.map((p) => ({
-        id: Number(p.id),
-        kind: "variant",
-      })) ?? [];
+    // // бүх variant-н main зураг (product.product image_*) — selected байхгүй үед ашиглана
+    // const allVariantMain: VImage[] =
+    //   item.parentProducts?.map((p) => ({
+    //     id: Number(p.id),
+    //     kind: "variant",
+    //   })) ?? [];
 
     // variant-н additional (product.image) — selected байвал зөвхөн тэр variant, үгүй бол бүгд
     const variantAdditional: VImage[] =
@@ -97,13 +97,10 @@ const ImageSlider: FC<Props> = ({ item, selectedProductId }) => {
       ? uniqueByKey([
           ...selectedVariantMain,
           ...variantAdditional,
-          ...mainAdditional,
-          ...allVariantMain,
         ])
       : uniqueByKey([
           ...main,
           ...mainAdditional,
-          ...allVariantMain,
           ...variantAdditional,
         ]);
 
@@ -157,11 +154,11 @@ const ImageSlider: FC<Props> = ({ item, selectedProductId }) => {
             key={`${image.kind}-${image.id}`}
             className="flex items-center justify-center"
           >
-            <div className="max-h-[600px]  flex items-center justify-center h-96">
+            <div className="max-h-[600px]  flex items-center justify-center relative">
               <Image
                 src={getSrc(image, "image_1920") ?? ""}
                 alt={item?.name ?? ""}
-                className="mx-auto w-full h-auto object-contain p-8 rounded-md"
+                className="mx-auto w-full max-h-[400px] object-cover p-8 rounded-md z-50"
                 loading="lazy"
                 preview
               />
