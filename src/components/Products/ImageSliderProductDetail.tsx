@@ -97,12 +97,10 @@ const ImageSlider: FC<Props> = ({ item, selectedProductId }) => {
       ? uniqueByKey([
           ...selectedVariantMain,
           ...variantAdditional,
+
+          ...(item?.parentProducts.length === 1 ? mainAdditional : []),
         ])
-      : uniqueByKey([
-          ...main,
-          ...mainAdditional,
-          ...variantAdditional,
-        ]);
+      : uniqueByKey([...main, ...mainAdditional, ...variantAdditional]);
 
     // additional-уудаа sequence-ээрээ дотроос нь эрэмбэлнэ
     const additional = sortAdditional(
