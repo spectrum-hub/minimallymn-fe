@@ -35,17 +35,13 @@ export const orderTotals = (order: OrderDetails) => {
       },
       {
         label: "Төлбөр төлөх данс",
-        value: "ХААНБАНК - 51 0705 4813",
+        value: "ХААНБАНК - 111111111",
         type:"bank_account"
       },
       {
         label: "Дансны нэр",
-        value: "АНТ ОНЛАЙН МОЛЛ ",
+        value: "MINIMALLY ",
       },
-      // {
-      //   label: "Төлбөр төлөгдсөн огноо",
-      //   value: new Date(order.invoiceDate).toLocaleDateString(),
-      // },
 
     ],
   };
