@@ -70,11 +70,11 @@ const ShipmentButton: FC<ShipmentButtonProps> = ({
     <button
       onClick={onClick}
       className={`
-        flex items-center justify-between w-full p-4 rounded-xl 
+        flex items-center justify-between w-full p-4 rounded
         bg-white border border-gray-200 shadow-sm
-        hover:shadow-md hover:border-blue-300 
+        hover:shadow-md hover:border-gray-500 
         transition-all duration-200 ease-in-out
-        ${isSelected ? "border-blue-500 bg-blue-50 shadow-md" : ""}
+        ${isSelected ? "border-black bg-blue-50 shadow-md" : ""}
       `}
       type={"button"}
     >
@@ -85,7 +85,7 @@ const ShipmentButton: FC<ShipmentButtonProps> = ({
       </div>
 
       {/* Right: Check Icon */}
-      {isSelected && <CheckCircle className="h-6 w-6 text-blue-600" />}
+      {isSelected && <CheckCircle className="h-6 w-6 text-black" />}
     </button>
   );
 };

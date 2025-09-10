@@ -1,7 +1,7 @@
 import { FC, useContext, useEffect, useMemo } from "react";
 import { Cart, PaymentMethods as TPaymentMethod } from "../../types/Cart";
 import { baseURL } from "../../lib/configs";
-import { Circle, CircleCheckBig } from "lucide-react";
+import { Circle,  CircleCheckBig } from "lucide-react";
 
 import { pleaseLoginNotifWithPayment } from "./helpers";
 import { Context } from "../../context/NotificationCtx";
@@ -92,12 +92,12 @@ const TPaymentMethods: FC<Prop> = ({
             key={payment.id}
             onClick={() => handleChangePayment(payment)}
             className={`
-              flex items-center justify-between w-full p-4 rounded-xl 
+              flex items-center justify-between max-w-[310px] w-full p-4 rounded 
               bg-white shadow-sm 
-              hover:shadow-md hover:border-blue-300 
+              hover:shadow-md hover:border-gray-500 
               transition-all duration-200 ease-in-out
               border-2 hover:bg-gray-100
-              ${isChecked ? "border-blue-500 bg-blue-50 border-l-8 " : ""}
+              ${isChecked ? "border-black bg-blue-50 border-l-4 " : ""}
             `}
           >
             <div className="flex items-center gap-3">
@@ -122,7 +122,7 @@ const TPaymentMethods: FC<Prop> = ({
               </div>
             </div>
             {isChecked ? (
-              <CircleCheckBig className="h-6 w-6 text-blue-600" />
+              <CircleCheckBig className="h-6 w-6 black" />
             ) : (
               <Circle className="h-6 w-6 text-gray-300" />
             )}
