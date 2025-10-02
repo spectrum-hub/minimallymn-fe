@@ -5,19 +5,6 @@ interface FooterProps {
   footerData?: FooterBlock | null;
 }
 
-/**
- * Minimal Zara/Apple-style footer
- * - Small, subtle gray background
- * - Compact typography, muted colors
- * - Smooth hover effects
- * - Centered on mobile, spread on desktop
- * 
- * Дэлгүүрийн цагийн хуваарь: 
-Өдөр бүр 10:00-18:30
-🏠: Нарны замын Доктор болон Миний дэлгүүр 2-ын дунд Luxhouse-5 Худалдааны төвийн 2 давхарт
-☎️: 8043-1000, 8042-1000
- Та бүхэн цахим залилангаас сэргийлж зөвхөн пэйж дээр байгаа утсаар болон чатаар захиалгаа өгөөрэй. Баярлалаа
- */
 const FooterComponent: FC<FooterProps> = () => {
   return (
     <footer className="w-full bg-neutral-50 dark:bg-neutral-900 text-neutral-600 dark:text-neutral-300 text-xs md:text-sm border-t border-neutral-200 dark:border-neutral-800 py-8">

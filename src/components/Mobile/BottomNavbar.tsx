@@ -1,64 +1,68 @@
 import React, { FC } from "react";
 import { Home, Search, Heart, User, LayoutGrid } from "lucide-react";
-import { matchPath, useLocation } from "react-router";
-import styles from "./mobile.module.css";
+import { useLocation } from "react-router";
 import { useWishListCount } from "../../Hooks/use-layout-data";
 import { useHistoryNavigate } from "../../Hooks/use-navigate";
 
-interface NavItemProps {
-  readonly icon: React.ReactNode;
-  readonly label: string;
-  readonly link: string;
-  readonly active?: boolean;
-  notification?: number;
-}
+type NavItemDef = {
+  icon: React.ReactNode;
+  label: string;
+  link: string;
+  notification?: number | null | undefined;
+};
 
-type Props = object;
-const BottomNavbar: FC<Props> = () => {
+const ICON_SIZE = 18;
+
+const BottomNavbar: FC = () => {
   const wishList = useWishListCount();
-  const pathname = useLocation()?.pathname;
+  const { pathname } = useLocation();
 
-  const iconSize = {
-    size: 24,
+  const items: NavItemDef[] = [
+    { icon: <Home size={ICON_SIZE} />, label: "Нүүр", link: "/" },
+    {
+      icon: <Search size={ICON_SIZE} />,
+      label: "Ангилал",
+      link: "/mobileCategories",
+    },
+    {
+      icon: <LayoutGrid size={ICON_SIZE} />,
+      label: "Бараанууд",
+      link: "/products",
+    },
+    {
+      icon: <Heart size={ICON_SIZE} />,
+      label: "Хадгалсан",
+      link: "/wishlist",
+      notification: wishList?.wishListCount,
+    },
+    { icon: <User size={ICON_SIZE} />, label: "Профайл", link: "/auth/login" },
+  ];
+
+  const isActive = (link: string) => {
+    if (!pathname) return false;
+    if (link === "/") return pathname === "/";
+    return pathname === link || pathname.startsWith(link + "/");
   };
+
   return (
     <nav
-      className={`
-      fixed bottom-0 left-0 right-0 bg-white border-t 
-      border-gray-200 z-50 shadow-xl flex py-4 pb-5
-    `}
+      aria-label="Bottom navigation"
+      className="fixed bottom-3 left-3 right-3 z-50 bg-white/25
+       backdrop-blur-sm border border-white/20 shadow-md rounded-full"
+      style={{ boxShadow: "0 6px 24px rgba(16,24,40,0.08)" }}
     >
-      <NavItem
-        icon={<Home {...iconSize} />}
-        label="Нүүр"
-        active={!!matchPath("/", pathname)}
-        link="/"
-      />
-      <NavItem
-        icon={<Search {...iconSize} />}
-        label="Ангилал"
-        link="/mobileCategories"
-        active={!!matchPath("/mobileCategories", pathname)}
-      />
-      <NavItem
-        icon={<LayoutGrid {...iconSize} />}
-        label="Бараанууд"
-        link="/products"
-        active={!!matchPath("/products", pathname)}
-      />
-      <NavItem
-        icon={<Heart {...iconSize} />}
-        label="Хадгалсан"
-        link="/wishlist"
-        notification={wishList?.wishListCount}
-        active={!!matchPath("/wishlist", pathname)}
-      />
-      <NavItem
-        icon={<User {...iconSize} />}
-        label="Профайл"
-        link="/auth/login"
-        active={!!matchPath("/auth/login", pathname)}
-      />
+      <div className="max-w-3xl mx-auto px-2 py-2 flex items-center justify-between">
+        {items.map((it) => (
+          <NavItem
+            key={it.link}
+            icon={it.icon}
+            label={it.label}
+            link={it.link}
+            notification={it.notification}
+            active={isActive(it.link)}
+          />
+        ))}
+      </div>
     </nav>
   );
 };
@@ -66,27 +70,62 @@ const BottomNavbar: FC<Props> = () => {
 function NavItem({
   icon,
   label,
-  active,
   link,
   notification,
-}: Readonly<NavItemProps>) {
+  active,
+}: NavItemDef & { active?: boolean }) {
   const { historyNavigate } = useHistoryNavigate();
+
   return (
     <button
       onClick={() => historyNavigate(link)}
-      className={`
-        ${styles.button}
-        ${
-          active
-            ? "text-blue-600"
-            : "text-gray-600 hover:text-blue-600 active:text-blue-700"
-        }`}
+      aria-current={active ? "page" : undefined}
+      aria-label={label}
+      className={`flex relative flex-col items-center justify-center gap-0.5 
+        focus:outline-none transition-all group`}
+      style={{ minWidth: 44 }}
     >
-      {Number?.(notification) > 0 ? (
-        <span className={styles.navNotification}>{notification}</span>
-      ) : null}
-      {icon}
-      <span className="text-[11px] font-semibold">{label}</span>
+      <div
+        className={`relative flex items-center justify-center w-9 h-9 rounded-full transition-transform transform ${
+          active ? "scale-105 bg-white/30" : "bg-transparent"
+        }`}
+      >
+        {notification && Number(notification) > 0 ? (
+          <span
+            className={`
+              absolute -top-2 -right-2 inline-flex items-center 
+              justify-center rounded-full text-[10px] font-semibold 
+              px-1.5 py-0.5 leading-none shadow-sm animate-pop bg-red-600 
+              text-white`}
+          >
+            {notification > 99 ? "99+" : notification}
+          </span>
+        ) : null}
+
+        {/* Icon - allow icon to inherit currentColor */}
+        <span
+          className={`group-focus:scale-105 transition-colors ${
+            active ? "text-blue-600" : "text-gray-700"
+          }`}
+        >
+          {icon}
+        </span>
+      </div>
+
+      <span
+        className={`text-[10px] font-medium ${
+          active ? "text-black" : "text-black/70"
+        }`}
+      >
+        {label}
+      </span>
+
+      {/* Active indicator (subtle) */}
+      <span
+        className={`absolute -top-1 hidden md:block h-0.5 w-5 rounded-full transition-all ${
+          active ? "bg-black/80 opacity-100 translate-y-7" : "opacity-0"
+        }`}
+      />
     </button>
   );
 }
