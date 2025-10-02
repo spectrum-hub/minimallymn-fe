@@ -68,18 +68,19 @@ const Carousel: FC<BlockProductsProps> = ({ block }) => {
         spaceBetween={10}
         // slidesPerView={numberSlide}
         autoplay={{
-          delay: 2000,
+          delay: 5000,
           disableOnInteraction: false,
         }}
         navigation
         pagination={{ clickable: true }}
+        speed={1000}
         scrollbar={false}
         grid={{
           fill: "row",
           rows: 2,
         }}
         className="  "
-        speed={500}
+        // speed={4000}
         breakpoints={{
           400: {
             slidesPerView: 2,

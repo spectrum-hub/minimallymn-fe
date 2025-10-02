@@ -129,6 +129,7 @@ const HeaderMini: FC<HeaderProps> = (props) => {
                   scrollTo({ top: 0, behavior: "smooth" });
                   historyNavigate("/wishlist");
                 }}
+                isMobile={!props.isMobile}
               />
               <UserInfoButton
                 isAuthenticated={props.isAuthenticated}
@@ -142,6 +143,7 @@ const HeaderMini: FC<HeaderProps> = (props) => {
                     props.isAuthenticated ? "/account/profile" : "/auth/login"
                   );
                 }}
+                isMobile={!props.isMobile}
               />
               <CartButton
                 totalItems={props?.cartTotalItems}
@@ -149,6 +151,7 @@ const HeaderMini: FC<HeaderProps> = (props) => {
                   scrollTo({ top: 0, behavior: "smooth" });
                   historyNavigate("/checkout");
                 }}
+                isMobile={!props.isMobile}
               />
             </div>
           </div>
@@ -156,8 +159,8 @@ const HeaderMini: FC<HeaderProps> = (props) => {
 
         {/* Navigation */}
         {showNavigation && (
-          <div className="border-t border-gray-200/60 mt-1">
-            <div className="py-3 overflow-x-auto scrollbar-hide">
+          <div className="mt-1">
+            <div className=" overflow-x-auto scrollbar-hide">
               <Navigation menus={data?.websiteBlocks?.menus} />
             </div>
           </div>
@@ -261,7 +264,7 @@ const SearchIconButton: FC<{
       onClick={onClick}
       aria-label="Хайлт нээх"
       className={clsx(
-        "h-10 w-10 flex items-center justify-center rounded-xl",
+        "h-8 w-8 flex items-center justify-center rounded-xl",
         "bg-gray-50 hover:bg-gray-100 active:bg-gray-200",
         "border border-gray-200 hover:border-gray-300",
         "transition-all duration-200 active:scale-95",

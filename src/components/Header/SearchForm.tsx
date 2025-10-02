@@ -72,8 +72,16 @@ const SearchForm = ({ onSearch }: SearchFormProps = {}) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-      <div className="relative w-full">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="w-full flex justify-center items-center"
+    >
+      <div
+        className="relative w-full max-w-md mx-auto bg-white 
+        dark:bg-gray-900 border border-gray-300 dark:border-gray-700 
+        rounded-2xl px-4 py-1 flex items-center"
+        style={{ borderWidth: 1 }}
+      >
         <Controller
           control={control}
           name="searchString"
@@ -86,11 +94,13 @@ const SearchForm = ({ onSearch }: SearchFormProps = {}) => {
               }}
               type="search"
               placeholder="Хайх"
-              className="peer w-full bg-transparent text-[15px] md:text-base tracking-wide md:tracking-wider
-                         text-gray-900 dark:text-gray-100 placeholder-gray-400 
-                         outline-none border-0 border-b border-black/20 dark:border-white/20
-                         focus:border-b-2 focus:border-black dark:focus:border-white
-                         transition-[border] duration-200 py-2 md:py-2.5 pr-20"
+              className="peer w-full bg-transparent text-[15px] md:text-base 
+              tracking-wide md:tracking-wider
+                               text-gray-900 dark:text-gray-100 
+                               placeholder-gray-400 
+                               outline-none border-0 rounded-xl px-4 py-1
+                              focus:ring-2 focus:ring-blue-100 
+                               transition-all duration-200 pr-16 shadow-sm"
             />
           )}
         />
@@ -100,9 +110,7 @@ const SearchForm = ({ onSearch }: SearchFormProps = {}) => {
           <button
             type="button"
             onClick={clearSearch}
-            className="absolute right-10 top-1/2 -translate-y-1/2 p-1 rounded-full
-                       text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white
-                       focus:outline-none"
+            className="absolute right-12 top-1/2 -translate-y-1/2 p-2 rounded-full bg-gray-100 dark:bg-gray-800 shadow hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
             aria-label="Clear search"
           >
             <XIcon className="h-4 w-4" />
@@ -112,12 +120,10 @@ const SearchForm = ({ onSearch }: SearchFormProps = {}) => {
         {/* Submit button */}
         <button
           type="submit"
-          className="absolute right-0 top-1/2 -translate-y-1/2 p-1.5
-                     text-gray-700 hover:text-black dark:text-gray-200 dark:hover:text-white
-                     focus:outline-none"
+          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-gray-200 shadow hover:bg-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200"
           aria-label="Search"
         >
-          <SearchIcon className="h-5 w-5" />
+          <SearchIcon className="h-5 w-5" color="#6B7280" />
         </button>
       </div>
     </form>

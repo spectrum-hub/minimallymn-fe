@@ -6,7 +6,12 @@ import clsx from "clsx";
  * Keep all icons visually balanced and consistent.
  */
 export const HeartIcon: FC<{ className?: string }> = ({ className }) => (
-  <svg viewBox="0 0 24 24" aria-hidden className={clsx("w-6 h-6", className)} fill="none">
+  <svg
+    viewBox="0 0 24 24"
+    aria-hidden
+    className={clsx("w-6 h-6", className)}
+    fill="none"
+  >
     <path
       d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
       stroke="currentColor"
@@ -18,14 +23,13 @@ export const HeartIcon: FC<{ className?: string }> = ({ className }) => (
 );
 
 export const UserIcon: FC<{ className?: string }> = ({ className }) => (
-  <svg viewBox="0 0 24 24" aria-hidden className={clsx("w-6 h-6", className)} fill="none">
-    <circle
-      cx="12"
-      cy="8"
-      r="4"
-      stroke="currentColor"
-      strokeWidth="1.5"
-    />
+  <svg
+    viewBox="0 0 24 24"
+    aria-hidden
+    className={clsx("w-6 h-6", className)}
+    fill="none"
+  >
+    <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.5" />
     <path
       d="M6 20.5c0-4.4 2.7-8 6-8s6 3.6 6 8"
       stroke="currentColor"
@@ -36,7 +40,12 @@ export const UserIcon: FC<{ className?: string }> = ({ className }) => (
 );
 
 export const CartIcon: FC<{ className?: string }> = ({ className }) => (
-  <svg viewBox="0 0 24 24" aria-hidden className={clsx("w-6 h-6", className)} fill="none">
+  <svg
+    viewBox="0 0 24 24"
+    aria-hidden
+    className={clsx("w-6 h-6", className)}
+    fill="none"
+  >
     <path
       d="M3 3h2l1.68 10.39A2 2 0 0 0 8.65 15h8.7A2 2 0 0 0 19.3 13.39L21 6H6"
       stroke="currentColor"
@@ -44,20 +53,8 @@ export const CartIcon: FC<{ className?: string }> = ({ className }) => (
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-    <circle
-      cx="8"
-      cy="19"
-      r="1.5"
-      stroke="currentColor"
-      strokeWidth="1.5"
-    />
-    <circle
-      cx="18"
-      cy="19"
-      r="1.5"
-      stroke="currentColor"
-      strokeWidth="1.5"
-    />
+    <circle cx="8" cy="19" r="1.5" stroke="currentColor" strokeWidth="1.5" />
+    <circle cx="18" cy="19" r="1.5" stroke="currentColor" strokeWidth="1.5" />
   </svg>
 );
 
@@ -90,6 +87,7 @@ type IconStackButtonProps = {
   badge?: number;
   "aria-label"?: string;
   children: React.ReactNode; // SVG
+  labelShow?: boolean; // whether to show label text
 };
 
 export const IconStackButton: FC<IconStackButtonProps> = ({
@@ -98,6 +96,7 @@ export const IconStackButton: FC<IconStackButtonProps> = ({
   className,
   badge,
   children,
+  labelShow,
   ...rest
 }) => {
   const hasBadge = typeof badge === "number" && badge > 0;
@@ -106,7 +105,8 @@ export const IconStackButton: FC<IconStackButtonProps> = ({
       onClick={onClick}
       className={clsx(
         "relative group inline-flex flex-col items-center justify-center",
-        "px-2 py-1 min-w-[64px]",
+        "px-1 py-1 ",
+         "min-w-[30px]",
         // unified color + effects
         "text-gray-700 dark:text-gray-200 hover:text-black dark:hover:text-white",
         "transition-colors duration-200",
@@ -127,15 +127,18 @@ export const IconStackButton: FC<IconStackButtonProps> = ({
         {hasBadge && (
           <span
             className="absolute -top-1 -right-1 text-[11px] font-bold w-4 h-4 rounded-full
-                       grid place-items-center text-white bg-black/80 dark:bg-white/90 dark:text-black"
+                       grid place-items-center text-white bg-black/80 dark:bg-white/90 
+                       dark:text-black"
           >
             {badge}
           </span>
         )}
       </span>
-      <span className="mt-[-2px] text-[11px] tracking-wide uppercase">
-        {label}
-      </span>
+      {labelShow ? (
+        <span className="mt-[-2px] text-[11px] tracking-wide uppercase">
+          {label}
+        </span>
+      ) : null}
     </button>
   );
 };
@@ -148,12 +151,14 @@ export const IconStackButton: FC<IconStackButtonProps> = ({
 export const WishlistButton: FC<{
   count?: number;
   onClick?: () => void;
-}> = ({ count, onClick }) => (
+  isMobile?: boolean;
+}> = ({ count, onClick, isMobile }) => (
   <IconStackButton
     label="Хадгалсан"
     onClick={onClick}
     badge={count}
     aria-label="Wishlist"
+    labelShow={isMobile}
   >
     <HeartIcon />
   </IconStackButton>
@@ -163,27 +168,31 @@ export const WishlistButton: FC<{
 export const UserInfoButton: FC<{
   isAuthenticated?: boolean;
   userName?: string | null;
+  isMobile?: boolean;
   onClick?: () => void;
-}> = ({ isAuthenticated, userName, onClick }) => (
+}> = ({ isAuthenticated, userName, onClick, isMobile }) => (
   <IconStackButton
     label={isAuthenticated ? userName || "Профайл" : "Нэвтрэх"}
     onClick={onClick}
     aria-label="User"
+    labelShow={isMobile}
   >
     <UserIcon />
   </IconStackButton>
 );
 
 // CartButton
-export const CartButton: FC<{ totalItems?: number; onClick?: () => void }> = ({
-  totalItems,
-  onClick,
-}) => (
+export const CartButton: FC<{
+  totalItems?: number;
+  onClick?: () => void;
+  isMobile?: boolean;
+}> = ({ totalItems, onClick, isMobile }) => (
   <IconStackButton
     label="Сагс"
     badge={totalItems}
     onClick={onClick}
     aria-label="Cart"
+    labelShow={isMobile}
   >
     <CartIcon />
   </IconStackButton>

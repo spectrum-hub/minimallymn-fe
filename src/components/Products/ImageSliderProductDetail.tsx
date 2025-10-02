@@ -47,14 +47,6 @@ const ImageSlider: FC<Props> = ({ item, selectedProductId }) => {
         sequence: img?.sequence,
       })) ?? [];
 
-    // // бүх variant-н main зураг (product.product image_*) — selected байхгүй үед ашиглана
-    // const allVariantMain: VImage[] =
-    //   item.parentProducts?.map((p) => ({
-    //     id: Number(p.id),
-    //     kind: "variant",
-    //   })) ?? [];
-
-    // variant-н additional (product.image) — selected байвал зөвхөн тэр variant, үгүй бол бүгд
     const variantAdditional: VImage[] =
       (selectedProductId
         ? item.parentProducts
@@ -156,7 +148,7 @@ const ImageSlider: FC<Props> = ({ item, selectedProductId }) => {
               <Image
                 src={getSrc(image, "image_1920") ?? ""}
                 alt={item?.name ?? ""}
-                className="mx-auto w-full max-h-[400px] object-cover p-8 rounded-md z-50"
+                className=" mx-auto w-full max-h-[400px] object-cover p-8 rounded-md z-50"
                 loading="lazy"
                 preview
               />
@@ -170,8 +162,8 @@ const ImageSlider: FC<Props> = ({ item, selectedProductId }) => {
           modules={[Thumbs]}
           watchSlidesProgress
           onSwiper={setThumbsSwiper}
-          spaceBetween={4}
-          slidesPerView={6}
+          spaceBetween={2}
+          slidesPerView={7}
           breakpoints={{
             0: { slidesPerView: 6, spaceBetween: 4 },
             640: { slidesPerView: 8, spaceBetween: 6 },
@@ -184,8 +176,8 @@ const ImageSlider: FC<Props> = ({ item, selectedProductId }) => {
               <img
                 src={getSrc(image, "image_512") ?? ""}
                 alt={item?.name ?? ""}
-                className="h-[54px] w-[54px] md:h-[64px] md:w-[64px] 
-                object-cover transition-transform duration-300 
+                className="h-[70px]  border-gray-200 border
+                object-contain transition-transform duration-300 
                 group-hover:scale-105 bg-white ml-1 cursor-pointer p-0.5"
                 loading="lazy"
               />

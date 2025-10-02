@@ -8,6 +8,7 @@ import { RootState } from "../../Redux/store";
 
 const RenderCategories: React.FC = () => {
   const { windowWidth } = useWindowWidth();
+
   const [searchParams] = useSearchParams();
   const categoryId = searchParams.get("category") ?? "";
 
@@ -39,33 +40,66 @@ const RenderCategories: React.FC = () => {
     return <p className="text-red-500">Error: {JSON.stringify(error)}</p>;
   }
 
+  if (
+    data?.categories?.categories &&
+    data?.categories?.categories?.length < 7
+  ) {
+    return (
+      <div className="w-full">
+        <h2 className="text-lg py-4 ">Ангилалууд</h2>
+
+        <div
+          className="bg-white rounded-xl shadow p-4 flex flex-wrap gap-3 justify-center"
+        >
+          {data?.categories?.categories?.map(({ id, name }, index) => (
+            <NavLink
+              key={id || index}
+              to={{ search: `category=${id}` }}
+              className={`
+                border border-gray-200 rounded-xl h-9 px-4 w-36 text-center my-1 max-w-36 mx-1 line-clamp-1
+                transition-all duration-200 ease-in-out transform hover:scale-105 hover:bg-blue-50 hover:border-blue-400 hover:shadow-md
+                ${Number(categoryId) === id ? "bg-blue-100 shadow-lg scale-105" : "bg-white text-gray-900"}
+              `}
+            >
+              <span
+                className="text-sm text-inherit text-center leading-9 line-clamp-1 "
+              >
+                {name}
+              </span>
+            </NavLink>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full">
       <h2 className="text-lg py-4 uppercase">Ангилалууд</h2>
 
-      <div className="bg-white rounded-lg shadow-sm p-4 categories-container">
+      <div className="bg-white rounded-xl shadow-md p-4">
         <Swiper
           modules={[Virtual, Navigation]}
           navigation
           slidesPerView={slidesPerView}
-          className=""
+          className="categories-swiper"
+          grid={{
+            rows: 2,
+            fill: "row",
+          }}
         >
           {data?.categories?.categories?.map(({ id, name }, index) => (
             <SwiperSlide key={id || index}>
               <NavLink
                 to={{ search: `category=${id}` }}
                 className={`
-                  border rounded h-8 px-2 w-36 text-center
-                hover:bg-gray-300 mx-1 line-clamp-1 ${
-                  Number(categoryId) === id ? "bg-gray-300 text-black" : ""
-                }
+                  border border-gray-200 rounded-xl h-9 px-4 w-36 text-center my-1 mx-1 line-clamp-1
+                  transition-all duration-200 ease-in-out transform hover:scale-105 hover:bg-blue-50 hover:border-blue-400 hover:shadow-md
+                  ${Number(categoryId) === id ? "bg-blue-100 border-blue-500 text-blue-700 shadow-lg scale-105" : "bg-white text-gray-900"}
                 `}
               >
                 <span
-                  className={`
-                    text-xs text-gray-900
-                    text-center leading-8 line-clamp-1 
-                  `}
+                  className="text-sm text-inherit text-center leading-9 line-clamp-1 font-medium"
                 >
                   {name}
                 </span>

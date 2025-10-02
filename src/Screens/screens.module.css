@@ -1,5 +1,5 @@
 .productsGrid {
-  @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2;
+  @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-2;
 }
 
 .clearButton {

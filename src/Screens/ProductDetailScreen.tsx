@@ -180,9 +180,9 @@ const ProductDetailScreen = () => {
   if (!product) return <div className="p-4">Product not found</div>;
 
   return (
-    <section className="products  mx-auto py-6">
+    <section className="products  mx-auto py-6 ">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="border rounded-md overflow-hidden">
+        <div className="border rounded-md overflow-hidden bg-white">
           <Suspense fallback={<Spin />}>
             <ImageSliderProductDetail
               item={product}
