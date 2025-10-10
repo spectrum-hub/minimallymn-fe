@@ -290,4 +290,4 @@ export interface LocationNType {
   };
 }
 
-export type ApiContextType = "commerce" | "antmall";
+export type ApiContextType = "commerce" | "minimally";

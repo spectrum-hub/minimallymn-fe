@@ -51,7 +51,7 @@ const useGqlQuery = <T>(
 
   const { loading, error, data, refetch }: QueryResult<T> = useQuery<T>(query, {
     context: {
-      api: "antmall",
+      api: "minimally",
       ...context,
     } as {
       api: ApiContextType

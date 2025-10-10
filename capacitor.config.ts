@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "com.amall.shopping",
-  appName: "antmall.mn",
+  appId: "com.minimally.shopping",
+  appName: "minimally.mn",
   webDir: "dist",
   plugins: {
     StatusBar: {
