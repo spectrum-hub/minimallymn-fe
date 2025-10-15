@@ -8,6 +8,7 @@ import Badge from "../Badge";
 import ImageSlider from "./ImageSlider";
 import { useAddWishlist, useRemoveWishlist } from "../../Hooks/use-wishlist";
 import { useLocation } from "react-router";
+import { baseURL } from "../../lib/configs";
 
 interface ProductItemProps {
   item: ProductItem;
@@ -34,8 +35,6 @@ const ProductItemCard: FC<ProductItemProps> = ({
   } = useAddWishlist(item.id, item.name);
 
   const location = useLocation();
-
- 
 
   const {
     removeWishlist,
@@ -65,13 +64,10 @@ const ProductItemCard: FC<ProductItemProps> = ({
     }
   };
 
-
   return (
     <div
-      className={` ${
-        isMobile ? "" : " group "
-      } relative bg-white w-full shadow 
-          transition-all hover:shadow-lg `}
+      className={` ${isMobile ? "" : " group "} relative bg-white w-full shadow 
+          transition-all hover:shadow-lg  rounded-md `}
     >
       <ProductLink
         item={item}
@@ -96,15 +92,25 @@ const ProductItemCard: FC<ProductItemProps> = ({
 
         {brand && <Badge className={style.badge}>{brand}</Badge>}
 
-        <div className="  rounded-t-lg bg-white md:h-56 h-48 overflow-hidden ">
-          <ImageSlider item={item} type={type} />
+        <div className="  rounded-t-lg bg-white  overflow-hidden ">
+          <img
+            src={`${baseURL}${item?.mainImageUrl}`}
+            alt={item?.name ?? ""}
+            className="
+            mx-auto w-full object-contain max-h-[180px]
+            center-image p-1 h-full
+          "
+            loading="lazy" 
+          />
         </div>
 
-        <div className="p-2 h-16 ">
-          <h3 className="mt-1 text-black line-clamp-1 uppercase text-xs md:text-[13px]">
-            {item.name}
+        <div className="p-2 h-20 ">
+          <h3 className="mt-0 text-black line-clamp-2 font-medium text-xs md:text-[13px]">
+            {
+              `${item?.templateName?.mn_MN}-${item?.attValueName?.mn_MN}`
+            }
           </h3>
-          <div className="mt-2 flex items-baseline gap-2 text-xs md:text-sm">
+          <div className="mt-1 flex items-baseline gap-2 text-xs md:text-sm">
             <span className=" font-medium text-black">
               {Number(price) > 0 ? `${price.toLocaleString()}₮` : ""}
             </span>

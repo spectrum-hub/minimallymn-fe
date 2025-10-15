@@ -20,6 +20,49 @@ export const GET_PRODUCTS = gql`
     $pageSize: Int = 20
     $orderBy: String
     $searchValue: String
+  ) {
+    products(
+      page: $page
+      pageSize: $pageSize
+      orderBy: $orderBy
+      filters: {
+        name: $searchValue
+      }
+    ) {
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        totalCount
+        pageCount
+        currentPage
+        pageSize
+      }
+      items {
+        indicesCount
+        attrName
+        attValueName
+        attValueId
+        priceExtra
+        attributeProductTmplId
+        categoryName
+        categoryId
+        brandName
+        discountPrice
+        templateName
+        productId
+        productTmplId
+        listPrice
+        mainImageUrl
+      }
+    }
+  }
+`;
+export const OLD_GET_PRODUCTS = gql`
+  query (
+    $page: Int = 1
+    $pageSize: Int = 20
+    $orderBy: String
+    $searchValue: String
     $attributesValues: [String]
     $categoryId: Int
     $brands: [String] # Add brands argument
