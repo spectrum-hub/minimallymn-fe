@@ -47,7 +47,16 @@ export interface PublicCategIds {
   id: number;
   parentPath: string;
 }
+
+interface Names {
+  mn_MN?: string;
+}
 export interface ProductItem {
+  templateName: Names;
+  attValueName: Names;
+  indicesCount: number;
+  mainImageUrl?: string;
+  variantImageUrl?: string;
   productHtmlDesc?: string;
   product_id?: number;
   product_variant_ids: number[];

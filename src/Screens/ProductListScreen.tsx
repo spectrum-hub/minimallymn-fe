@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { X } from "lucide-react";
 import { GET_PRODUCTS } from "../api";
 import useGqlQuery from "../Hooks/Query";
@@ -24,10 +22,9 @@ import EmptySearch from "../components/Products/EmptySearch";
 import useWindowWidth from "../Hooks/use-window-width";
 
 const ProductListScreen: React.FC = () => {
-  
   const { isMobile } = useWindowWidth();
   const [searchParams, setSearchParams] = useSearchParams();
-  
+
   const categories = useSelector(
     (state: RootState) => state.category?.data?.categories
   );
@@ -136,7 +133,6 @@ const ProductListScreen: React.FC = () => {
   };
 
   const clearAllFilters = () => {
-    
     const currentParams = new URLSearchParams(searchParams.toString());
     currentParams.delete("filter-attributes");
     currentParams.delete("brands");
@@ -284,12 +280,7 @@ const ProductListScreen: React.FC = () => {
           {!products.length ? <EmptySearch /> : null}
           <div className={styles.productsGrid}>
             {(products ?? []).map((item) => (
-              <ProductItemCard
-                key={item.id}
-                item={item}
-                type={"slider"}
-                isMobile={isMobile}
-              />
+              <ProductItemCard key={item.id} item={item} isMobile={isMobile} />
             ))}
           </div>
 

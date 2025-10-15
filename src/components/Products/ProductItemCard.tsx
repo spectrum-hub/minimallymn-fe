@@ -5,7 +5,6 @@ import { ProductLink } from "../Links";
 import style from "./style.module.css";
 import IconButton from "./IconButton";
 import Badge from "../Badge";
-import ImageSlider from "./ImageSlider";
 import { useAddWishlist, useRemoveWishlist } from "../../Hooks/use-wishlist";
 import { useLocation } from "react-router";
 import { baseURL } from "../../lib/configs";
@@ -14,7 +13,6 @@ interface ProductItemProps {
   item: ProductItem;
   listType?: "products" | "wishlist";
   action?: (arg?: "products" | "wishlist") => void;
-  type?: "detail" | "list" | "slider";
   isMobile?: boolean;
 }
 
@@ -22,7 +20,6 @@ const ProductItemCard: FC<ProductItemProps> = ({
   item,
   listType = "products",
   action,
-  type,
   isMobile,
 }) => {
   const discountPrice = Number(item.standardPrice);
@@ -94,21 +91,23 @@ const ProductItemCard: FC<ProductItemProps> = ({
 
         <div className="  rounded-t-lg bg-white  overflow-hidden ">
           <img
-            src={`${baseURL}${item?.mainImageUrl}`}
+            src={`${baseURL}${
+              item?.indicesCount > 1
+                ? item?.variantImageUrl
+                : item?.mainImageUrl
+            }`}
             alt={item?.name ?? ""}
             className="
             mx-auto w-full object-contain max-h-[180px]
             center-image p-1 h-full
           "
-            loading="lazy" 
+            loading="lazy"
           />
         </div>
 
         <div className="p-2 h-20 ">
           <h3 className="mt-0 text-black line-clamp-2 font-medium text-xs md:text-[13px]">
-            {
-              `${item?.templateName?.mn_MN}-${item?.attValueName?.mn_MN}`
-            }
+            {`${item?.templateName?.mn_MN}-${item?.attValueName?.mn_MN}`}
           </h3>
           <div className="mt-1 flex items-baseline gap-2 text-xs md:text-sm">
             <span className=" font-medium text-black">

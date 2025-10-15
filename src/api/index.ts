@@ -53,6 +53,7 @@ export const GET_PRODUCTS = gql`
         productTmplId
         listPrice
         mainImageUrl
+        variantImageUrl
       }
     }
   }
