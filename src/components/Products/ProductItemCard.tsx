@@ -61,6 +61,10 @@ const ProductItemCard: FC<ProductItemProps> = ({
     }
   };
 
+  const itemName = `${item?.templateName?.mn_MN}${
+    item?.attValueName?.mn_MN ? ` - ${item?.attValueName?.mn_MN}` : ""
+  }`;
+
   return (
     <div
       className={` ${isMobile ? "" : " group "} relative bg-white w-full shadow 
@@ -92,13 +96,13 @@ const ProductItemCard: FC<ProductItemProps> = ({
         <div className="  rounded-t-lg bg-white  overflow-hidden ">
           <img
             src={`${baseURL}${
-              item?.indicesCount > 1
+              item?.indicesCount > 0
                 ? item?.variantImageUrl
                 : item?.mainImageUrl
             }`}
             alt={item?.name ?? ""}
             className="
-            mx-auto w-full object-contain max-h-[180px]
+            mx-auto w-full object-contain max-h-[210px]
             center-image p-1 h-full
           "
             loading="lazy"
@@ -106,9 +110,7 @@ const ProductItemCard: FC<ProductItemProps> = ({
         </div>
 
         <div className="p-2 h-20 ">
-          <h3 className="mt-0 text-black line-clamp-2 font-medium text-xs md:text-[13px]">
-            {`${item?.templateName?.mn_MN}-${item?.attValueName?.mn_MN}`}
-          </h3>
+          <RenderItemName item={item} />
           <div className="mt-1 flex items-baseline gap-2 text-xs md:text-sm">
             <span className=" font-medium text-black">
               {Number(price) > 0 ? `${price.toLocaleString()}₮` : ""}
@@ -146,3 +148,20 @@ const ProductItemCard: FC<ProductItemProps> = ({
 };
 
 export default ProductItemCard;
+
+const RenderItemName: FC<{ item: ProductItem }> = ({ item }) => {
+  const name = item?.templateName?.mn_MN || "";
+  const value = item?.attValueName?.mn_MN;
+
+  return (
+    <h3 className="mt-0 text-black line-clamp-2 font-medium text-xs md:text-[14px]">
+      {value ? (
+        <>
+          {name} - <span className="font-semibold first-letter:capitalize">{value.charAt(0).toUpperCase() + value.slice(1)}</span>
+        </>
+      ) : (
+        name
+      )}
+    </h3>
+  );
+};
