@@ -14,9 +14,9 @@ export const GET_LOCATIONS = gql`
 
   // products(page: 1, pageSize: 20, orderBy: "name_desc", 
   // filters: {
-  //   # name: "Будаатай"
+  //   # name: "Бараа нэр"
   //   # cids: [1, 2, 9]
-  //   category: "Аялал"
+  //   category: "Категори "
   // }  
   // ) {
 
