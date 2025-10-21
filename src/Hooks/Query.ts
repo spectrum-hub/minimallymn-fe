@@ -25,6 +25,8 @@ interface UseGqlQueryVariables {
   filters?: {
     filterAttributes?: string[];
     attributesValues?: string[];
+    cids?: (number | undefined)[];
+    brands?: string[];
   };
   attributesValues?: string[];
 }

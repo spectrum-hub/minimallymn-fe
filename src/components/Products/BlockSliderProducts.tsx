@@ -29,11 +29,12 @@ const Carousel: FC<BlockProductsProps> = ({ block }) => {
       ? Number(block?.data_product_category_id)
       : null;
 
+  const pageSize =
+    Number(block?.data_number_of_elements) || BLOCK_PRODUCTS_DEFAULT_TOTAL;
   const { loading, error, data } = useGqlQuery<ProductsQuery>(GET_PRODUCTS, {
     page: 1,
-    pageSize:
-      Number(block?.data_number_of_elements) || BLOCK_PRODUCTS_DEFAULT_TOTAL,
-    categoryId: catId ?? undefined,
+    pageSize: pageSize,
+    filters: { cids: [catId ?? undefined] },
   });
 
   const items = data?.products?.items;
@@ -109,11 +110,10 @@ const Carousel: FC<BlockProductsProps> = ({ block }) => {
         }}
       >
         {items?.map((item) => (
-          <SwiperSlide key={item.id}>
+          <SwiperSlide key={item.productId}>
             <ProductItemCard
               item={item}
-              key={item.id}
-              type={"slider"}
+              key={item.productId}
               isMobile={isMobile}
             />
           </SwiperSlide>

@@ -164,27 +164,64 @@ const MainLayout: FC<Props> = ({ children }) => {
 
   return (
     <ErrorBoundary fallback={<Spin fullscreen />}>
-      <Header {...headerParams} />
-      <div
-        className={`min-h-screen flex flex-col ${
-          isMobile ? "bg-gray-200" : "bg-gray-100"
-        }`}
-      >
-        <main className="px-1 py-1 pb-20 max-w-5xl mx-auto flex-grow w-full">
-          <Suspense fallback={<LoadingSpinner />}>{children}</Suspense>
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 via-white to-gray-100">
+        {/* Header with sticky positioning and smooth shadow */}
+        <header className="sticky top-0 z-50 backdrop-blur-md bg-white/90 border-b border-gray-200/50 shadow-sm transition-all duration-300">
+          <Header {...headerParams} />
+        </header>
+
+        {/* Main content area with improved spacing and max-width */}
+        <main className={`flex-grow w-full transition-all duration-300 ${
+          isMobile 
+            ? "px-3 py-2 pb-24" 
+            : "px-4 md:px-6 lg:px-8 py-4 md:py-6"
+        } max-w-7xl mx-auto`}>
+          <div className="transition-opacity duration-300">
+            <Suspense 
+              fallback={
+                <div className="flex items-center justify-center min-h-[200px]">
+                  <LoadingSpinner />
+                </div>
+              }
+            >
+              {children}
+            </Suspense>
+          </div>
         </main>
+
+        {/* Footer/Bottom Navigation */}
         {isMobile ? (
-          <Suspense fallback={<LoadingSpinner />}>
-            <BottomNavbar />
-          </Suspense>
+          <div className="fixed bottom-0 left-0 right-0 z-40 backdrop-blur-md bg-white/95 border-t border-gray-200/50 shadow-lg">
+            <Suspense fallback={<LoadingSpinner />}>
+              <BottomNavbar />
+            </Suspense>
+          </div>
         ) : (
-          <Footer footerData={footer ?? null} />
+          <footer className="mt-auto border-t border-gray-200/50 bg-white/80 backdrop-blur-sm">
+            <Footer footerData={footer ?? null} />
+          </footer>
         )}
-        {isMobile ? null : (
-          <FloatButton.BackTop visibilityHeight={100} shape={"square"} />
+
+        {/* Back to top button with modern design */}
+        {!isMobile && (
+          <FloatButton.BackTop 
+            visibilityHeight={100} 
+            style={{
+              right: 24,
+              bottom: 24,
+              borderRadius: 12,
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              backgroundColor: '#3B82F6',
+              border: 'none',
+            }}
+          />
         )}
       </div>
-      <FBMessenger />
+
+      {/* FB Messenger with improved positioning */}
+      <div className="fixed bottom-20 right-4 z-30">
+        <FBMessenger />
+      </div>
     </ErrorBoundary>
   );
 };

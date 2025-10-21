@@ -48,70 +48,50 @@ export interface PublicCategIds {
   parentPath: string;
 }
 
-interface Names {
-  mn_MN?: string;
-}
-export interface ProductItem {
-  templateName: Names;
-  attValueName: Names;
-  indicesCount: number;
-  mainImageUrl?: string;
-  variantImageUrl?: string;
-  productHtmlDesc?: string;
-  product_id?: number;
-  product_variant_ids: number[];
+export interface ProductBrand {
   id: number;
+  logo: string;
   name: string;
-  listPrice: number;
-  standardPrice: number;
-  type: string;
-  websiteSequence: number;
-  category: Category;
-  productVariantIds: number[];
-  productVariantId: string[];
-  productVariantCount: number;
-  barcode: string;
-  pricelistItemCount: number;
-  images?: ProductImage[];
-  productTemplateImageIds?: number[];
-
-  description?: string;
-  pricelist?: any | null;
-  attributes?: any | null;
-  displayName?: string;
-  productVariantNum?: number;
-  productVariantName?: string;
-  propertyStockProductionId?: number;
-  propertyStockProductionName?: string;
-  publicCategIds?: PublicCategIds[];
-  baseUnitPrice?: string;
-  availableThreshold?: string;
-  baseUnitName?: string;
-  baseUnitCount?: string;
-  descriptionSale?: string;
-  attributeLineIds?: number[];
-  validProductTemplateAttributeLineIds?: number[];
-  incomingQty?: number;
-  outgoingQty?: number;
-  salesCount?: number;
-  alternativeProductIds?: any[];
-  websiteDescription?: string;
-  qtyAvailable?: number;
-  productVariants?: {
-    attributesList?: AttributesList[];
-    combinationIndicesValues?: CombinationIndicesValues[];
-  };
-  productTmplId: number;
-  combinationIndices?: string;
-  productBrand?: {
-    name: string;
-    id: number;
-  };
-  brand?: {
-    name: string;
-    id: number;
-  };
 }
+
+export interface ProductPrice {
+  currency: string;
+  formatted: string;
+  price: number;
+}
+
+export interface ProductDiscount {
+  originalPrice: number;
+  originalPriceFormatted: string;
+  rate: number;
+  currency: string;
+  savingsFormatted: string;
+  savings: number;
+}
+
+export interface ProductImageUrl {
+  main: string;
+  medium: string;
+  small: string;
+}
+
+export interface ProductItem {
+  category: string;
+  productTmplId: string;
+  productId: string;
+  productName: string;
+  attributes: string;
+  categoryNames: string[];
+  priceExtraSum: number;
+  mainImageUrl: ProductImageUrl;
+  variantImageUrl: ProductImageUrl;
+  brand: ProductBrand;
+  price: ProductPrice;
+  discount: ProductDiscount;
+  tags: string[];
+}
+
+
 
 export interface AttributesList {
   productVariantId?: number;

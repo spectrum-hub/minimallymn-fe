@@ -277,10 +277,14 @@ const ProductListScreen: React.FC = () => {
             </div>
           </div>
 
-          {!products.length ? <EmptySearch /> : null}
+          {products.length === 0 ? <EmptySearch /> : null}
           <div className={styles.productsGrid}>
             {(products ?? []).map((item) => (
-              <ProductItemCard key={item.id} item={item} isMobile={isMobile} />
+              <ProductItemCard
+                key={item.productId}
+                item={item}
+                isMobile={isMobile}
+              />
             ))}
           </div>
 

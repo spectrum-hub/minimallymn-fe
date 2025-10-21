@@ -68,105 +68,109 @@ const HeaderMini: FC<HeaderProps> = (props) => {
   }, [pathname]);
 
   return (
-    <header
-      className={clsx(
-        "sticky top-0 z-50 w-full",
-        "bg-white/95 backdrop-blur-md border-b border-gray-100",
-        "shadow-sm"
-      )}
-    >
-      {/* Top contact bar */}
-      <div className="hidden md:block bg-gray-50/80 backdrop-blur-sm">
+    <div className="w-full">
+      {/* Top contact bar - enhanced with gradients and better spacing */}
+      <div className="hidden md:block bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between py-2.5 text-xs text-gray-600">
-            <div className="flex items-center space-x-6">
-              <span className="flex items-center space-x-2 hover:text-gray-900 transition-colors">
-                <Phone size={14} className="text-blue-600" />
+          <div className="flex items-center justify-between py-3 text-sm text-gray-600">
+            <div className="flex items-center space-x-8">
+              <a 
+                href="tel:80431000"
+                className="flex items-center space-x-2 hover:text-blue-600 transition-all duration-200 group"
+              >
+                <Phone size={16} className="text-blue-500 group-hover:text-blue-600 transition-colors" />
                 <span className="font-medium">8043-1000, 8042-1000</span>
-              </span>
-              <span className="hidden lg:flex items-center space-x-2 hover:text-gray-900 transition-colors">
-                <Send size={14} className="text-blue-600" />
+              </a>
+              <a 
+                href="mailto:info@minimally.mn"
+                className="hidden lg:flex items-center space-x-2 hover:text-blue-600 transition-all duration-200 group"
+              >
+                <Send size={16} className="text-blue-500 group-hover:text-blue-600 transition-colors" />
                 <span className="font-medium">info@minimally.mn</span>
-              </span>
+              </a>
             </div>
             <SocialLinks />
           </div>
         </div>
       </div>
 
-      {/* Main header */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
-        <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Left side: menu + logo */}
-          <div className="flex items-center space-x-3 md:space-x-4">
-            <MenuToggle onClick={handleToggleCategories} />
+      {/* Main header with enhanced design */}
+      <div className="bg-white/98 backdrop-blur-xl border-b border-gray-200/60 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 md:h-20">
+            {/* Left side: menu + logo with better spacing */}
+            <div className="flex items-center space-x-4 md:space-x-6">
+              <MenuToggle onClick={handleToggleCategories} />
 
-            <LogoLink className="flex-shrink-0">
-              <img
-                src="/assets/logo.png"
-                alt="Minimally Logo"
-                className="h-8 md:h-12 w-auto transition-all duration-300 hover:scale-105"
-              />
-            </LogoLink>
-          </div>
-
-          {/* Center: search (desktop >= 580px) */}
-          <div className="hidden min-[580px]:flex flex-1 max-w-xl mx-8">
-            <SearchForm />
-          </div>
-
-          {/* Right side: actions */}
-          <div className="flex items-center space-x-1 sm:space-x-2">
-            {/* Search icon for screens < 580px */}
-            <div className="min-[580px]:hidden">
-              <SearchIconButton onClick={handleToggleSearch} />
+              <LogoLink className="flex-shrink-0 group">
+                <img
+                  src="/assets/logo.png"
+                  alt="Minimally Logo"
+                  className="h-9 md:h-14 w-auto transition-all duration-300 group-hover:scale-105 filter drop-shadow-sm"
+                />
+              </LogoLink>
             </div>
 
-            <div className="flex items-center space-x-1">
-              <WishlistButton
-                count={wishList?.wishListCount}
-                onClick={() => {
-                  scrollTo({ top: 0, behavior: "smooth" });
-                  historyNavigate("/wishlist");
-                }}
-                isMobile={!props.isMobile}
-              />
-              <UserInfoButton
-                isAuthenticated={props.isAuthenticated}
-                userName={
-                  props.userInfo?.userInfo?.userData?.name ??
-                  props.userInfo?.userInfo?.userData?.login
-                }
-                onClick={() => {
-                  scrollTo({ top: 0, behavior: "smooth" });
-                  historyNavigate(
-                    props.isAuthenticated ? "/account/profile" : "/auth/login"
-                  );
-                }}
-                isMobile={!props.isMobile}
-              />
-              <CartButton
-                totalItems={props?.cartTotalItems}
-                onClick={() => {
-                  scrollTo({ top: 0, behavior: "smooth" });
-                  historyNavigate("/checkout");
-                }}
-                isMobile={!props.isMobile}
-              />
+            {/* Center: search with improved styling */}
+            <div className="hidden min-[580px]:flex flex-1 max-w-2xl mx-6 md:mx-8">
+              <div className="w-full relative">
+                <SearchForm />
+              </div>
+            </div>
+
+            {/* Right side: actions with better spacing */}
+            <div className="flex items-center space-x-2 md:space-x-3">
+              {/* Search icon for mobile */}
+              <div className="min-[580px]:hidden">
+                <SearchIconButton onClick={handleToggleSearch} />
+              </div>
+
+              <div className="flex items-center space-x-2 md:space-x-3">
+                <WishlistButton
+                  count={wishList?.wishListCount}
+                  onClick={() => {
+                    scrollTo({ top: 0, behavior: "smooth" });
+                    historyNavigate("/wishlist");
+                  }}
+                  isMobile={!props.isMobile}
+                />
+                <UserInfoButton
+                  isAuthenticated={props.isAuthenticated}
+                  userName={
+                    props.userInfo?.userInfo?.userData?.name ??
+                    props.userInfo?.userInfo?.userData?.login
+                  }
+                  onClick={() => {
+                    scrollTo({ top: 0, behavior: "smooth" });
+                    historyNavigate(
+                      props.isAuthenticated ? "/account/profile" : "/auth/login"
+                    );
+                  }}
+                  isMobile={!props.isMobile}
+                />
+                <CartButton
+                  totalItems={props?.cartTotalItems}
+                  onClick={() => {
+                    scrollTo({ top: 0, behavior: "smooth" });
+                    historyNavigate("/checkout");
+                  }}
+                  isMobile={!props.isMobile}
+                />
+              </div>
             </div>
           </div>
+
+          {/* Navigation with enhanced styling */}
+          {showNavigation && (
+            <div className="pb-3 border-t border-gray-100/60">
+              <div className="overflow-x-auto scrollbar-hide pt-3">
+                <Navigation menus={data?.websiteBlocks?.menus} />
+              </div>
+            </div>
+          )}
         </div>
-
-        {/* Navigation */}
-        {showNavigation && (
-          <div className="mt-1">
-            <div className=" overflow-x-auto scrollbar-hide">
-              <Navigation menus={data?.websiteBlocks?.menus} />
-            </div>
-          </div>
-        )}
       </div>
-    </header>
+    </div>
   );
 };
 

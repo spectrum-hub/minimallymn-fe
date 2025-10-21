@@ -45,7 +45,6 @@ export const GET_PRODUCTS = gql`
         category
         productTmplId
         productId
-        listPrice
         productName
         attributes
         categoryNames

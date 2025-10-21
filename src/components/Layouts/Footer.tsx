@@ -7,89 +7,141 @@ interface FooterProps {
 
 const FooterComponent: FC<FooterProps> = () => {
   return (
-    <footer className="w-full bg-neutral-50 dark:bg-neutral-900 text-neutral-600 dark:text-neutral-300 text-xs md:text-sm border-t border-neutral-200 dark:border-neutral-800 py-8">
-      <div className="max-w-5xl mx-auto px-4">
-        <div className="flex flex-col md:flex-row md:justify-between gap-6 md:gap-12">
-          {/* Logo */}
-          <div className="flex-shrink-0 flex justify-center md:justify-start">
-            <a href="/" aria-current="page" className="inline-block">
-              <img
-                src="/logo.png"
-                alt="Minimally Logo"
-                className="h-8 md:h-14 opacity-80 hover:opacity-100 transition duration-300"
-              />
-            </a>
-          </div>
-
-          {/* About */}
-          <div className="max-w-sm text-center md:text-left">
-            <h2 className="mb-2 font-medium text-neutral-800 dark:text-neutral-100 text-sm">
-              Бидний тухай
-            </h2>
-            <p className="leading-relaxed text-[13px]">
-              Бид танд бараа бүтээгдэхүүнийг төлбөрийн олон төрлийн нөхцөлөөр
-              илүү хялбараар худалдан авах боломжийг олгож байна.
-            </p>
-          </div>
-
-          {/* Contact */}
-          <div className="max-w-sm text-center md:text-left">
-            <h2 className="mb-2 font-medium text-neutral-800 dark:text-neutral-100 text-sm">
-              Холбоо барих
-            </h2>
-            <ul className="space-y-1 text-[13px] leading-6">
-              <li>
-                <span className="font-medium">Утас:</span> 8043-1000, 8042-1000
-              </li>
-              <li>
-                <span className="font-medium">Цагийн хуваарь:</span> Өдөр бүр
-                10:00 - 18:30{" "}
-              </li>
-              <li>
-                <span className="font-medium">Цахим шуудан:</span>{" "}
-                sales@minimally.mn
-              </li>
-              <li>
-                <span className="font-medium">Хаяг:</span> Нарны замын Доктор
-                болон Миний дэлгүүр 2-ын дунд Luxhouse-5 Худалдааны төвийн 2
-                давхарт
-              </li>
-              <li className="italic opacity-80">Minimally -тай ХАМТ</li>
-            </ul>
-
-            {/* Social */}
-            <div className="flex justify-center md:justify-start mt-4 gap-3">
-              <a
-                href="https://www.facebook.com/minimally.mn"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="opacity-70 hover:opacity-100 transition"
-              >
+    <footer className="w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-300">
+      {/* Main footer content */}
+      <div className="relative">
+        {/* Background pattern overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+            {/* Brand Section */}
+            <div className="lg:col-span-2 space-y-6">
+              <a href="/" className="inline-block group">
                 <img
-                  src="/images/facebook.png"
-                  alt="facebook.com"
-                  className="h-5"
+                  src="/assets/footer_white_logo.png"
+                  alt="Minimally Logo"
+                  className="h-12 lg:h-16 w-auto filter brightness-0 invert transition-all duration-300 group-hover:scale-105"
                 />
               </a>
-              <a
-                href="https://www.instagram.com/minimally_official/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="opacity-70 hover:opacity-100 transition"
-              >
-                <img
-                  src="/images/instagram.png"
-                  alt="instagram.com"
-                  className="h-5"
-                />
-              </a>
+              
+              <div className="max-w-md">
+                <h3 className="text-lg font-semibold text-white mb-4">Бидний тухай</h3>
+                <p className="text-sm leading-relaxed text-gray-400">
+                  Бид танд бараа бүтээгдэхүүнийг төлбөрийн олон төрлийн нөхцөлөөр
+                  илүү хялбараар худалдан авах боломжийг олгож байна.
+                </p>
+              </div>
+
+              {/* Social Media */}
+              <div className="flex items-center space-x-4">
+                <span className="text-sm font-medium text-white">Бидэнтэй хамт:</span>
+                <div className="flex space-x-3">
+                  <a
+                    href="https://www.facebook.com/minimally.mn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 bg-blue-600/20 hover:bg-blue-600 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 group"
+                    aria-label="Facebook хуудас"
+                  >
+                    <svg className="w-5 h-5 text-blue-400 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M22 12a10 10 0 1 0-11.6 9.9v-7h-2.2V12h2.2V9.8c0-2.2 1.3-3.4 3.3-3.4.95 0 1.9.17 1.9.17v2.1h-1.1c-1 0-1.3.63-1.3 1.3V12h2.2l-.35 2.9h-1.85v7A10 10 0 0 0 22 12Z" />
+                    </svg>
+                  </a>
+                  <a
+                    href="https://www.instagram.com/minimally_official/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 bg-pink-600/20 hover:bg-pink-600 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 group"
+                    aria-label="Instagram хуудас"
+                  >
+                    <svg className="w-5 h-5 text-pink-400 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2.2A2.8 2.8 0 1 0 12 17.8 2.8 2.8 0 0 0 12 9.2Zm5.55-1.65a1.05 1.05 0 1 1 0 2.1 1.05 1.05 0 0 1 0-2.1Z" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Contact Info */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-white">Холбоо барих</h3>
+              
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <svg className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  <div>
+                    <p className="text-sm font-medium text-white">Утас</p>
+                    <p className="text-sm text-gray-400">8043-1000, 8042-1000</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-3">
+                  <svg className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <p className="text-sm font-medium text-white">Цагийн хуваарь</p>
+                    <p className="text-sm text-gray-400">Өдөр бүр 10:00 - 18:30</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-3">
+                  <svg className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  <div>
+                    <p className="text-sm font-medium text-white">Цахим шуудан</p>
+                    <a href="mailto:sales@minimally.mn" className="text-sm text-blue-400 hover:text-blue-300 transition-colors">
+                      sales@minimally.mn
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Location */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-white">Хаяг</h3>
+              
+              <div className="flex items-start space-x-3">
+                <svg className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <div>
+                  <p className="text-sm text-gray-400 leading-relaxed">
+                    Нарны замын Доктор болон Миний дэлгүүр 2-ын дунд Luxhouse-5 
+                    Худалдааны төвийн 2 давхарт
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6 p-4 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl border border-blue-600/20">
+                <p className="text-sm font-medium text-blue-300 italic">
+                  Minimally -тай ХАМТ
+                </p>
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Bottom bar */}
-        <div className="mt-8 border-t border-neutral-200 dark:border-neutral-800 pt-4 text-center text-[12px] text-neutral-500 dark:text-neutral-400">
-          © {new Date().getFullYear()} Minimally. Бүх эрх хуулиар хамгаалагдсан.
+      {/* Bottom bar */}
+      <div className="border-t border-gray-700/50 bg-gray-900/50 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+            <p className="text-sm text-gray-400">
+              © {new Date().getFullYear()} Minimally. Бүх эрх хуулиар хамгаалагдсан.
+            </p>
+            <div className="flex items-center space-x-4 text-xs text-gray-500">
+              <a href="/privacy" className="hover:text-gray-300 transition-colors">Нууцлалын бодлого</a>
+              <span>•</span>
+              <a href="/terms" className="hover:text-gray-300 transition-colors">Үйлчилгээний нөхцөл</a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
