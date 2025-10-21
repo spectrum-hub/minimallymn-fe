@@ -58,7 +58,7 @@ const ProductListScreen: React.FC = () => {
   );
 
   // Infinite scroll
-  const { ref, inView } = useInView({ threshold: 1.0 });
+  const { ref, inView } = useInView({ threshold: 1 });
   const debouncedInView = useDebounce(inView, 300);
 
   // Fetch products

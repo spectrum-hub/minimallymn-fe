@@ -12,22 +12,26 @@ export const GET_LOCATIONS = gql`
   }
 `;
 
-// filters: { name: $searchValue, attributesValues: ["1-2", "3-4"] }
+  // products(page: 1, pageSize: 20, orderBy: "name_desc", 
+  // filters: {
+  //   # name: "Будаатай"
+  //   # cids: [1, 2, 9]
+  //   category: "Аялал"
+  // }  
+  // ) {
 
 export const GET_PRODUCTS = gql`
   query (
     $page: Int = 1
     $pageSize: Int = 20
     $orderBy: String
-    $searchValue: String
+    $filters: ProductFilter
   ) {
     products(
       page: $page
       pageSize: $pageSize
       orderBy: $orderBy
-      filters: {
-        name: $searchValue
-      }
+      filters: $filters
     ) {
       pageInfo {
         hasNextPage
@@ -38,98 +42,48 @@ export const GET_PRODUCTS = gql`
         pageSize
       }
       items {
-        indicesCount
-        attrName
-        attValueName
-        attValueId
-        priceExtra
-        attributeProductTmplId
-        categoryName
-        categoryId
-        brandName
-        discountPrice
-        templateName
-        productId
+        category
         productTmplId
+        productId
         listPrice
-        mainImageUrl
-        variantImageUrl
-      }
-    }
-  }
-`;
-export const OLD_GET_PRODUCTS = gql`
-  query (
-    $page: Int = 1
-    $pageSize: Int = 20
-    $orderBy: String
-    $searchValue: String
-    $attributesValues: [String]
-    $categoryId: Int
-    $brands: [String] # Add brands argument
-    $onsale: Int
-  ) {
-    products(
-      page: $page
-      pageSize: $pageSize
-      orderBy: $orderBy
-      filters: {
-        onsale: $onsale
-        name: $searchValue
-        attributesValues: $attributesValues
-        categoryId: $categoryId
-        brands: $brands # Include brands in filters
-      }
-    ) {
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-        totalCount
-        pageCount
-        pageSize
-        currentPage
-      }
-      publicCategories {
-        id
-        name
-        parentPath
-      }
-      items {
-        id
-        name
-        listPrice
-        standardPrice
-        type
-        websiteSequence
-        category {
+        productName
+        attributes
+        categoryNames
+        priceExtraSum
+        mainImageUrl {
+          main
+          medium
+          small
+        }
+        variantImageUrl {
+          main
+          medium
+          small
+        }
+        brand {
           id
+          logo
           name
         }
-        productVariantIds
-        productVariantId
-        productVariantCount
-        barcode
-        pricelistItemCount
-        images {
-          id
-          url
+        price {
+          currency
+          formatted
+          price
         }
-        productTemplateImageIds
-      }
-      attributes {
-        id
-        name
-        sequence
-        attributeId
-        color
-        htmlColor
-        active
-        defaultExtraPrice
-        displayType
+        discount {
+          originalPrice
+          originalPriceFormatted
+          rate
+          currency
+          savingsFormatted
+          savings
+        }
+        tags
       }
     }
   }
 `;
+
 export const PRODUCT_DETAIL_PLATFORM = gql`
   query ($platformItemId: String = "", $platform: String = "amazon") {
     itemDetailPlatform(platformItemId: $platformItemId, platform: $platform) {

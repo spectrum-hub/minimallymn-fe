@@ -61,10 +61,6 @@ const ProductItemCard: FC<ProductItemProps> = ({
     }
   };
 
-  const itemName = `${item?.templateName?.mn_MN}${
-    item?.attValueName?.mn_MN ? ` - ${item?.attValueName?.mn_MN}` : ""
-  }`;
-
   return (
     <div
       className={` ${isMobile ? "" : " group "} relative bg-white w-full shadow 
