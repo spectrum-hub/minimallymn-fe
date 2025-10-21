@@ -9,7 +9,7 @@ const ProductLink = ({
   children: React.ReactNode;
 }) => {
   return (
-    <NavLink className="block" to={`/products/${item?.id}`}>
+    <NavLink className="block" to={`/products/${item?.productId}`}>
       {children}
     </NavLink>
   );

@@ -12,13 +12,13 @@ export const GET_LOCATIONS = gql`
   }
 `;
 
-  // products(page: 1, pageSize: 20, orderBy: "name_desc", 
-  // filters: {
-  //   # name: "Бараа нэр"
-  //   # cids: [1, 2, 9]
-  //   category: "Категори "
-  // }  
-  // ) {
+// products(page: 1, pageSize: 20, orderBy: "name_desc",
+// filters: {
+//   # name: "Бараа нэр"
+//   # cids: [1, 2, 9]
+//   category: "Категори "
+// }
+// ) {
 
 export const GET_PRODUCTS = gql`
   query (
@@ -42,13 +42,28 @@ export const GET_PRODUCTS = gql`
         pageSize
       }
       items {
-        category
         productTmplId
         productId
         productName
+        isFrontListView
         attributes
+        tags
         categoryNames
-        priceExtraSum
+        templateAdditionalImages {
+          main
+          medium
+          small
+        }
+        variantAdditionalImages {
+          main
+          medium
+          small
+        }
+        brand {
+          id
+          name
+          logo
+        }
         mainImageUrl {
           main
           medium
@@ -59,25 +74,11 @@ export const GET_PRODUCTS = gql`
           medium
           small
         }
-        brand {
-          id
-          logo
-          name
-        }
         price {
-          currency
-          formatted
           price
-        }
-        discount {
-          originalPrice
-          originalPriceFormatted
-          rate
+          formatted
           currency
-          savingsFormatted
-          savings
         }
-        tags
       }
     }
   }

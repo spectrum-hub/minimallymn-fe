@@ -44,14 +44,13 @@ const BlockProducts: FC<BlockProductsProps> = ({ block }) => {
 
   return (
     <section className={`${block?.data_name}  mx-auto `}>
-      <h2 className="text-3xl font-bold mb-8">Featured Products</h2>
       <div
         className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 
         gap-1 md:gap-2
       "
       >
         {(data?.products?.items ?? []).map((item) => (
-          <ProductItemCard key={item.id} item={item} />
+          <ProductItemCard key={item.productId} item={item} />
         ))}
       </div>
     </section>

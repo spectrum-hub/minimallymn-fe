@@ -1,5 +1,5 @@
 export const websiteId = "1";
-// export const baseURL = "https://minim-admini.minimally.mn/";
+/// export const baseURL = "https://minim-admini.minimally.mn/";
 
 export const baseURL = "http://172.18.228.210:8069";
  

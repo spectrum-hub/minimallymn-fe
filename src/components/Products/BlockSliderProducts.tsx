@@ -69,7 +69,7 @@ const Carousel: FC<BlockProductsProps> = ({ block }) => {
         spaceBetween={10}
         // slidesPerView={numberSlide}
         autoplay={{
-          delay: 5000,
+          delay: 8000,
           disableOnInteraction: false,
         }}
         navigation

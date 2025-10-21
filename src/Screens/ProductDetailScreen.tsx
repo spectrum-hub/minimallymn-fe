@@ -117,7 +117,7 @@ const ProductDetailScreen = () => {
   );
   const categoryProductsItems =
     categoryProductsData?.products?.items?.filter(
-      (p) => p.id !== product?.id
+      (p) => Number(p.productId)!== product?.id
     ) ?? [];
   const publicCategories =
     categoryProductsData?.products?.publicCategories ?? [];
@@ -271,8 +271,7 @@ const ProductDetailScreen = () => {
           {categoryProductsItems.map((item) => (
             <ProductItemCard
               item={item}
-              key={item.id}
-              type="slider"
+              key={item.productId}
               isMobile={isMobile}
             />
           ))}

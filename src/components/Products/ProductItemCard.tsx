@@ -7,6 +7,7 @@ import Badge from "../Badge";
 import { useAddWishlist, useRemoveWishlist } from "../../Hooks/use-wishlist";
 import { useLocation } from "react-router";
 import { baseURL } from "../../lib/configs";
+import React from "react";
 
 interface ProductItemProps {
   item: ProductItem;
@@ -43,7 +44,8 @@ const ProductItemCard: FC<ProductItemProps> = ({
 
   const isNew = false; // Consider making this dynamic based on product data
   const brand = item.brand?.name; // Use brand from GraphQL
-  const originalPrice = discountPrice > 0 ? item.discount?.originalPrice : undefined;
+  const originalPrice =
+    discountPrice > 0 ? item.discount?.originalPrice : undefined;
 
   const handleAddToWishlist = async () => {
     await addWishlist();
@@ -62,7 +64,9 @@ const ProductItemCard: FC<ProductItemProps> = ({
 
   return (
     <div
-      className={`${isMobile ? "" : "group"} relative bg-white w-full shadow-sm hover:shadow-xl 
+      className={`${
+        isMobile ? "" : "group"
+      } relative bg-white w-full shadow-sm hover:shadow-xl 
           transition-all duration-300 ease-in-out transform hover:-translate-y-1 rounded-xl border border-gray-100 hover:border-gray-200 overflow-hidden`}
     >
       <ProductLink
@@ -74,7 +78,10 @@ const ProductItemCard: FC<ProductItemProps> = ({
         {(discount > 0 || isNew) && (
           <div className="absolute left-3 top-3 z-10 space-y-2">
             {discount > 0 && (
-              <Badge variant="outline" className="font-semibold shadow-md bg-red-500 text-white border-red-500 px-2 py-1 text-xs rounded-lg">
+              <Badge
+                variant="outline"
+                className="font-semibold shadow-md bg-red-500 text-white border-red-500 px-2 py-1 text-xs rounded-lg"
+              >
                 -{discount.toFixed(0)}%
               </Badge>
             )}
@@ -86,7 +93,11 @@ const ProductItemCard: FC<ProductItemProps> = ({
           </div>
         )}
 
-        {brand && <Badge className={`${style.badge} bg-blue-500 text-white`}>{brand}</Badge>}
+        {brand && (
+          <Badge className={`${style.badge} bg-blue-500 text-white`}>
+            {brand}
+          </Badge>
+        )}
 
         {/* Image Container with improved styling */}
         <div className="relative rounded-t-xl bg-gradient-to-br from-gray-50 to-white overflow-hidden aspect-square">
@@ -104,17 +115,19 @@ const ProductItemCard: FC<ProductItemProps> = ({
         {/* Content Container with better spacing */}
         <div className="p-4 flex-1 flex flex-col justify-between">
           {/* <RenderItemName item={item} /> */}
-          <h3>{item?.productName}</h3>
-          
+          <RenderItemName item={item} />
+
           {/* Price Section with improved styling */}
-          <div className="mt-3 flex items-center justify-between">
+          <div className="mt-1 flex items-center justify-between">
             <div className="flex items-baseline gap-2">
-              <span className="font-bold text-lg text-gray-900">
-                {Number(price) > 0 ? `${price.toLocaleString()}₮` : ""}
+              <span className="font-bold text-sm text-gray-900">
+                {Number(item?.price?.price) > 0
+                  ? `${item?.price?.formatted}`
+                  : ""}
               </span>
-              {originalPrice && (
+              {Number(item?.discount?.originalPrice) > 0 && (
                 <span className="text-sm text-gray-500 line-through">
-                  {originalPrice.toLocaleString()}₮
+                  {item?.discount?.originalPriceFormatted}
                 </span>
               )}
             </div>
@@ -171,17 +184,33 @@ export default ProductItemCard;
 
 const RenderItemName: FC<{ item: ProductItem }> = ({ item }) => {
   const name = item?.productName || "";
-  const attributes = item?.attributes ? JSON.parse(item.attributes) : null;
+
+  const entriesAttributesLength = item?.attributes?.length ?? 0;
+  const attributesFirstThree = item?.attributes?.slice(0, 3);
 
   return (
-    <h3 className="mt-0 text-gray-900 line-clamp-2 font-medium text-sm leading-tight">
-      {attributes ? (
+    <div className="mt-0 text-gray-900 leading-tight">
+      {entriesAttributesLength > 0 ? (
         <>
-          {name} - <span className="font-semibold text-gray-700">{attributes}</span>
+          <h5 className="text-xs line-clamp-2 my-1 block leading-[16px] ">{name}</h5>
+          <div className=" text-gray-700 min-h-8">
+            {(attributesFirstThree ?? [])?.map((obj, index) => (
+              <div key={index} className="text-xs">
+                {Object.entries(obj).map(([key, value]) => (
+                  <div key={key}>
+                    {key}:{" "}
+                    <span className=" text-black ">
+                      {value.slice(0, 1).toUpperCase() + value.slice(1)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </>
       ) : (
-        name
+        <h5 className="text-sm line-clamp-2 my-1">{name}</h5>
       )}
-    </h3>
+    </div>
   );
 };

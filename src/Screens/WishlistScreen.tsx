@@ -64,7 +64,7 @@ const WishListScreen = () => {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
           {(products ?? []).map((item) => (
             <ProductItemCard
-              key={item.id}
+              key={item.productId}
               item={item}
               listType={"wishlist"}
               action={() => refetch()}

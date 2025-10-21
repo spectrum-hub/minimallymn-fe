@@ -70,6 +70,7 @@ const ImageSlider: FC<Props> = ({ item, type = "list", selectedProduct }) => {
         )
       ) ?? [];
     return [...templateImages, ...itemImages, ...variantImages].filter(Boolean);
+    
   }, [item, type]);
 
   const imagesArray = useMemo(() => {
@@ -88,7 +89,7 @@ const ImageSlider: FC<Props> = ({ item, type = "list", selectedProduct }) => {
       >
         <Image
           src={imagesArray?.[0]}
-          alt={item?.name ?? ""}
+          alt={""}
           className="
             mx-auto w-full object-contain max-h-[200px]
             center-image p-1 h-full
@@ -119,7 +120,7 @@ const ImageSlider: FC<Props> = ({ item, type = "list", selectedProduct }) => {
           <SwiperSlide key={index}>
             <Image
               src={image}
-              alt={item?.name ?? ""}
+              alt={""}
               className="mx-auto w-full object-contain p-8 rounded-md"
               height="100%"
               loading="lazy"
@@ -142,7 +143,7 @@ const ImageSlider: FC<Props> = ({ item, type = "list", selectedProduct }) => {
             <SwiperSlide key={index}>
               <img
                 src={image}
-                alt={item?.name ?? ""}
+                alt={""}
                 className="
                 h-[54px] w-[48px] 
                 md:h-[70px] md:w-[64px] 

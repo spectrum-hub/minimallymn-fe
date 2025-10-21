@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Category } from "./Category";
-
 export interface Attribute {
   id: number;
   name: string;
@@ -76,11 +74,14 @@ export interface ProductImageUrl {
 }
 
 export interface ProductItem {
+  qtyAvailable: number;
+  id: number;
+  name: string
   category: string;
   productTmplId: string;
   productId: string;
   productName: string;
-  attributes: string;
+  attributes?: Record<string, string>[];
   categoryNames: string[];
   priceExtraSum: number;
   mainImageUrl: ProductImageUrl;
@@ -89,6 +90,20 @@ export interface ProductItem {
   price: ProductPrice;
   discount: ProductDiscount;
   tags: string[];
+  images: ProductImage[];
+  productTemplateImageIds: string[];
+  productVariantImageIds: string[];
+  productVariantId: string;
+  productVariantCount: string;
+  productVariantNum: string;
+  productVariantName: string;
+  productVariantIds: string[];
+  propertyStockProductionId: string;
+  productVariants: {
+    combinationIndicesValues: CombinationIndicesValues[];
+  };
+  combinationIndicesValues: CombinationIndicesValues[];
+  combinationIndices: string;
 }
 
 

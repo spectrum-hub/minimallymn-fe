@@ -14,9 +14,11 @@ const ProductLink: FC<Props> = ({ item, children, className, returnTo }) => {
     <Link
       to={
         "/products/" +
-        (item?.id ?? "") +
+        (item?.productTmplId ?? "") +
         "?name=" +
-        (item?.name ? item.name.toLowerCase().replace(/\s+/g, "-") : "") +
+        (item?.productName
+          ? item.productName.toLowerCase().replace(/\s+/g, "-")
+          : "") +
         (returnTo ? "&returnTo=" + returnTo : "")
       }
       className={className}
