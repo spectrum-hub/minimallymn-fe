@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { ProductItem } from "../../types/Products";
+import { ProductAttribute, ProductItem } from "../../types/Products";
 import { ProductLink } from "../Links";
 import style from "./style.module.css";
 import IconButton from "./IconButton";
@@ -182,30 +182,48 @@ const ProductItemCard: FC<ProductItemProps> = ({
 
 export default ProductItemCard;
 
-const RenderItemName: FC<{ item: ProductItem }> = ({ item }) => {
-  const name = item?.productName || "";
+const capitalizeFirst = (s: string) =>
+  s.length > 0 ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 
-  const entriesAttributesLength = item?.attributes?.length ?? 0;
-  const attributesFirstThree = item?.attributes?.slice(0, 3);
+const formatAttrValue = (value: ProductAttribute["value"]) => {
+  if (value === null || value === undefined) return "";
+  const str = String(value).trim();
+  return str ? capitalizeFirst(str) : "";
+};
+
+
+const RenderItemName: FC<{ item: ProductItem }> = ({ item }) => {
+  const name = item?.productName ?? "";
+
+  const attributes = Array.isArray(item?.attributes) ? item.attributes : [];
+  const entriesAttributesLength = attributes.length;
+  const attributesFirstThree = attributes.slice(0, 3);
 
   return (
     <div className="mt-0 text-gray-900 leading-tight">
       {entriesAttributesLength > 0 ? (
         <>
-          <h5 className="text-xs line-clamp-2 my-1 block leading-[16px] ">{name}</h5>
-          <div className=" text-gray-700 min-h-8">
-            {(attributesFirstThree ?? [])?.map((obj, index) => (
-              <div key={index} className="text-xs">
-                {Object.entries(obj).map(([key, value]) => (
-                  <div key={key}>
-                    {key}:{" "}
-                    <span className=" text-black ">
-                      {value.slice(0, 1).toUpperCase() + value.slice(1)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ))}
+          <h5 className="text-xs line-clamp-2 my-1 block leading-[16px] ">
+            {name}
+          </h5>
+
+          <div className="text-gray-700 min-h-8">
+            {(attributesFirstThree ?? []).map((attr, index) => {
+              // use value_id or attribute_id for stable key if available
+              const key = attr.value_id ?? attr.attribute_id ?? index;
+              const label = attr.attribute ?? "";
+              const val = formatAttrValue(attr.value);
+
+              // show "Attribute: Value" — hide if value empty
+              return (
+                <div key={key} className="text-xs">
+                  <span className="text-gray-600">{label}:</span>{" "}
+                  <span className="text-black">
+                    {val || <span className="text-gray-400">—</span>}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </>
       ) : (

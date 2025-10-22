@@ -73,15 +73,25 @@ export interface ProductImageUrl {
   small: string;
 }
 
+export interface ProductAttribute {
+  attribute_id: number;
+  attribute: string;
+  value_id: number;
+  value: string;
+}
+
+// Тухайн талбарын төрөл:
+export type Attributes = ProductAttribute[];
+
 export interface ProductItem {
   qtyAvailable: number;
   id: number;
-  name: string
+  name: string;
   category: string;
   productTmplId: string;
   productId: string;
   productName: string;
-  attributes?: Record<string, string>[];
+  attributes?: Attributes;
   categoryNames: string[];
   priceExtraSum: number;
   mainImageUrl: ProductImageUrl;
@@ -105,8 +115,6 @@ export interface ProductItem {
   combinationIndicesValues: CombinationIndicesValues[];
   combinationIndices: string;
 }
-
-
 
 export interface AttributesList {
   productVariantId?: number;
