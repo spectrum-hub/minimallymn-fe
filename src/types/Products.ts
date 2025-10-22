@@ -99,7 +99,11 @@ export interface ProductItem {
   brand: ProductBrand;
   price: ProductPrice;
   discount: ProductDiscount;
-  tags: string[];
+  tags: {
+    name: string;
+    tag_id: string;
+    color: string;
+  }[];
   images: ProductImage[];
   productTemplateImageIds: string[];
   productVariantImageIds: string[];
@@ -114,6 +118,7 @@ export interface ProductItem {
   };
   combinationIndicesValues: CombinationIndicesValues[];
   combinationIndices: string;
+  templateAdditionalImages: ProductImageUrl[];
 }
 
 export interface AttributesList {
