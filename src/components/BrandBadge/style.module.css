@@ -1,0 +1,7 @@
+.brandLogo {
+  @apply w-20 md:w-24 min-h-14 object-contain border border-gray-200 rounded-lg p-2 mb-2;
+}
+
+.brandName {
+  @apply text-lg border border-gray-100 rounded-lg max-w-28 text-center font-semibold text-gray-900 font-sans;
+}
