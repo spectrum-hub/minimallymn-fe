@@ -54,6 +54,7 @@ const Carousel: FC<BlockProductsProps> = ({ block }) => {
       }
     }
   };
+  
   const { isMobile } = useWindowWidth();
 
   if (loading) return <Spin />;

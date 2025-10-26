@@ -49,6 +49,7 @@ const ProductListScreen: React.FC = () => {
     [searchParams]
   );
 
+  console.log(existingBrandsFilters[0]);
   // State
   const [products, setProducts] = useState<ProductItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -76,6 +77,7 @@ const ProductListScreen: React.FC = () => {
       }),
       ...(existingBrandsFilters.length > 0 && {
         brands: existingBrandsFilters,
+        brandIds: existingBrandsFilters,
       }),
     },
     {
@@ -85,7 +87,6 @@ const ProductListScreen: React.FC = () => {
     }
   );
 
-  // Effects
   useEffect(() => {
     setCategoryId(selectedCategoryId ? Number(selectedCategoryId) : undefined);
   }, [selectedCategoryId]);
@@ -140,8 +141,6 @@ const ProductListScreen: React.FC = () => {
     setSearchParams(currentParams);
     setCurrentPage(1);
   };
-
-  // Category breadcrumb
 
   const getCategoryPath = useMemo(() => {
     if (!selectedCategoryId || !categories?.categories) return [];
