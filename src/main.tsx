@@ -11,8 +11,6 @@ import "swiper/css/scrollbar";
 import "swiper/css/grid";
 
 
-
-
 import AppTheme from "./components/theme";
 import { Provider } from "react-redux";
 import { store } from "./Redux/store.ts";

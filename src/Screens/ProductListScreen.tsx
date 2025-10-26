@@ -20,6 +20,7 @@ import ProductItemCard from "../components/Products/ProductItemCard";
 import { PRODUCTS_SCREEN_DEFAULT_TOTAL } from "../Constants";
 import EmptySearch from "../components/Products/EmptySearch";
 import useWindowWidth from "../Hooks/use-window-width";
+import BrandBadge from "../components/BrandBadge";
 
 const ProductListScreen: React.FC = () => {
   const { isMobile } = useWindowWidth();
@@ -257,10 +258,15 @@ const ProductListScreen: React.FC = () => {
         <Attributes attributes={data?.products?.attributes} loading={loading} />
         <div className="w-full">
           <div className={styles.containerItemHeader}>
+            <BrandBadge
+              brand={products?.[0]?.brand}
+              isViewBrand={!existingBrandsFilters?.[0]}
+            />
+
             <div className={styles.containerSubHeader}>
-              <h2 className="text-md text-gray-900 w-full mb-2">
-                Бараа бүтээгдэхүүн
-              </h2>
+              <h3 className="text-sm text-gray-900 w-full mb-2">
+                Бүтээгдэхүүн
+              </h3>
               <SortOrderList
                 sortOrder={sortOrder}
                 sortOnChange={setSortOrder}
