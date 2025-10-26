@@ -12,26 +12,55 @@ export const GET_LOCATIONS = gql`
   }
 `;
 
-// products(page: 1, pageSize: 20, orderBy: "name_desc",
-// filters: {
-//   # name: "Бараа нэр"
-//   # cids: [1, 2, 9]
-//   category: "Категори "
-// }
-// ) {
+/** 
+ * 
+query products {
+  products(page: 1, pageSize: 200, orderBy: "name_desc", 
+  filters: {
+    # name: "Будаатай"
+    # cids: [1, 2, 9]
+    # category: "А"
+    # cids:[2]
+    brandIds: [1,3]
+  }
+  ) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      totalCount
+      pageCount
+      currentPage
+      pageSize
+    }
+    items {
+      productTmplId      
+      productId
+      productName
+
+ */
 
 export const GET_PRODUCTS = gql`
   query (
     $page: Int = 1
     $pageSize: Int = 20
     $orderBy: String
-    $filters: ProductFilter
+    $searchValue: String
+    $categoryId: Int
+    $onsale: Int
+    $attributeValueIds: [Int]
+    $brandIds: [Int]
   ) {
     products(
       page: $page
       pageSize: $pageSize
       orderBy: $orderBy
-      filters: $filters
+      filters: {
+        name: $searchValue
+        cids: [$categoryId]
+        brandIds: $brandIds
+        onsale: $onsale
+        attributeValueIds: $attributeValueIds
+      }
     ) {
       pageInfo {
         hasNextPage

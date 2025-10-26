@@ -73,11 +73,10 @@ const ProductListScreen: React.FC = () => {
       ...(categoryId && { categoryId }),
       ...(filterOnSale && { onsale: 1 }),
       ...(filterAttributes.length > 0 && {
-        attributesValues: filterAttributes,
+        attributeValueIds: filterAttributes,
       }),
       ...(existingBrandsFilters.length > 0 && {
-        brands: existingBrandsFilters,
-        brandIds: existingBrandsFilters,
+        brandIds: existingBrandsFilters.map(Number),
       }),
     },
     {
