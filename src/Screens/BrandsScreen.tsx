@@ -33,7 +33,7 @@ const GET_BRANDS = gql`
 
 function BrandsScreen() {
   const [page, setPage] = useState(1);
-  const pageSize = 30; // Default page size
+  const pageSize = 40; // Default page size
   const orderBy = "name asc"; // Default sorting
   const websiteId = 1; // Example website ID; adjust as needed or make dynamic
   const { loading, error, data } = useQuery(GET_BRANDS, {
