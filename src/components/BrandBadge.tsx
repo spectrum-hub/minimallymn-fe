@@ -1,21 +1,23 @@
 import { FC } from "react";
 import { ProductBrand } from "../types/Products";
 
-const BrandBadge: FC<{ brand?: ProductBrand; isViewBrand: boolean }> = ({
-  brand,
-  isViewBrand,
-}) => {
+interface Props {
+  brand?: ProductBrand;
+  isViewBrand: boolean;
+}
+const BrandBadge: FC<Props> = ({ brand, isViewBrand }) => {
   if (isViewBrand) {
     return null;
   }
 
   if (brand?.logo && brand.logo.length > 10) {
+    const classBrandName =
+      "w-20 md:w-24 min-h-14 object-contain border border-gray-200 rounded-lg p-2 mb-2 ";
     return (
       <img
         src={`data:image/png;base64,${brand?.logo}`}
         alt={`${brand?.name} Logo`}
-        className={` w-20 md:w-24 min-h-14 object-contain
-            border border-gray-200 rounded-lg p-2 mb-2 `}
+        className={classBrandName}
       />
     );
   }
