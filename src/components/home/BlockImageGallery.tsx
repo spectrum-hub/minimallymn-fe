@@ -1,5 +1,4 @@
 import { FC } from "react";
-import { Block } from "../../types/Blocks";
 import { baseURL } from "../../lib/configs";
 import {
   Navigation,
@@ -9,16 +8,17 @@ import {
   A11y,
 } from "swiper/modules";
 import { Swiper as SwiperComponent, SwiperSlide } from "swiper/react";
+import { RowItem } from "../../types";
 
 interface Props {
-  block: Block;
+  rowItems?: RowItem[];
 }
 
-const BlockImageGallery: FC<Props> = ({ block }) => {
-  const images = imageFinder(block);
+const BlockImageGallery: FC<Props> = ({ rowItems }) => {
+ 
 
   return (
-    <section className={`${block.attributes.class}  mx-auto`}>
+    <section className={` mx-auto`}>
       <div
         className="absolute left-1 top-[50%] z-10
           bg-gray-400  
@@ -32,12 +32,12 @@ const BlockImageGallery: FC<Props> = ({ block }) => {
         pagination
         className=" h-full max-h-[600px] shadow"
       >
-        {(images ?? []).map((image, index) => (
+        {(rowItems ?? []).map((image, index) => (
           <SwiperSlide key={index}>
             <img
               key={index}
-              src={`${baseURL}${image?.attributes?.src}`}
-              alt={image.attributes.alt || ""}
+              src={`${baseURL}${image?.itemImage?.large}`}
+              alt={image?.itemTitle || ""}
               className="h-full object-cover w-full"
             />
           </SwiperSlide>
@@ -48,19 +48,4 @@ const BlockImageGallery: FC<Props> = ({ block }) => {
 };
 
 export default BlockImageGallery;
-
-const imageFinder = (block?: Block): Block[] => {
-  const images: Block[] = [];
-
-  if (block?.tag === "img") {
-    images.push(block);
-  }
-
-  if (block?.children && block?.children.length > 0) {
-    block.children.forEach((child) => {
-      images.push(...imageFinder(child)); // Collect images from children recursively
-    });
-  }
-
-  return images;
-};
+ 

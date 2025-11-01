@@ -34,6 +34,7 @@ export interface GridRow {
 }
 
 export interface RowItem {
+  className: string;
   itemId: number | null;
   itemTitle: string | null;
   itemRowRel: string | null;

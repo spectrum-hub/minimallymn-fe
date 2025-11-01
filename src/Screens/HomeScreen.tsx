@@ -34,7 +34,7 @@ const RenderRow = ({
 
 
   if(row?.rowType === "banner"){
-    return <>banner </>
+    return <BlockImageGallery rowItems={row?.rowItems}/>
   }
 
   return <></>
