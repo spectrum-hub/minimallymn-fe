@@ -1,7 +1,5 @@
 export interface ThemeGridResponse {
-  data: {
-    themeGrid: ThemeGrid;
-  };
+  themeGrid: ThemeGrid;
 }
 
 export interface ThemeGrid {

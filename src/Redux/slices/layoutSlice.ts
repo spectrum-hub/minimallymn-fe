@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { WebBlocksResponse } from "../../types/Blocks";
+import { ThemeGridResponse } from "../../types";
 
 interface LayoutState {
-  data: WebBlocksResponse | null;
+  data: ThemeGridResponse | null;
   loading: boolean;
   error: string | null;
   message: string | null;
@@ -27,7 +27,7 @@ const layoutSlice = createSlice({
     },
     setLayoutSuccess: (
       state,
-      action: PayloadAction<WebBlocksResponse | null>
+      action: PayloadAction<ThemeGridResponse | null>
     ) => {
       state.data = action.payload;
       state.loading = false;

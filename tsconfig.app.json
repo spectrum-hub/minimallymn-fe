@@ -22,5 +22,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "swiper.d.ts"]
+  "include": ["src", "swiper.d.ts", "src/Screens/.tsx"]
 }
