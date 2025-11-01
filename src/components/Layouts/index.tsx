@@ -99,7 +99,7 @@ const MainLayout: FC<Props> = ({ children }) => {
   const dispatch: AppDispatch = useDispatch();
   const { isMobile } = useWindowWidth();
 
-  const cart = useSelector((state: RootState) => state.cart.cart);
+  const cart = useSelector((state: RootState) => state?.cart?.cart);
   const categories = useSelector((state: RootState) => state.category);
 
   const footer = useSelector(

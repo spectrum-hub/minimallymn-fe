@@ -7,12 +7,12 @@ import {
 import { setContext } from "@apollo/client/link/context";
 import { AUTH_SESSION_ID, CLIENT_CUSTOMER_TOKEN } from "../Constants";
 import { decryptData } from "./helpers";
-import { baseURL } from "./configs";
-import { ApiContextType } from "../types/Common";
+import { baseURL } from "./configs"; 
 
 // Create links for each GraphQL endpoint
 const coreLink = new HttpLink({ uri: `${baseURL}/api/v1/graphql` });
 const commerceLink = new HttpLink({ uri: `${baseURL}/api/v3/graphql` });
+const version8Link = new HttpLink({ uri: `${baseURL}/api/v8/graphql` });
 
 // Function to safely retrieve decrypted auth token
 const getAuthToken = () => {
@@ -38,8 +38,15 @@ const authLink = setContext(() => {
 });
 
 const dynamicLink = ApolloLink.split(
-  (operation) => (operation.getContext().api as ApiContextType) === "commerce",
-  commerceLink,
+  (operation) => {
+    const api = operation.getContext().api;
+    return api === "commerce" || api === "version8";
+  },
+  ApolloLink.split(
+    (operation) => operation.getContext().api === "commerce",
+    commerceLink,
+    version8Link
+  ),
   coreLink
 );
 

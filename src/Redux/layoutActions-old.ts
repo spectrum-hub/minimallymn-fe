@@ -13,6 +13,7 @@ import {
   setLayoutSuccess,
 } from "./slices/layoutSlice";
 import { gql } from "@apollo/client";
+import { websiteId } from "../lib/configs";
 import {
   setCategoriesFailure,
   setCategoriesRequest,
@@ -20,56 +21,11 @@ import {
 } from "./slices/categorySlice";
 
 export const GET_LAYOUTS = gql`
-  query WebsiteBlocks($themeType: String!) {
-    themeGrid(themeType: $themeType) {
-      id
-      name
-      companyName
-      companyDescription
-      contactPhone
-      contactEmail
-      address
-      timetable
-      footerTemplate
-      copyrightText
-      facebookUrl
-      youtubeUrl
-      instagramUrl
-      twitterUrl
-      webfrontDefault
-      headerItems
-      footerItems
-      domainName
-      rows {
-        gridId
-        rowId
-        rowType
-        itemViewType
-        sectionTitle
-        sectionSubtitle
-        sectionDescription
-        rowItems {
-          itemId
-          itemTitle
-          itemRowRel
-          itemDescriptionId
-          itemDescriptionTitle
-          itemDescriptionSubTitle
-          itemDescriptionFullDescription
-          itemDescriptionViewStyle
-          itemDescriptionRowRel
-          itemName
-          productTemplateId
-          itemLink
-          itemType
-          itemAttributes
-          itemImage {
-            large
-            medium
-            small
-          }
-        }
-      }
+  query WebsiteBlocks($websiteId: String!, $pageUrl: String!) {
+    websiteBlocks(pageUrl: $pageUrl, websiteId: $websiteId) {
+      menus
+      blocks
+      footer
     }
   }
 `;
@@ -81,11 +37,8 @@ export const getLayoutsAsync =
     try {
       const { data } = await apolloClient.query({
         query: GET_LAYOUTS,
-        variables: { themeType: "webfront" },
+        variables: { websiteId, pageUrl: "/" },
         fetchPolicy: forceRefresh ? "network-only" : "cache-first", // Toggle policy
-        context: {
-          api: "version8",
-        },
       });
 
       if (data) {
