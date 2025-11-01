@@ -9,7 +9,7 @@ import ProductItemCard from "../Products/ProductItemCard";
 
 interface Props {
   row?: GridRow;
-  isMobile?: boolean
+  isMobile?: boolean;
 }
 
 const BlockCategories: FC<Props> = ({ row, isMobile }) => {
@@ -40,7 +40,8 @@ const BlockCategories: FC<Props> = ({ row, isMobile }) => {
       context: {
         api: "minimally",
       },
-      skip: row?.itemViewType !== "item_products" || cidIds.length === 0, // Only run query when itemViewType is "item_products" and cidIds exist
+      // Only run query when itemViewType is "item_products" and cidIds exist
+      skip: row?.itemViewType !== "item_products" || cidIds.length === 0,
     }
   );
 
@@ -69,11 +70,7 @@ const BlockCategories: FC<Props> = ({ row, isMobile }) => {
         <section className="mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {data.products.items.map((item, index) => (
-              <ProductItemCard
-                key={index}
-                item={item}
-                isMobile={isMobile}
-              />
+              <ProductItemCard key={index} item={item} isMobile={isMobile} />
             ))}
           </div>
         </section>
