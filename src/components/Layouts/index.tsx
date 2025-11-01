@@ -1,8 +1,3 @@
-/**
- * components\Layouts\index.tsx
- * component: MainLayout
- * Enhanced version with better performance, modularity, and UX
- */
 import { StatusBar, Style } from "@capacitor/status-bar";
 import React, {
   FC,
