@@ -102,8 +102,8 @@ const MainLayout: FC<Props> = ({ children }) => {
   const cart = useSelector((state: RootState) => state?.cart?.cart);
   const categories = useSelector((state: RootState) => state.category);
 
-  const footer = useSelector(
-    (state: RootState) => state.layouts?.data?.websiteBlocks?.footer
+  const themeGrid = useSelector(
+    (state: RootState) => state.layouts?.data?.themeGrid
   );
   const { isAuthenticated, loading: authLoading } = useSelector(
     (state: RootState) => state.auth
@@ -198,7 +198,7 @@ const MainLayout: FC<Props> = ({ children }) => {
           </div>
         ) : (
           <footer className="mt-auto border-t border-gray-200/50 bg-white/80 backdrop-blur-sm">
-            <Footer footerData={footer ?? null} />
+            <Footer themeGrid={themeGrid ?? null} />
           </footer>
         )}
 
