@@ -15,8 +15,6 @@ interface Props {
 }
 
 const BlockImageGallery: FC<Props> = ({ rowItems }) => {
- 
-
   return (
     <section className={` mx-auto `}>
       <div
@@ -48,4 +46,3 @@ const BlockImageGallery: FC<Props> = ({ rowItems }) => {
 };
 
 export default BlockImageGallery;
- 

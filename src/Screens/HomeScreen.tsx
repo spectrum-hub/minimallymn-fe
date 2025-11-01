@@ -23,6 +23,7 @@ import BlockSEmbedCode from "../components/Products/BlockSEmbedCode";
 import ReactPlayer from "react-player";
 import useWindowWidth from "../Hooks/use-window-width";
 import { GridRow } from "../types";
+import BlockCategories from "../components/home/BlockCategories";
 
 const RenderRow = ({
   row,
@@ -31,15 +32,14 @@ const RenderRow = ({
   isMobile?: boolean;
   row?: GridRow;
 }) => {
-
-
-  if(row?.rowType === "banner"){
-    return <BlockImageGallery rowItems={row?.rowItems}/>
+  if (row?.rowType === "banner") {
+    return <BlockImageGallery rowItems={row?.rowItems} />;
+  } else if (row?.rowType === "category") {
+    return <BlockCategories rowItems={row?.rowItems} />;
   }
 
-  return <></>
+  return <></>;
 };
-
 
 const HomeScreen = () => {
   const { data, loading, error } = useSelector(
