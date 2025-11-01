@@ -210,8 +210,6 @@ const MainLayout: FC<Props> = ({ children }) => {
               right: 24,
               bottom: 24,
               borderRadius: 12,
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-              backgroundColor: '#3B82F6',
               border: 'none',
             }}
           />
