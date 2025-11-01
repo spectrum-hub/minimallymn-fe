@@ -18,7 +18,7 @@ const BlockImageGallery: FC<Props> = ({ rowItems }) => {
  
 
   return (
-    <section className={` mx-auto`}>
+    <section className={` mx-auto `}>
       <div
         className="absolute left-1 top-[50%] z-10
           bg-gray-400  
@@ -38,7 +38,7 @@ const BlockImageGallery: FC<Props> = ({ rowItems }) => {
               key={index}
               src={`${baseURL}${image?.itemImage?.large}`}
               alt={image?.itemTitle || ""}
-              className="h-full object-cover w-full"
+              className="h-full object-cover w-full rounded-md "
             />
           </SwiperSlide>
         ))}
