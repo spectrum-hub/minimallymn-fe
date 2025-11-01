@@ -43,7 +43,7 @@ const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
                 </span>
                 <div className="flex space-x-3">
                   <a
-                    href="https://www.facebook.com/minimally.mn"
+                    href={themeGrid?.facebookUrl ?? "#"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-10 h-10 bg-blue-600/20 hover:bg-blue-600 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 group"
@@ -58,7 +58,7 @@ const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
                     </svg>
                   </a>
                   <a
-                    href="https://www.instagram.com/minimally_official/"
+                    href={themeGrid?.instagramUrl ?? "#"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-10 h-10 bg-pink-600/20 hover:bg-pink-600 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 group"
