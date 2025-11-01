@@ -42,10 +42,10 @@ query products {
 export const GET_PRODUCTS = gql`
   query (
     $page: Int = 1
-    $pageSize: Int = 20
+    $pageSize: Int = 40
     $orderBy: String
     $searchValue: String
-    $categoryId: Int
+    $cids: [Int]
     $onsale: Int
     $attributeValueIds: [Int]
     $brandIds: [Int]
@@ -56,7 +56,7 @@ export const GET_PRODUCTS = gql`
       orderBy: $orderBy
       filters: {
         name: $searchValue
-        cids: [$categoryId]
+        cids: $cids
         brandIds: $brandIds
         onsale: $onsale
         attributeValueIds: $attributeValueIds

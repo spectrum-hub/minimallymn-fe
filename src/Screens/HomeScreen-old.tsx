@@ -15,7 +15,6 @@ import { useSelector } from "react-redux";
  */
 
 import BlockSliderProducts from "../components/Products/BlockSliderProducts";
-import BlockImageGallery from "../components/home/BlockImageGallery";
 import { Block, FooterBlock } from "../types/Blocks";
 import { RootState } from "../Redux/store";
 import { baseURL } from "../lib/configs";
@@ -126,9 +125,9 @@ const RenderChildren = ({
           return <BlockSliderProducts block={block as Block} key={index} />;
         }
 
-        if (block.data_snippet === "s_image_gallery") {
-          return <BlockImageGallery block={block as Block} key={index} />;
-        }
+        // if (block.data_snippet === "s_image_gallery") {
+        //   return <BlockImageGallery block={block as Block} key={index} />;
+        // }
 
         return (
           <section key={index} className={``}>
@@ -204,14 +203,14 @@ const HomeScreen = () => {
         *
       */}
 
-      {data?.websiteBlocks?.blocks?.map((block, index) => (
+      {/* {data?.websiteBlocks?.blocks?.map((block, index) => (
         <div key={index} className={""}>
           <RenderBlock block={block} />
           {block.children && (
             <RenderChildren blocks={block.children} isMobile={isMobile} />
           )}
         </div>
-      ))}
+      ))} */}
     </>
   );
 };

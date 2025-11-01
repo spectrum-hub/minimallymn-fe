@@ -35,7 +35,7 @@ const RenderRow = ({
   if (row?.rowType === "banner") {
     return <BlockImageGallery row={row} />;
   } else if (row?.rowType === "category") {
-    return <BlockCategories row={row} />;
+    return <BlockCategories row={row} isMobile={isMobile} />;
   }
 
   return <></>;
