@@ -33,9 +33,9 @@ const RenderRow = ({
   row?: GridRow;
 }) => {
   if (row?.rowType === "banner") {
-    return <BlockImageGallery rowItems={row?.rowItems} />;
+    return <BlockImageGallery row={row} />;
   } else if (row?.rowType === "category") {
-    return <BlockCategories rowItems={row?.rowItems} />;
+    return <BlockCategories row={row} />;
   }
 
   return <></>;

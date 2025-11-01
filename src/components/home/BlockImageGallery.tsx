@@ -8,13 +8,13 @@ import {
   A11y,
 } from "swiper/modules";
 import { Swiper as SwiperComponent, SwiperSlide } from "swiper/react";
-import { RowItem } from "../../types";
+import { GridRow } from "../../types";
 
 interface Props {
-  rowItems?: RowItem[];
+  row?: GridRow;
 }
 
-const BlockImageGallery: FC<Props> = ({ rowItems }) => {
+const BlockImageGallery: FC<Props> = ({ row }) => {
   return (
     <section className={` mx-auto `}>
       <div
@@ -30,7 +30,7 @@ const BlockImageGallery: FC<Props> = ({ rowItems }) => {
         pagination
         className=" h-full max-h-[600px] shadow"
       >
-        {(rowItems ?? []).map((image, index) => (
+        {(row?.rowItems ?? []).map((image, index) => (
           <SwiperSlide key={index}>
             <img
               key={index}
