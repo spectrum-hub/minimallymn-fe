@@ -23,7 +23,7 @@ import BlockSEmbedCode from "../components/Products/BlockSEmbedCode";
 import ReactPlayer from "react-player";
 import useWindowWidth from "../Hooks/use-window-width";
 import { GridRow } from "../types";
-import BlockCategories from "../components/home/BlockCategories";
+import CaruselSliderProducts from "../components/Products/CaruselSliderProducts";
 
 const RenderRow = ({
   row,
@@ -35,7 +35,11 @@ const RenderRow = ({
   if (row?.rowType === "banner") {
     return <BlockImageGallery row={row} />;
   } else if (row?.rowType === "category") {
-    return <BlockCategories row={row} isMobile={isMobile} />;
+    if (row.itemViewType === "item_products") {
+
+      console.log("rowrowrow", row);
+      return <CaruselSliderProducts row={row} isMobile={isMobile} />;
+    }
   }
 
   return <></>;

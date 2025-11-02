@@ -12,7 +12,7 @@ const slides = [
     id: 2,
     image: 'https://images.unsplash.com/photo-1585559700398-1385b3a8aeb6?auto=format&fit=crop&w=1200&h=400',
     title: 'America Litter',
-    subtitle: 'ШИНЭ БАРДА ИРЛЭЭ',
+    subtitle: 'ШИНЭ БАРАА ИРЛЭЭ',
   }
 ];
 
