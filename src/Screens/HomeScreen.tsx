@@ -7,6 +7,7 @@ import { GridRow } from "../types";
 import CaruselSliderProducts from "../components/Products/CaruselSliderProducts";
 import RowYTFBVideoPLayer from "../components/RowYTFBVideoPLayer";
 import RowTextDescription from "../components/RowTextDescription";
+import RowBrands from "../components/RowBrands";
 
 const RenderRow = ({
   row,
@@ -16,27 +17,36 @@ const RenderRow = ({
   row?: GridRow;
 }) => {
   const rowType = row?.rowType ?? "";
-  if (rowType === "banner") {
-    return <BlockImageGallery row={row} />;
-  } else if (rowType === "category") {
-    if (row?.itemViewType === "item_products") {
-      return <CaruselSliderProducts row={row} isMobile={isMobile} />;
-    }
-  } else if (rowType === "video") {
-    return <RowYTFBVideoPLayer row={row} isMobile={isMobile} />;
-  } else if (rowType === "text_description") {
-    return <RowTextDescription row={row} isMobile={isMobile} />;
-  }
 
-  return <></>;
+  switch (rowType) {
+    case "banner":
+      return <BlockImageGallery row={row} />;
+
+    case "category":
+      // category-д нэмэлт нөхцөл шалгах хэрэгтэй тул энд шалгана
+      if (row?.itemViewType === "item_products") {
+        return <CaruselSliderProducts row={row} isMobile={isMobile} />;
+      }
+      return <></>; // шаардлагагүй тохиолдолд хоосон баримт буцаана
+
+    case "video":
+      return <RowYTFBVideoPLayer row={row} isMobile={isMobile} />;
+
+    case "text_description":
+      return <RowTextDescription row={row} isMobile={isMobile} />;
+
+    case "brand":
+      return <RowBrands row={row} isMobile={isMobile} />;
+
+    default:
+      return <></>;
+  }
 };
 
 const HomeScreen = () => {
   const { data, loading, error } = useSelector(
     (state: RootState) => state.layouts
   );
-
-  console.log("data?.themeGriddata?.themeGrid", data?.themeGrid);
 
   const isMobile = useWindowWidth().isMobile;
 

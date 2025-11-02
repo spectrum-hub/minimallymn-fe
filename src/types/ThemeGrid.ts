@@ -25,7 +25,7 @@ export interface ThemeGrid {
 export interface GridRow {
   gridId: number;
   rowId: number;
-  rowType: "banner" | "category" | "text_description" | "video";
+  rowType: "banner" | "category" | "text_description" | "video" | "brand";
   itemViewType: string;
   sectionTitle: string;
   sectionSubtitle: string | null;
