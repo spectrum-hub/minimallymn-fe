@@ -48,13 +48,13 @@ const RowTextDescription: FC<Props> = ({ row, isMobile }) => {
         } = item ?? {};
         return (
           <div key={item.itemId || index} className="w-full  text-center ">
-            {(itemDescriptionTitle ?? "").length > 4 && (
+            {(itemDescriptionTitle ?? "").length > 1 && (
               <p>{itemDescriptionTitle}</p>
             )}
-            {(itemDescriptionSubTitle ?? "").length > 4 && (
+            {(itemDescriptionSubTitle ?? "").length > 1 && (
               <p>{itemDescriptionSubTitle}</p>
             )}
-            {(itemDescriptionFullDescription ?? "").length > 4 && (
+            {(itemDescriptionFullDescription ?? "").length > 1 && (
               <p>{itemDescriptionFullDescription}</p>
             )}
           </div>
