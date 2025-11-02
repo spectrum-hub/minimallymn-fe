@@ -43,9 +43,18 @@ const RowTextDescription: FC<Props> = ({ row, isMobile }) => {
         // "itemDescriptionViewStyle": "text_only",
         return (
           <div key={item.itemId || index} className="w-full  text-center ">
-            <p>{item.itemDescriptionTitle}</p>
-            <p>{item.itemDescriptionSubTitle}</p>
-            <p>{item.itemDescriptionFullDescription}</p>
+            {item?.itemDescriptionTitle &&
+              item.itemDescriptionTitle.length > 4 && (
+                <p>{item.itemDescriptionTitle}</p>
+              )}
+            {item?.itemDescriptionSubTitle &&
+              item.itemDescriptionSubTitle.length > 4 && (
+                <p>{item.itemDescriptionSubTitle}</p>
+              )}
+            {item?.itemDescriptionFullDescription &&
+              item.itemDescriptionFullDescription.length > 4 && (
+                <p>{item.itemDescriptionFullDescription}</p>
+              )}
           </div>
         );
       })}
