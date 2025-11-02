@@ -1,28 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { Spin } from "antd";
-import { Fragment } from "react";
-import { NavLink } from "react-router";
 import { useSelector } from "react-redux";
-
-/**
- *
- *
- *
- * Components
- *
- *
- */
-
-import BlockSliderProducts from "../components/Products/BlockSliderProducts";
 import BlockImageGallery from "../components/home/BlockImageGallery";
-import { Block, FooterBlock } from "../types/Blocks";
 import { RootState } from "../Redux/store";
-import { baseURL } from "../lib/configs";
 import useWindowWidth from "../Hooks/use-window-width";
 import { GridRow } from "../types";
 import CaruselSliderProducts from "../components/Products/CaruselSliderProducts";
 import RowYTFBVideoPLayer from "../components/RowYTFBVideoPLayer";
+import RowTextDescription from "../components/RowTextDescription";
 
 const RenderRow = ({
   row,
@@ -36,11 +20,12 @@ const RenderRow = ({
     return <BlockImageGallery row={row} />;
   } else if (rowType === "category") {
     if (row?.itemViewType === "item_products") {
-      console.log("rowrowrow", row);
       return <CaruselSliderProducts row={row} isMobile={isMobile} />;
     }
   } else if (rowType === "video") {
     return <RowYTFBVideoPLayer row={row} isMobile={isMobile} />;
+  } else if (rowType === "text_description") {
+    return <RowTextDescription row={row} isMobile={isMobile} />;
   }
 
   return <></>;
