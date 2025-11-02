@@ -48,9 +48,7 @@ const RenderCategories: React.FC = () => {
       <div className="w-full">
         <h2 className="text-lg py-4 ">Ангилалууд</h2>
 
-        <div
-          className="bg-white rounded-xl shadow p-4 flex flex-wrap gap-3 justify-center"
-        >
+        <div className="bg-white rounded-xl shadow p-4 flex flex-wrap gap-3 justify-center">
           {data?.categories?.categories?.map(({ id, name }, index) => (
             <NavLink
               key={id || index}
@@ -58,12 +56,14 @@ const RenderCategories: React.FC = () => {
               className={`
                 border border-gray-200 rounded-xl h-9 px-4 w-36 text-center my-1 max-w-36 mx-1 line-clamp-1
                 transition-all duration-200 ease-in-out transform hover:scale-105 hover:bg-blue-50 hover:border-blue-400 hover:shadow-md
-                ${Number(categoryId) === id ? "bg-blue-100 shadow-lg scale-105" : "bg-white text-gray-900"}
+                ${
+                  Number(categoryId) === id
+                    ? "bg-blue-100 shadow-lg scale-105"
+                    : "bg-white text-gray-900"
+                }
               `}
             >
-              <span
-                className="text-sm text-inherit text-center leading-9 line-clamp-1 "
-              >
+              <span className="text-sm text-inherit text-center leading-9 line-clamp-1 ">
                 {name}
               </span>
             </NavLink>
@@ -95,12 +95,17 @@ const RenderCategories: React.FC = () => {
                 className={`
                   border border-gray-200 rounded-xl h-9 px-4 w-36 text-center my-1 mx-1 line-clamp-1
                   transition-all duration-200 ease-in-out transform hover:scale-105 hover:bg-blue-50 hover:border-blue-400 hover:shadow-md
-                  ${Number(categoryId) === id ? "bg-blue-100 border-blue-500 text-blue-700 shadow-lg scale-105" : "bg-white text-gray-900"}
+                  ${
+                    Number(categoryId) === id
+                      ? "bg-blue-100 border-blue-500 text-blue-700 shadow-lg scale-105"
+                      : "bg-white text-gray-900"
+                  }
                 `}
+                onClick={() => {
+                  window.scrollTo(0, 0);
+                }}
               >
-                <span
-                  className="text-sm text-inherit text-center leading-9 line-clamp-1 font-medium"
-                >
+                <span className="text-sm text-inherit text-center leading-9 line-clamp-1 font-medium">
                   {name}
                 </span>
               </NavLink>

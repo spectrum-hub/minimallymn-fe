@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { ThemeGrid } from "../../types";
 import RenderHtml from "../RenderHtml";
+import { NavLink } from "react-router";
 
 interface FooterProps {
   themeGrid?: ThemeGrid | null;
@@ -209,19 +210,17 @@ const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
               © {new Date().getFullYear()} {themeGrid?.copyrightText}
             </p>
             <div className="flex items-center space-x-4 text-xs text-gray-500">
-              <a
-                href="/privacy"
-                className="hover:text-gray-300 transition-colors"
-              >
-                Нууцлалын бодлого
-              </a>
-              <span>•</span>
-              <a
-                href="/terms"
-                className="hover:text-gray-300 transition-colors"
-              >
-                Үйлчилгээний нөхцөл
-              </a>
+              {themeGrid?.pages?.map((page) => (
+                <NavLink
+                  key={page.pageId}
+                  to={`/pages/${page.pageSlug}`}
+                  onClick={() => {
+                    window.scrollTo(0, 0);
+                  }}
+                >
+                  {page.pageName}
+                </NavLink>
+              ))}
             </div>
           </div>
         </div>

@@ -24,30 +24,18 @@ import BlogsScreen from "./Screens/BlogsScreen";
 
 /**
  *
- * 
- * 
+ *
+ *
  * Mobile Screens ------------
- * 
- * 
+ *
+ *
  */
 
 import MobileCategoriesScreent from "./Screens/Mobile/CategoriesScreent";
 import PrivacyPolicyScreen from "./Screens/ContentsScreen";
-import MarketplaceProductsScreen from "./Screens/MarketplaceProductsScreen";
-import MarketplaceProductDetailScreen from "./Screens/MarketplaceProductDetailScreen";
-
+import PagesScreen from "./Screens/PagesScreen";
 const routes = [
   { navigationShow: true, path: "/", Component: HomeScreen },
-  {
-    navigationShow: true,
-    path: "/marketplace",
-    Component: MarketplaceProductsScreen,
-  },
-  {
-    navigationShow: true,
-    path: "/marketplace/:productId",
-    Component: MarketplaceProductDetailScreen,
-  },
   {
     navigationShow: true,
     path: "/products/:slug",
@@ -118,6 +106,16 @@ const routes = [
     navigationShow: true,
     path: "/brands",
     Component: BrandsScreen,
+  },
+  {
+    navigationShow: true,
+    path: "/pages",
+    Component: PagesScreen,
+  },
+  {
+    navigationShow: true,
+    path: "/pages/:pageSlug",
+    Component: PagesScreen,
   },
   {
     navigationShow: true,
