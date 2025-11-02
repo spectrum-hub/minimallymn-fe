@@ -34,6 +34,23 @@ export const GET_LAYOUTS = gql`
       headerItems
       footerItems
       domainName
+      mainMenu {
+        menuId
+        menuTitle
+        menuSequence
+        menuLink
+        menuExternal
+      }
+      pages {
+        pageId
+        pageName
+        pageSlug
+        pageLink
+        pageContentType
+        pageDescription
+        pageAdditional
+        pageActive
+      }
       rows {
         gridId
         rowId

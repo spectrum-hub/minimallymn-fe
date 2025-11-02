@@ -2,6 +2,25 @@ export interface ThemeGridResponse {
   themeGrid: ThemeGrid;
 }
 
+export interface GridMainMenu {
+  menuId: number;
+  menuTitle?: string;
+  menuSequence?: string;
+  menuLink?: string;
+  menuExternal?: boolean;
+}
+
+export interface GridMainPage {
+  pageId: number;
+  pageName?: string;
+  pageSlug?: string;
+  pageLink?: string;
+  pageContentType?: string;
+  pageDescription?: string;
+  pageAdditional?: string;
+  pageActive?: boolean;
+}
+
 export interface ThemeGrid {
   id: number;
   name: string;
@@ -20,6 +39,8 @@ export interface ThemeGrid {
   webfrontDefault: boolean;
   domainName: string;
   rows: GridRow[];
+  pages?: GridMainPage[];
+  mainMenu?: GridMainMenu[];
 }
 
 export interface GridRow {
