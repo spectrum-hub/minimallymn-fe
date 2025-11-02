@@ -6,7 +6,6 @@ interface Props {
 }
 
 const RowTextDescription: FC<Props> = ({ row, isMobile }) => {
-  // Check if this is a video row
   if (row?.rowType !== "text_description") {
     return null;
   }
