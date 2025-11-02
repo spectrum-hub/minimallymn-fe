@@ -1,5 +1,7 @@
 import { FC } from "react";
 import { GridRow } from "../types";
+import { baseURL } from "../lib/configs";
+import { NavLink } from "react-router";
 interface Props {
   row?: GridRow;
   isMobile?: boolean;
@@ -38,15 +40,32 @@ const RowBrands: FC<Props> = ({ row, isMobile }) => {
         </div>
       )}
 
-      {(items ?? []).map((item, index) => {
-        // "itemDescriptionViewStyle": "text_only",
-        const { itemId, itemName } = item ?? {};
-        return (
-          <div key={item.itemId || index} className="w-full  text-center ">
-             {itemName && <img src={itemName} alt={itemName} />}
-          </div>
-        );
-      })}
+      <div className="flex justify-items-center justify-center items-center gap-4 ">
+        {(items ?? []).map((item, index) => {
+          // "itemDescriptionViewStyle": "text_only",
+          const { itemId, itemImage, itemName } = item ?? {};
+          return (
+            <div key={itemId || index} className="w-full  text-center ">
+              {(itemImage?.medium ?? "").length > 2 && (
+                <NavLink
+                  to={`/products?brands=${itemId}`}
+                  key={itemId}
+                  className={`
+                    w-40 h-20 block 
+                `}
+                >
+                  <img
+                    src={`${baseURL}${itemImage.medium}`}
+                    alt={itemName ?? ""}
+                    className="w-40 object-contain h-20 rounded-md  hover:scale-105 transition-transform duration-200"
+                  />
+                  <span className="text-sm">{itemName}</span>
+                </NavLink>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </section>
   );
 };
