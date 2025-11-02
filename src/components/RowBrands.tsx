@@ -40,26 +40,34 @@ const RowBrands: FC<Props> = ({ row, isMobile }) => {
         </div>
       )}
 
-      <div className="flex justify-items-center justify-center items-center gap-4 ">
+      <div className="flex flex-wrap justify-items-center justify-center items-center gap-4 w-full">
         {(items ?? []).map((item, index) => {
           // "itemDescriptionViewStyle": "text_only",
           const { itemId, itemImage, itemName } = item ?? {};
           return (
-            <div key={itemId || index} className="w-full  text-center ">
+            <div
+              key={itemId || index}
+              className=" 
+            hover:shadow-md
+            text-center border-2 rounded-lg p-2"
+            >
               {(itemImage?.medium ?? "").length > 2 && (
                 <NavLink
                   to={`/products?brands=${itemId}`}
                   key={itemId}
                   className={`
-                    w-40 h-20 block 
+                    w-28   text-center
                 `}
                 >
                   <img
                     src={`${baseURL}${itemImage.medium}`}
                     alt={itemName ?? ""}
-                    className="w-40 object-contain h-20 rounded-md  hover:scale-105 transition-transform duration-200"
+                    className="
+                    w-20 md:w-28 object-contain h-20 rounded-md  
+                    hover:scale-105 transition-transform duration-200
+                    "
                   />
-                  <span className="text-sm">{itemName}</span>
+                  <span className="text-sm md:text-xs">{itemName}</span>
                 </NavLink>
               )}
             </div>
