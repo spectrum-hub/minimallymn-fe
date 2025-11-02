@@ -19,11 +19,10 @@ import BlockImageGallery from "../components/home/BlockImageGallery";
 import { Block, FooterBlock } from "../types/Blocks";
 import { RootState } from "../Redux/store";
 import { baseURL } from "../lib/configs";
-import BlockSEmbedCode from "../components/Products/BlockSEmbedCode";
-import ReactPlayer from "react-player";
 import useWindowWidth from "../Hooks/use-window-width";
 import { GridRow } from "../types";
 import CaruselSliderProducts from "../components/Products/CaruselSliderProducts";
+import RowYTFBVideoPLayer from "../components/RowYTFBVideoPLayer";
 
 const RenderRow = ({
   row,
@@ -32,14 +31,16 @@ const RenderRow = ({
   isMobile?: boolean;
   row?: GridRow;
 }) => {
-  if (row?.rowType === "banner") {
+  const rowType = row?.rowType ?? "";
+  if (rowType === "banner") {
     return <BlockImageGallery row={row} />;
-  } else if (row?.rowType === "category") {
-    if (row.itemViewType === "item_products") {
-
+  } else if (rowType === "category") {
+    if (row?.itemViewType === "item_products") {
       console.log("rowrowrow", row);
       return <CaruselSliderProducts row={row} isMobile={isMobile} />;
     }
+  } else if (rowType === "video") {
+    return <RowYTFBVideoPLayer row={row} isMobile={isMobile} />;
   }
 
   return <></>;
@@ -61,7 +62,7 @@ const HomeScreen = () => {
   }
 
   return (data?.themeGrid?.rows ?? [])?.map((row, index) => (
-    <RenderRow row={row} key={index} />
+    <RenderRow row={row} key={index} isMobile={isMobile} />
   ));
 };
 
