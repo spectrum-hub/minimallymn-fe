@@ -1,4 +1,3 @@
-// Carousel.tsx
 import { FC } from "react";
 import {
   Navigation,
