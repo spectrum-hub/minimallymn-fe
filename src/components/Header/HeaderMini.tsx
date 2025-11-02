@@ -164,7 +164,7 @@ const HeaderMini: FC<HeaderProps> = (props) => {
           {showNavigation && (
             <div className="pb-3 border-t border-gray-100/60">
               <div className="overflow-x-auto scrollbar-hide pt-3">
-                <Navigation menus={data?.websiteBlocks?.menus} />
+                <Navigation menus={data?.themeGrid?.mainMenu} />
               </div>
             </div>
           )}
