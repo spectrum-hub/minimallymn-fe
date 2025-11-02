@@ -32,9 +32,7 @@ const BlockCategories: FC<Props> = ({ row, isMobile }) => {
       page: 1,
       pageSize: PRODUCTS_SCREEN_DEFAULT_TOTAL,
       orderBy: "create_date desc",
-      filters: {
-        cids: cidIds,
-      },
+      ...(cidIds.length > 0 && { cids: cidIds }), // Use cidIds array
     },
     {
       context: {
