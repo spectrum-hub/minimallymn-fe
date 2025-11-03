@@ -34,6 +34,14 @@ export const GET_LAYOUTS = gql`
       headerItems
       footerItems
       domainName
+      payments {
+        paymentId
+        bankName
+        bankIban
+        bankAccount
+        bankAccountName
+        accountViewStatus
+      }
       mainMenu {
         menuId
         menuTitle

@@ -21,6 +21,15 @@ export interface GridMainPage {
   pageActive?: boolean;
 }
 
+export interface GridPayments {
+  paymentId: number;
+  bankName: string;
+  bankIban: string;
+  bankAccount: string;
+  bankAccountName: string;
+  accountViewStatus: boolean;
+}
+
 export interface ThemeGrid {
   id: number;
   name: string;
@@ -40,6 +49,7 @@ export interface ThemeGrid {
   domainName: string;
   rows: GridRow[];
   pages?: GridMainPage[];
+  payments?: GridPayments[];
   mainMenu?: GridMainMenu[];
 }
 
