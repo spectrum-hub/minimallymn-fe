@@ -1,6 +1,7 @@
 import { OrderDetails } from "../../types/Order";
 
 export const orderTotals = (order: OrderDetails) => {
+
   return {
     title: "Захиалгын мэдээлэл",
     items: [
@@ -33,16 +34,6 @@ export const orderTotals = (order: OrderDetails) => {
         label: "Хүчинтэй хугацаа",
         value: new Date(order.validityDate).toLocaleDateString(),
       },
-      {
-        label: "Төлбөр төлөх данс",
-        value: "ХААНБАНК - 111111111",
-        type:"bank_account"
-      },
-      {
-        label: "Дансны нэр",
-        value: "MINIMALLY ",
-      },
-
     ],
   };
 };

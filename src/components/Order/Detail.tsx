@@ -23,10 +23,27 @@ import StorepayLoanCheck from "./StorepayLoanCheck";
 import PocketzeroResponse from "./PocketzeroResponse";
 import OrderLinesItems from "./orderLineItems";
 import LendMnResponse from "./LendMnResponse";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Redux/store";
 
 const OrderDetailComponent = () => {
   const { orderId } = useParams();
   const { isMobile } = useWindowWidth();
+
+    const themeGrid = useSelector(
+    (state: RootState) => state.layouts?.data?.themeGrid
+  );
+
+  const paymentAccounts = themeGrid?.payments ?? [];
+
+  const paymentAcnts = (paymentAccounts ?? []).flatMap((payAcnt) => [
+    { label: "Банк:", value: payAcnt.bankName },
+    { label: "IBAN - дугаар:", value: payAcnt.bankIban },
+    { label: "Дансны дугаар:", value: payAcnt.bankAccount },
+    { label: "Дансны нэр:", value: payAcnt.bankAccountName },
+  ]);
+
+  
 
   const { loading, error, data } = useGqlQuery<OrderDetailQuery>(
     GET_ORDER_DETAIL,
@@ -56,8 +73,7 @@ const OrderDetailComponent = () => {
   if (loading) return <LoadingOrder />;
   if (error) return <ErrorMessage message={error.message} />;
   if (!order) return <OrderNotFound />;
-
-  console.log("order.lendmnResponseorder.lendmnResponse", order.lendmnResponse);
+ 
   return (
     <>
       {/* Order Items */}
@@ -79,6 +95,8 @@ const OrderDetailComponent = () => {
         <QpayMethodInvoice order={order} isMobile={isMobile} />
         <InfoCard {...orderTotals(order)} />
         <InfoCard {...partnerInfos(order)} />
+        <InfoCard title={"Төлбөр төлөх дансны мэдээлэл"} items={paymentAcnts} />
+        
 
         {isMobile ? <OrderLinesItems order={order} /> : null}
       </div>
