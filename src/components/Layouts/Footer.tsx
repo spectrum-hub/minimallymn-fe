@@ -209,7 +209,7 @@ const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
             <p className="text-sm text-gray-400">
               © {new Date().getFullYear()} {themeGrid?.copyrightText}
             </p>
-            <div className="flex items-center space-x-4 text-xs text-gray-500">
+            <div className="flex items-center space-x-4 text-md text-gray-300">
               {themeGrid?.pages?.map((page) => (
                 <NavLink
                   key={page.pageId}
