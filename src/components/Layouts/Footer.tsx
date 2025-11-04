@@ -157,6 +157,35 @@ const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
                     </a>
                   </div>
                 </div>
+
+                <div className="flex items-start space-x-3">
+                  <svg
+                    className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 2h8a2 2 0 012 2v16a2 2 0 01-2 2H8a2 2 0 01-2-2V4a2 2 0 012-2zM8 6h8M8 10h8M8 14h8M8 18h8"
+                    />
+                  </svg>
+
+                  {themeGrid?.pages?.map((page) => (
+                    <NavLink
+                      key={page.pageId}
+                      to={`/pages/${page.pageSlug}`}
+                      onClick={() => {
+                        window.scrollTo(0, 0);
+                      }}
+                      className="text-sm font-medium text-white"
+                    >
+                      {page.pageName}
+                    </NavLink>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -209,19 +238,6 @@ const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
             <p className="text-sm text-gray-400">
               © {new Date().getFullYear()} {themeGrid?.copyrightText}
             </p>
-            <div className="flex items-center space-x-4 text-md text-gray-300">
-              {themeGrid?.pages?.map((page) => (
-                <NavLink
-                  key={page.pageId}
-                  to={`/pages/${page.pageSlug}`}
-                  onClick={() => {
-                    window.scrollTo(0, 0);
-                  }}
-                >
-                  {page.pageName}
-                </NavLink>
-              ))}
-            </div>
           </div>
         </div>
       </div>

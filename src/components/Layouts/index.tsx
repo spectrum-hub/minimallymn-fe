@@ -219,4 +219,4 @@ const MainLayout: FC<Props> = ({ children }) => {
   );
 };
 
-export default MainLayout; 
+export default MainLayout;
