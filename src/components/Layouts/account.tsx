@@ -2,19 +2,18 @@ import React from "react";
 import { NavLink, matchPath, useLocation } from "react-router";
 import { User, Files, MessageCircleQuestion, LogOut } from "lucide-react";
 import type { PopconfirmProps } from "antd";
-import { Button, Popconfirm } from "antd";
+import { Popconfirm } from "antd";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Redux/store";
-import useWindowWidth from "../../Hooks/use-window-width";
 import { useHistoryNavigate } from "../../Hooks/use-navigate";
 
 const items = [
-  { link: "/account/profile", icon: <User />, label: "Хувийн мэдээлэл" },
-  { link: "/account/orders", icon: <Files />, label: "Захиалгууд" },
+  { link: "/account/profile", icon: <User className="w-4 h-4" />, label: "Хувийн мэдээлэл" },
+  { link: "/account/orders", icon: <Files className="w-4 h-4" />, label: "Захиалгууд" },
   {
     link: "/account/support",
-    icon: <MessageCircleQuestion />,
-    label: "Тусламж ",
+    icon: <MessageCircleQuestion className="w-4 h-4" />,
+    label: "Тусламж",
   },
 ];
 
@@ -22,8 +21,6 @@ const AccountLayout: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const authState = useSelector((state: RootState) => state.auth);
-  const { isMobile } = useWindowWidth();
-
   const pathname = useLocation()?.pathname;
   const { historyNavigate } = useHistoryNavigate();
 
@@ -32,94 +29,58 @@ const AccountLayout: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <section
-      className={` flex flex-col md:flex-row gap-4 pt-4 `}
-    >
-      <aside
-        className={`
-          w-full md:w-1/4 flex flex-col 
-          items-center p-4 rounded-lg 
-          shadow-md h-full
-        `}
-      >
-        {authState?.isAuthenticated ? (
-          <ul className="w-full flex md:block">
-            {items.map((menu, i) => (
-              <li key={i} className="w-full mb-3">
-                <NavLink
-                  to={menu.link}
-                  className={`
-                   flex flex-col items-center gap-3 
-                   p-1 md:p-3
-                   w-full text-gray-700 
-                  hover:bg-gray-200 rounded-lg transition 
-                  ${
-                    matchPath(pathname, menu.link)
-                      ? "font-bold bg-gray-200 text-blue-800"
-                      : ""
-                  }`}
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar */}
+          <aside className="lg:w-80">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              {authState?.isAuthenticated && (
+                <nav className="space-y-2 flex flex-row md:flex-col gap-4">
+                  {items.map((menu, i) => (
+                    <NavLink
+                      key={i}
+                      to={menu.link}
+                      className={`flex items-center gap-3 
+                        p-2
+                        rounded-lg text-sm font-medium transition-colors ${
+                        matchPath(pathname, menu.link)
+                          ? "bg-gray-900 text-white"
+                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                      }`}
+                    >
+                      {menu.icon}
+                      <span className="text-xs md:text-sm">{menu.label}</span>
+                    </NavLink>
+                  ))}
+                </nav>
+              )}
+
+              <div className="mt-8 pt-6 border-t border-gray-100">
+                <Popconfirm
+                  title="Системээс гарах"
+                  description="Та системээс гарахдаа итгэлтэй байна уу?"
+                  onConfirm={confirm}
+                  okText="Тийм"
+                  cancelText="Үгүй"
+                  placement="top"
                 >
-                  {menu.icon}
-                  <span className="text-sm md:text-md">{menu.label}</span>
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        ) : null}
+                  <button className="flex items-center gap-3 px-4 py-3 w-full text-left text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                    <LogOut className="w-4 h-4" />
+                    <span>Системээс гарах</span>
+                  </button>
+                </Popconfirm>
+              </div>
+            </div>
+          </aside>
 
-        {!isMobile ? (
-          <Popconfirm
-            title=""
-            description={
-              <span className="text-sm">
-                Системээс гарахдаа итгэлтэй <br />
-                байна уу ?
-              </span>
-            }
-            onConfirm={confirm}
-            okText="Тийм"
-            cancelText="Үгүй"
-          >
-            <Button
-              size={"small"}
-              danger
-              type={"link"}
-              className={` mt-20 `}
-              icon={<LogOut />}
-            >
-              <span className="text-sm md:text-md">Системээс гарах</span>
-            </Button>
-          </Popconfirm>
-        ) : null}
-      </aside>
-      <div className="p-1 pb-12 w-full">{children}</div>
-
-      {isMobile ? (
-        <Popconfirm
-          title=""
-          description={
-            <span className="text-sm">
-              Системээс гарахдаа итгэлтэй <br />
-              байна уу ?
-            </span>
-          }
-          onConfirm={confirm}
-          okText="Тийм"
-          cancelText="Үгүй"
-        >
-          <Button
-            size={"small"}
-            danger
-            type={"link"}
-            className={`my-1 mb-8`}
-            icon={<LogOut />}
-          >
-            <span className="text-sm md:text-md">Системээс гарах</span>
-          </Button>
-        </Popconfirm>
-      ) : null}
-
-    </section>
+          {/* Main content */}
+          <main className="flex-1">
+            {children}
+          </main>
+        </div>
+      </div>
+    </div>
   );
 };
 

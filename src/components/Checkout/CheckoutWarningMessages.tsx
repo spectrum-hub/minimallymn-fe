@@ -1,6 +1,6 @@
 // src/components/Checkout/CheckoutWarnings.tsx
 import React from "react";
-import { Tag, Tooltip } from "antd";
+import { Tooltip } from "antd";
 import { motion } from "framer-motion";
 import { X, Check } from "lucide-react";
 

@@ -4,10 +4,8 @@ import { AppDispatch, RootState } from "../../Redux/store";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { Button, Form, Input } from "antd";
 import AccountLayout from "../../components/Layouts/account";
 import { useNotification } from "../../Hooks/use-notification";
-import styles from "./user.module.css";
 import { userPhoneUpdateAsync } from "../../Redux/userActions";
 import UserInfoTab from "../../components/User/UserInfoSelectTab";
 
@@ -21,11 +19,9 @@ const AccountFormSchema = Yup.object().shape({
   phone: Yup.string()
     .required("Заавал бөглөх")
     .matches(/^\+?[1-9]\d{7,14}$/, "Утасны дугаар буруу форматтай"),
-  otp: Yup.string().when("$isVerifying", {
-    is: true,
-    then: (schema) => schema.required("Баталгаажуулах код оруулна уу"),
-    otherwise: (schema) => schema,
-  }),
+  otp: Yup.string().when("$isVerifying", (isVerifying, schema) =>
+    isVerifying ? schema.required("Баталгаажуулах код оруулна уу") : schema
+  ),
 });
 
 const PhoneUpdateScreen: React.FC = () => {
@@ -128,7 +124,7 @@ const PhoneUpdateScreen: React.FC = () => {
   };
 
   const onSubmit = (formData: FormType) => {
-    if (!otpRequested) {
+    if (otpRequested === false) {
       requestOtp(formData);
     } else {
       verifyAndUpdate(formData);
@@ -145,94 +141,125 @@ const PhoneUpdateScreen: React.FC = () => {
 
   return (
     <AccountLayout>
-      <UserInfoTab />
-      <form
-        onSubmit={handleSubmit(onSubmit, onError)}
-        className={styles.itemContainer}
-      >
-        <h2 className={styles.title}>Утасны дугаар шинэчлэх</h2>
+      <div className="max-w-2xl mx-auto space-y-6">
+        <UserInfoTab />
+        
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="mb-6">
+            <h1 className="text-xl font-semibold text-gray-900 mb-1">
+              Утасны дугаар шинэчлэх
+            </h1>
+            <p className="text-sm text-gray-500">
+              Одоогийн утас: <span className="font-medium text-gray-900">{phone}</span>
+            </p>
+          </div>
 
-        <div className=" my-4 text-sm text-blue-800">
-          Хэрэглэгчийн утасны дугаар: <b>{phone}</b>
-        </div>
-        <Controller
-          control={control}
-          name="phone"
-          render={({ field, fieldState }) => (
-            <Form.Item
-              label="Утасны дугаар"
-              layout="vertical"
-              help={fieldState.error?.message}
-              validateStatus={fieldState.error ? "error" : ""}
-            >
-              <Input
-                {...field}
-                disabled={otpRequested}
-                placeholder="+976XXXXXXXX"
-                className="w-full"
-              />
-            </Form.Item>
-          )}
-        />
-
-        <span
-          className={`text-sm mt-6 font-bold block ${
-            success ? "text-green-500" : "text-red-600"
-          }`}
-        >
-          {message === "Имэйл буруу форматтай байна." ||
-          message === "Имэйл буруу форматтай байна"
-            ? ""
-            : message}
-        </span>
-        {otpRequested && (
-          <>
+          <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-6">
             <Controller
               control={control}
-              name="otp"
+              name="phone"
               render={({ field, fieldState }) => (
-                <Form.Item
-                  label={`Баталгаажуулах код (${
-                    countdown
-                      ? `${Math.floor(countdown / 60)}:${(countdown % 60)
-                          .toString()
-                          .padStart(2, "0")}`
-                      : "0:00"
-                  })`}
-                  layout="vertical"
-                  help={fieldState.error?.message}
-                  validateStatus={fieldState.error ? "error" : ""}
-                >
-                  <Input
+                <div className="space-y-2">
+                  <label htmlFor="phone" className="text-sm font-medium text-gray-700">
+                    Шинэ утасны дугаар
+                  </label>
+                  <input
                     {...field}
-                    placeholder="4 оронтой код"
-                    maxLength={4}
-                    className="w-full"
+                    id="phone"
+                    disabled={otpRequested}
+                    placeholder="+976XXXXXXXX"
+                    className={`w-full px-4 py-3 rounded-lg border transition-colors 
+                      focus:outline-none focus:ring-2 focus:ring-gray-900 
+                      bg-white
+                      focus:border-transparent ${
+                      fieldState.error
+                        ? "border-red-300 focus:ring-red-500"
+                        : "border-gray-200 hover:border-gray-300"
+                    } ${otpRequested ? "bg-gray-50 cursor-not-allowed" : ""}`}
                   />
-                </Form.Item>
+                  {fieldState.error && (
+                    <p className="text-sm text-red-600">{fieldState.error.message}</p>
+                  )}
+                </div>
               )}
             />
-            {countdown === 0 && (
-              <Button
-                onClick={() => requestOtp({ phone: currentPhone, otp: "" })}
-                disabled={isSubmitting}
-              >
-                Дахин код авах
-              </Button>
-            )}
-          </>
-        )}
 
-        <Button
-          size="large"
-          htmlType="submit"
-          type="primary"
-          loading={loading || isSubmitting}
-          className="w-full max-w-xs"
-        >
-          {otpRequested ? "Баталгаажуулах" : "Код авах"}
-        </Button>
-      </form>
+            {message && message !== "Имэйл буруу форматтай байна." && (
+              <div className={`p-3 rounded-lg text-sm ${
+                success 
+                  ? "bg-green-50 text-green-700 border border-green-200" 
+                  : "bg-red-50 text-red-700 border border-red-200"
+              }`}>
+                {message}
+              </div>
+            )}
+
+            {otpRequested && (
+              <div className="space-y-4">
+                <Controller
+                  control={control}
+                  name="otp"
+                  render={({ field, fieldState }) => (
+                    <div className="space-y-2">
+                      <label htmlFor="otp" className="text-sm font-medium text-gray-700">
+                        Баталгаажуулах код {countdown && (
+                          <span className="text-gray-500">
+                            ({Math.floor(countdown / 60)}:{(countdown % 60).toString().padStart(2, "0")})
+                          </span>
+                        )}
+                      </label>
+                      <input
+                        {...field}
+                        id="otp"
+                        placeholder="4 оронтой код"
+                        maxLength={4}
+                        className={`w-full px-4 py-3 rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
+                          fieldState.error
+                            ? "border-red-300 focus:ring-red-500"
+                            : "border-gray-200 hover:border-gray-300"
+                        }`}
+                      />
+                      {fieldState.error && (
+                        <p className="text-sm text-red-600">{fieldState.error.message}</p>
+                      )}
+                    </div>
+                  )}
+                />
+
+                {countdown === 0 && (
+                  <button
+                    type="button"
+                    onClick={() => requestOtp({ phone: currentPhone, otp: "" })}
+                    disabled={isSubmitting}
+                    className="text-sm text-gray-600 hover:text-gray-900 underline disabled:opacity-50"
+                  >
+                    Дахин код авах
+                  </button>
+                )}
+              </div>
+            )}
+
+            <div className="pt-4">
+              <button
+                type="submit"
+                disabled={loading || isSubmitting}
+                className="w-full bg-gray-900 text-white py-3 px-6 rounded-lg font-medium hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {loading || isSubmitting ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    {otpRequested ? "Баталгаажуулж байна..." : "Код илгээж байна..."}
+                  </div>
+                ) : (
+                  <>
+                    {otpRequested ? "Баталгаажуулах" : "Код авах"}
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </AccountLayout>
   );
 };

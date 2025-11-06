@@ -1,20 +1,11 @@
-/**
- *
- *  AccountPasswordScreen.tsx is a React component that
- *  allows users to update their login password.
- *
- */
-
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Redux/store";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { Button, Form, Input } from "antd";
 import AccountLayout from "../../components/Layouts/account";
 import { useNotification } from "../../Hooks/use-notification";
-import styles from "./user.module.css";
 import UserInfoTab from "../../components/User/UserInfoSelectTab";
 import { gql } from "@apollo/client";
 import { apolloClient } from "../../lib/apolloClient";
@@ -31,11 +22,7 @@ interface FormType {
 const AccountFormSchema = Yup.object().shape({
   newPassword: Yup.string().required("Заавал бөглөх"),
   newPasswordRepeat: Yup.string().required("Заавал бөглөх"),
-  smsPassword: Yup.string().when("step", {
-    is: (val: string) => val === "verify",
-    then: (schema) => schema.required("Заавал бөглөх"),
-    otherwise: (schema) => schema,
-  }),
+  smsPassword: Yup.string().optional(),
 });
 
 const RESET_PASSWORD_GQL = gql`
@@ -110,73 +97,128 @@ const AccountPasswordScreen: React.FC = () => {
 
   return (
     <AccountLayout>
-      <UserInfoTab />
-      <form onSubmit={handleSubmit(onSubmit)} className={styles.itemContainer}>
-        <h2 className={styles.title}>Нэвтрэх нууц үг шинэчлэх</h2>
-        <Controller
-          control={control}
-          name={"newPassword"}
-          render={({ field, fieldState }) => (
-            <Form.Item
-              label="Шинэ нууц үг"
-              layout="vertical"
-              help={fieldState.error?.message}
-              validateStatus={fieldState.error ? "error" : ""}
-            >
-              <Input {...field} placeholder="" className="w-full" />
-            </Form.Item>
-          )}
-        />
-        <Controller
-          control={control}
-          name={"newPasswordRepeat"}
-          render={({ field, fieldState }) => (
-            <Form.Item
-              label="Шинэ нууц үг давтах"
-              layout="vertical"
-              help={fieldState.error?.message}
-              validateStatus={fieldState.error ? "error" : ""}
-            >
-              <Input {...field} placeholder="" className="w-full" />
-            </Form.Item>
-          )}
-        />
+      <div className="max-w-2xl mx-auto space-y-6">
+        <UserInfoTab />
+        
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="mb-6">
+            <h1 className="text-xl font-semibold text-gray-900 mb-1">
+              Нууц үг шинэчлэх
+            </h1>
+            <p className="text-sm text-gray-500">
+              Аккаунтын аюулгүй байдлыг сахиулах зорилгоор нууц үгээ шинэчлэнэ үү
+            </p>
+          </div>
 
-        {step === "verify" && (
-          <Controller
-            control={control}
-            name="smsPassword"
-            render={({ field, fieldState }) => (
-              <Form.Item
-                label="Нэг удаагийн нууц үг"
-                layout="vertical"
-                help={fieldState.error?.message}
-                validateStatus={fieldState.error ? "error" : ""}
-              >
-                <Input {...field} placeholder="" className="w-full" />
-              </Form.Item>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <Controller
+              control={control}
+              name="newPassword"
+              render={({ field, fieldState }) => (
+                <div className="space-y-2">
+                  <label htmlFor="newPassword" className="text-sm font-medium text-gray-700">
+                    Шинэ нууц үг
+                  </label>
+                  <input
+                    {...field}
+                    id="newPassword"
+                    type="password"
+                    className={`w-full bg-white px-4 py-3 rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
+                      fieldState.error
+                        ? "border-red-300 focus:ring-red-500"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                    placeholder="Шинэ нууц үгээ оруулна уу"
+                  />
+                  {fieldState.error && (
+                    <p className="text-sm text-red-600">{fieldState.error.message}</p>
+                  )}
+                </div>
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="newPasswordRepeat"
+              render={({ field, fieldState }) => (
+                <div className="space-y-2">
+                  <label htmlFor="newPasswordRepeat" className="text-sm font-medium text-gray-700">
+                    Нууц үг давтах
+                  </label>
+                  <input
+                    {...field}
+                    id="newPasswordRepeat"
+                    type="password"
+                    className={`w-full px-4  bg-white py-3 rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
+                      fieldState.error
+                        ? "border-red-300 focus:ring-red-500"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                    placeholder="Нууц үгээ дахин оруулна уу"
+                  />
+                  {fieldState.error && (
+                    <p className="text-sm text-red-600">{fieldState.error.message}</p>
+                  )}
+                </div>
+              )}
+            />
+
+            {step === "verify" && (
+              <Controller
+                control={control}
+                name="smsPassword"
+                render={({ field, fieldState }) => (
+                  <div className="space-y-2">
+                    <label htmlFor="smsPassword" className="text-sm font-medium text-gray-700">
+                      Нэг удаагийн нууц үг
+                    </label>
+                    <input
+                      {...field}
+                      id="smsPassword"
+                      className={`w-full px-4 py-3 rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
+                        fieldState.error
+                          ? "border-red-300 focus:ring-red-500"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                      placeholder="SMS-ээр ирсэн кодыг оруулна уу"
+                    />
+                    {fieldState.error && (
+                      <p className="text-sm text-red-600">{fieldState.error.message}</p>
+                    )}
+                  </div>
+                )}
+              />
             )}
-          />
-        )}
 
-        <span
-          className={`text-sm mt-6 font-bold block ${
-            success ? "text-green-500" : "text-red-600"
-          }`}
-        >
-          {message}
-        </span>
+            {message && (
+              <div className={`p-3 rounded-lg text-sm ${
+                success 
+                  ? "bg-green-50 text-green-700 border border-green-200" 
+                  : "bg-red-50 text-red-700 border border-red-200"
+              }`}>
+                {message}
+              </div>
+            )}
 
-        <Button
-          size="large"
-          htmlType="submit"
-          type="primary"
-          loading={loading || isSubmitting}
-          className="w-full max-w-xs"
-        >
-          Нууц үг солих
-        </Button>
-      </form>
+            <div className="pt-4">
+              <button
+                type="submit"
+                disabled={loading || isSubmitting}
+                className="w-full bg-gray-900 text-white py-3 px-6 rounded-lg font-medium hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {loading || isSubmitting ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Шинэчилж байна...
+                  </div>
+                ) : (
+                  "Нууц үг солих"
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </AccountLayout>
   );
 };
