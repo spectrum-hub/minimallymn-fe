@@ -77,7 +77,8 @@ const CheckoutScreen: React.FC = () => {
 
   const [checkoutWarningMessagesState, setCheckoutWarningMessagesState] =
     useState<Record<number, string> | undefined>();
-  // toggle болон remove функцуудыг тодорхойлно
+
+  console.log(checkoutWarningMessagesState);
   const handleToggleWarning = (id: number, text: string) => {
     setCheckoutWarningMessagesState((prev) => {
       if (!prev) {
@@ -192,10 +193,6 @@ const CheckoutScreen: React.FC = () => {
     const initialCity = cityValue || "11";
     if (!locationsState.city) {
       updateLocation({ city: initialCity });
-      // setAddressDetail((prev) => ({
-      //   ...prev,
-      //   city: typedLocations[initialCity]?.label,
-      // }));
       setValue("city", initialCity);
     }
   }, [cityValue, locationsState.city, setValue, typedLocations]);
@@ -217,10 +214,6 @@ const CheckoutScreen: React.FC = () => {
   ) => {
     field.onChange(value);
     updateLocation({ [name]: value });
-    // setAddressDetail((prev) => ({
-    //   ...prev,
-    //   [name]: option.label,
-    // }));
     resetFields?.forEach((field) => resetField(field));
   };
 
@@ -229,6 +222,10 @@ const CheckoutScreen: React.FC = () => {
       const { s_address, s_phone, firstname, email } = data;
 
       setCartLoading(true);
+
+      const checkoutWarningMessages =
+        Object.values(checkoutWarningMessagesState ?? {}).join(",  ") ||
+        undefined;
       const result = await executeCreateOrder({
         variables: {
           address: s_address,
@@ -238,6 +235,7 @@ const CheckoutScreen: React.FC = () => {
           note: s_address,
           paymentMethod: selectedPaymentCode,
           deliveryMethod: deliveryId,
+          checkoutWarningMessages: checkoutWarningMessages,
         },
       });
       const orderResult = result?.data?.checkoutOrder;

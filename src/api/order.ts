@@ -41,6 +41,7 @@ export const GET_ORDER_DETAIL = gql`
       createDate
       dateOrder
       carrierId
+      checkoutWarningMessage
       payment {
         id
         name

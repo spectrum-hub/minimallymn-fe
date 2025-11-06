@@ -69,6 +69,7 @@ export interface PocketzeroResponse {
 }
 
 export interface OrderDetails {
+  checkoutWarningMessage?: string;
   paymentMethodDesc: PaymentTypes;
   id: number;
   name: string;

@@ -87,21 +87,24 @@ const PaymentInfo: FC<PaymentInfoProps> = ({
 
   return (
     <>
-      <section
-        className="bg-white/90 dark:bg-neutral-900/80 backdrop-blur border border-neutral-200 dark:border-neutral-800
+      {nextPath === "/checkout" ? (
+        <section
+          className="bg-white/90 dark:bg-neutral-900/80 backdrop-blur border border-neutral-200 dark:border-neutral-800
                   p-5 md:p-6 text-sm text-neutral-800 dark:text-neutral-200 h-fit"
-        aria-labelledby="payment-info-title"
-      >
-        <h2
-          id="payment-info-title"
-          className="text-[14px] font-semibold text-neutral-900 dark:text-white pb-3 mb-4 border-b border-neutral-200 dark:border-neutral-800"
+          aria-labelledby="payment-info-title"
         >
-          Төлбөр төлөх дансны мэдээлэл
-        </h2>
-        {(paymentAcnts ?? []).map((it, i) => (
-          <Row key={i} {...it} />
-        ))}
-      </section>
+          <h2
+            id="payment-info-title"
+            className="text-[14px] font-semibold text-neutral-900 dark:text-white pb-3 mb-4 border-b border-neutral-200 dark:border-neutral-800"
+          >
+            Төлбөр төлөх дансны мэдээлэл
+          </h2>
+          {(paymentAcnts ?? []).map((it, i) => (
+            <Row key={i} {...it} />
+          ))}
+        </section>
+      ) : null}
+
       <section
         className="bg-white/90 dark:bg-neutral-900/80 backdrop-blur border border-neutral-200 dark:border-neutral-800
                   p-5 md:p-6 text-sm text-neutral-800 dark:text-neutral-200 h-fit"

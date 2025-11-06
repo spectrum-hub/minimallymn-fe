@@ -68,6 +68,7 @@ export const CREATE_ORDER_CHECKOUT = gql`
     $note: String
     $paymentMethod: String
     $deliveryMethod: Int
+    $checkoutWarningMessages: String
   ) {
     checkoutOrder(
       formData: {
@@ -77,6 +78,7 @@ export const CREATE_ORDER_CHECKOUT = gql`
         note: $note
         paymentMethod: $paymentMethod
         deliveryMethod: $deliveryMethod
+        checkoutWarningMessages: $checkoutWarningMessages
       }
     ) {
       isSuccess

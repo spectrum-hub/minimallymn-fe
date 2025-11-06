@@ -34,6 +34,14 @@ export const orderTotals = (order: OrderDetails) => {
         label: "Хүчинтэй хугацаа",
         value: new Date(order.validityDate).toLocaleDateString(),
       },
+      {
+        label: "Хүчинтэй хугацаа",
+        value: new Date(order.validityDate).toLocaleDateString(),
+      },
+      {
+        label: "Санамж",
+        value: order?.checkoutWarningMessage ?? "",
+      },
     ],
   };
 };
