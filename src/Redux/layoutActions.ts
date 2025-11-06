@@ -34,6 +34,10 @@ export const GET_LAYOUTS = gql`
       headerItems
       footerItems
       domainName
+      checkoutWarningMessages {
+       warningId
+       warningText
+      }
       payments {
         paymentId
         bankName
@@ -98,14 +102,14 @@ export const getLayoutsAsync =
   async (dispatch: Dispatch) => {
     dispatch(setLayoutRequest());
     try {
-      const { data } = (await apolloClient.query({
+      const { data } = await apolloClient.query({
         query: GET_LAYOUTS,
         variables: { themeType: "webfront" },
         fetchPolicy: forceRefresh ? "network-only" : "cache-first", // Toggle policy
         context: {
           api: "version8",
         },
-      }));
+      });
 
       console.log("data", data);
 

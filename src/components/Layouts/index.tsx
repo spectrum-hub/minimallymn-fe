@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { StatusBar, Style } from "@capacitor/status-bar";
 import React, {
   FC,
@@ -114,7 +115,7 @@ const MainLayout: FC<Props> = ({ children }) => {
   const cartTotalItems = useMemo(() => {
     return (
       cart?.carts?.[0]?.orderLines?.reduce(
-        (acc, item) => acc + (item.quantity ?? 0),
+        (acc: any, item: any) => acc + (item.quantity ?? 0),
         0
       ) ?? 0
     );
@@ -166,13 +167,13 @@ const MainLayout: FC<Props> = ({ children }) => {
         </header>
 
         {/* Main content area with improved spacing and max-width */}
-        <main className={`flex-grow w-full transition-all duration-300 ${
-          isMobile 
-            ? "px-3 py-2 pb-24" 
-            : "px-4 md:px-6 lg:px-8 py-4 md:py-6"
-        } max-w-7xl mx-auto`}>
+        <main
+          className={`flex-grow w-full transition-all duration-300 ${
+            isMobile ? "px-3 py-2 pb-24" : "px-4 md:px-6 lg:px-8 py-4 md:py-6"
+          } max-w-7xl mx-auto`}
+        >
           <div className="transition-opacity duration-300">
-            <Suspense 
+            <Suspense
               fallback={
                 <div className="flex items-center justify-center min-h-[200px]">
                   <LoadingSpinner />
@@ -199,13 +200,13 @@ const MainLayout: FC<Props> = ({ children }) => {
 
         {/* Back to top button with modern design */}
         {!isMobile && (
-          <FloatButton.BackTop 
-            visibilityHeight={100} 
+          <FloatButton.BackTop
+            visibilityHeight={100}
             style={{
               right: 24,
               bottom: 24,
               borderRadius: 12,
-              border: 'none',
+              border: "none",
             }}
           />
         )}

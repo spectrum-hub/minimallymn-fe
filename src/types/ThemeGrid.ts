@@ -29,6 +29,10 @@ export interface GridPayments {
   bankAccountName: string;
   accountViewStatus: boolean;
 }
+export interface CheckoutWarningMessages {
+  warningId: number;
+  warningText: string;
+}
 
 export interface ThemeGrid {
   id: number;
@@ -51,6 +55,7 @@ export interface ThemeGrid {
   pages?: GridMainPage[];
   payments?: GridPayments[];
   mainMenu?: GridMainMenu[];
+  checkoutWarningMessages?: CheckoutWarningMessages[];
 }
 
 export interface GridRow {

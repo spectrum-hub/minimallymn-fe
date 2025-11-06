@@ -24,6 +24,7 @@ import { useCart } from "../../Hooks/use-cart";
 import { Context } from "../../context/NotificationCtx";
 import ErrorMessege from "../../components/Checkout/ErrorMessege";
 import { useHistoryNavigate } from "../../Hooks/use-navigate";
+import CheckoutWarnings from "../../components/Checkout/CheckoutWarningMessages";
 
 const isFalseLocation = (value?: string) => {
   return value === "false" ? "" : value;
@@ -42,6 +43,10 @@ const CheckoutScreen: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const authState = useSelector((state: RootState) => state.auth);
   const userInfo = useSelector((state: RootState) => state.userInfo);
+  const checkoutWarningMessages = useSelector(
+    (state: RootState) =>
+      state.layouts.data?.themeGrid?.checkoutWarningMessages || []
+  );
   const { cart, loading } = useSelector((state: RootState) => state.cart);
 
   const { refetchCart } = useCart();
@@ -69,6 +74,31 @@ const CheckoutScreen: React.FC = () => {
   const [orderCreateStatus, setOrderCreateStatus] = useState<
     "pending" | "failed" | "success"
   >("pending");
+
+  const [checkoutWarningMessagesState, setCheckoutWarningMessagesState] =
+    useState<Record<number, string> | undefined>();
+  // toggle болон remove функцуудыг тодорхойлно
+  const handleToggleWarning = (id: number, text: string) => {
+    setCheckoutWarningMessagesState((prev) => {
+      if (!prev) {
+        return { [id]: text };
+      }
+      if (prev[id]) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { [id]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [id]: text };
+    });
+  };
+
+  const handleRemoveWarning = (id: number) => {
+    setCheckoutWarningMessagesState((prev) => {
+      if (!prev) return prev;
+      const { [id]: _, ...rest } = prev;
+      return rest;
+    });
+  };
 
   const formMethods = useForm<StepValues>({
     resolver: yupResolver(validSchema2),
@@ -225,7 +255,10 @@ const CheckoutScreen: React.FC = () => {
 
         const paymentResult = orderResult?.values;
 
-        if (selectedPaymentCode === "storepay" && paymentResult.status === "Failed") {
+        if (
+          selectedPaymentCode === "storepay" &&
+          paymentResult.status === "Failed"
+        ) {
           setOrderCreateStatus("failed");
           const msg =
             paymentResult?.payment_response?.msgList?.[0]?.text ??
@@ -443,6 +476,15 @@ const CheckoutScreen: React.FC = () => {
                   }}
                 />
               </div>
+
+              {checkoutWarningMessages.length > 0 && (
+                <CheckoutWarnings
+                  warnings={checkoutWarningMessages}
+                  selectedWarnings={checkoutWarningMessagesState}
+                  onToggleWarning={handleToggleWarning}
+                  onRemoveWarning={handleRemoveWarning}
+                />
+              )}
 
               <div className="mt-6 flex justify-end">
                 <Button
