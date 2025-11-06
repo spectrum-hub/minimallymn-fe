@@ -17,6 +17,8 @@ import {
   MailOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+import { useDrawerCtx } from "../../Hooks/use-modal-drawer";
+import UserAddressForm from "../../components/User/UserAddressForm";
 
 const AccountFormSchema = Yup.object().shape({
   name: Yup.string().required("Нэрээ заавал оруулна уу"),
@@ -29,6 +31,8 @@ interface FormType {
 }
 
 const ProfileScreen: React.FC = () => {
+  const { setLoading, showDrawer } = useDrawerCtx();
+
   const dispatch = useDispatch<AppDispatch>();
   const { data, loading } =
     useSelector((state: RootState) => state.userInfo) ?? {};
@@ -37,7 +41,6 @@ const ProfileScreen: React.FC = () => {
   const { historyNavigate } = useHistoryNavigate();
   const { openNotification } = useNotification();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isAddressModalVisible, setIsAddressModalVisible] = useState(false);
 
   useEffect(() => {
     if (!authState?.isAuthenticated) {
@@ -63,6 +66,17 @@ const ProfileScreen: React.FC = () => {
       });
     }
   }, [data, name, email, reset]);
+
+  const handleOpenDrawer = () => {
+    setLoading(true);
+    showDrawer({
+      title: "Хайлт",
+      placement: "right",
+      content: <UserAddressForm />,
+      width: "400px",
+    });
+    setLoading(false);
+  };
 
   const onSubmit = async (formData: FormType) => {
     setIsSubmitting(true);
@@ -207,7 +221,7 @@ const ProfileScreen: React.FC = () => {
               type="primary"
               icon={<PlusOutlined />}
               className="bg-green-600 hover:bg-green-700 border-0 rounded-xl font-medium"
-              onClick={() => setIsAddressModalVisible(true)}
+              onClick={() => handleOpenDrawer()}
             >
               Хаяг нэмэх
             </Button>
@@ -223,10 +237,11 @@ const ProfileScreen: React.FC = () => {
                     type="text"
                     icon={<EditOutlined />}
                     className="text-blue-600"
+                    key={1}
                   >
                     Засах
                   </Button>,
-                  <Button type="text" danger icon={<DeleteOutlined />}>
+                  <Button type="text" danger icon={<DeleteOutlined />} key={2}>
                     Устгах
                   </Button>,
                 ]}
@@ -252,19 +267,6 @@ const ProfileScreen: React.FC = () => {
           />
         </Card>
       </div>
-
-      {/* Хаяг нэмэх модал */}
-      <Modal
-        title={<span className="font-bold text-lg">Шинэ хаяг нэмэх</span>}
-        open={isAddressModalVisible}
-        onCancel={() => setIsAddressModalVisible(false)}
-        footer={null}
-        centered
-      >
-        <div className="text-center py-8 text-gray-500">
-          <p>Энд хаяг нэмэх форм орох болно...</p>
-        </div>
-      </Modal>
     </AccountLayout>
   );
 };
