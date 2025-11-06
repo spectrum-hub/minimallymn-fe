@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import { Spin } from "antd";
-import { useNavigate, useParams, useSearchParams } from "react-router";
+import { NavLink, useNavigate, useParams, useSearchParams } from "react-router";
 import useGqlQuery from "../Hooks/Query";
 import { GET_PRODUCTS, PRODUCT_DETAIL } from "../api";
 import useWindowWidth from "../Hooks/use-window-width";
@@ -21,6 +21,9 @@ import {
 import ProductItemCard from "../components/Products/ProductItemCard";
 import { ProductsQuery } from "../types/Products";
 import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
+import { RootState } from "../Redux/store";
+import FacebookLink from "../components/FacebookLink";
 
 // Lazy imports for better code-splitting
 const ImageSliderProductDetail = lazy(
@@ -88,6 +91,9 @@ const ProductDetailScreen = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { isMobile } = useWindowWidth();
+  const companyFacebookUrl = useSelector(
+    (state: RootState) => state.layouts?.data?.themeGrid?.facebookUrl
+  );
 
   // Params
   const productId = Number(slug) || null;
@@ -117,7 +123,7 @@ const ProductDetailScreen = () => {
   );
   const categoryProductsItems =
     categoryProductsData?.products?.items?.filter(
-      (p) => Number(p.productId)!== product?.id
+      (p) => Number(p.productId) !== product?.id
     ) ?? [];
   const publicCategories =
     categoryProductsData?.products?.publicCategories ?? [];
@@ -249,6 +255,7 @@ const ProductDetailScreen = () => {
               amount={amount}
               setAmount={setAmount}
             />
+
             <AddCartButtons
               initialAmount={initialTotalAmount()}
               productId={selectedProductId}
@@ -258,6 +265,9 @@ const ProductDetailScreen = () => {
               isVariant={product.parentProducts?.length > 0 ? 1 : 0}
               isMobile={isMobile}
             />
+      
+            <FacebookLink url={companyFacebookUrl} />
+
             {isMobile && (
               <DescriptionSale description={product.productHtmlDesc} />
             )}

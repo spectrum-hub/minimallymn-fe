@@ -65,8 +65,6 @@ const CheckoutScreen: React.FC = () => {
 
   const [deliveryId, setDeliveryId] = useState<number>();
   const [isDeliverySet, setIsDeliverySet] = useState<boolean>(false);
-
-  // const [addressDetail, setAddressDetail] = useState<Partial<Locations>>();
   const [customerType, setCustomerType] = useState<CustomerType>("citizen");
   const [orderCreateStatus, setOrderCreateStatus] = useState<
     "pending" | "failed" | "success"
