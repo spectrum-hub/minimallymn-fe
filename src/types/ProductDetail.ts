@@ -102,6 +102,7 @@ export interface NProductDetail {
   error?: string;
   qtyAvailable: number;
   productHtmlDesc: string | undefined;
+  productAdditionalWarning?: string;
   id: number;
   name: string;
   description: string;

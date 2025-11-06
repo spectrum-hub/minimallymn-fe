@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import { Spin } from "antd";
-import { NavLink, useNavigate, useParams, useSearchParams } from "react-router";
+import { useNavigate, useParams, useSearchParams } from "react-router";
 import useGqlQuery from "../Hooks/Query";
 import { GET_PRODUCTS, PRODUCT_DETAIL } from "../api";
 import useWindowWidth from "../Hooks/use-window-width";
@@ -47,10 +47,16 @@ const SHAKE_ANIMATION = {
   transition: { duration: 0.4, ease: "easeInOut" },
 };
 
-const DescriptionSale = ({ description }: { description?: string }) =>
+const DescriptionSale = ({
+  description,
+  className,
+}: {
+  description?: string;
+  className?: string;
+}) =>
   !description || description === "false" ? null : (
     <div
-      className="text-sm bg-white p-4"
+      className={`text-sm bg-white p-2 ${className}`}
       dangerouslySetInnerHTML={{ __html: description }}
     />
   );
@@ -265,7 +271,7 @@ const ProductDetailScreen = () => {
               isVariant={product.parentProducts?.length > 0 ? 1 : 0}
               isMobile={isMobile}
             />
-      
+
             <FacebookLink url={companyFacebookUrl} />
 
             {isMobile && (

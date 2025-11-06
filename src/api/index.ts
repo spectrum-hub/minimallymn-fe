@@ -189,6 +189,7 @@ export const PRODUCT_DETAIL = gql`
       listPrice
       standardPrice
       productHtmlDesc
+      productAdditionalWarning
       publicCategIds {
         name
         id
