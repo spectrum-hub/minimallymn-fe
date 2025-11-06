@@ -8,8 +8,6 @@ import * as Yup from "yup";
 import { userInfoAsync, userInfoUpdateAsyncNew } from "../../Redux/userActions";
 import AccountLayout from "../../components/Layouts/account";
 import { useNotification } from "../../Hooks/use-notification";
-
-import UserInfoTab from "../../components/User/UserInfoSelectTab";
 import { useHistoryNavigate } from "../../Hooks/use-navigate";
 
 const AccountFormSchema = Yup.object().shape({
@@ -101,7 +99,6 @@ const ProfileScreen: React.FC = () => {
   return (
     <AccountLayout>
       <div className="max-w-2xl mx-auto space-y-6">
-        <UserInfoTab />
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="mb-6">

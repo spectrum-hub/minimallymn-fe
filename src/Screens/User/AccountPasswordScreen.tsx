@@ -6,7 +6,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import AccountLayout from "../../components/Layouts/account";
 import { useNotification } from "../../Hooks/use-notification";
-import UserInfoTab from "../../components/User/UserInfoSelectTab";
 import { gql } from "@apollo/client";
 import { apolloClient } from "../../lib/apolloClient";
 
@@ -98,8 +97,6 @@ const AccountPasswordScreen: React.FC = () => {
   return (
     <AccountLayout>
       <div className="max-w-2xl mx-auto space-y-6">
-        <UserInfoTab />
-        
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="mb-6">
             <h1 className="text-xl font-semibold text-gray-900 mb-1">

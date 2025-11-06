@@ -7,7 +7,6 @@ import * as Yup from "yup";
 import AccountLayout from "../../components/Layouts/account";
 import { useNotification } from "../../Hooks/use-notification";
 import { userPhoneUpdateAsync } from "../../Redux/userActions";
-import UserInfoTab from "../../components/User/UserInfoSelectTab";
 
 // React Component
 interface FormType {
@@ -142,7 +141,7 @@ const PhoneUpdateScreen: React.FC = () => {
   return (
     <AccountLayout>
       <div className="max-w-2xl mx-auto space-y-6">
-        <UserInfoTab />
+    
         
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="mb-6">

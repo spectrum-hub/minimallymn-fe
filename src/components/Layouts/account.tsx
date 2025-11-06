@@ -9,7 +9,9 @@ import { useHistoryNavigate } from "../../Hooks/use-navigate";
 
 const items = [
   { link: "/account/profile", icon: <User className="w-4 h-4" />, label: "Хувийн мэдээлэл" },
+  { link: "/account/phone-update", icon: <User className="w-4 h-4" />, label: "Гар утас" },
   { link: "/account/orders", icon: <Files className="w-4 h-4" />, label: "Захиалгууд" },
+  { link: "/account/password", icon: <User className="w-4 h-4" />, label: "Нууц үг" },
   {
     link: "/account/support",
     icon: <MessageCircleQuestion className="w-4 h-4" />,
