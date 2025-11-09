@@ -1,190 +1,319 @@
 // components/forms/UserAddressForm.tsx
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { message } from "antd";
-import { useState } from "react";
+import { message, Spin, Checkbox } from "antd";
+import { useState, useEffect } from "react";
 import { Phone } from "lucide-react";
-import { HookFormInput, HookFormSelect } from "../HookFormInput";
+
 import locations from "../../lib/locations.json";
 import HookFormProvider from "../../Providers/HookFormProvider";
 import { LocationNType } from "../../types/Common";
 import { shipmentLocations } from "../../lib/checkout";
+import { HookFormInput, HookFormSelect } from "../HookFormInput";
+
 const formSchema = Yup.object().shape({
-  addressDetail: Yup.string()
-    .required("Гудамж, байр, орц, давхар оруулна уу")
-    .min(5, "Хэт богино хаяг"),
   addressTitle: Yup.string()
     .required("Хаягын нэр оруулна уу")
-    .min(2, "Нэр хэт богино"),
+    .min(2, "Хэт богино"),
+  addressDetail: Yup.string()
+    .required("Дэлгэрэнгүй хаяг оруулна уу")
+    .min(5, "Хэт богино"),
   phone: Yup.string()
-    .required("Утасны дугаар оруулна уу")
-    .test("is-number", "Зөвхөн тоо оруулна уу", (value) => {
-      if (!value) return false;
-      const cleanedValue = value.split(/[\s\-+]/).join("");
-      return /^\d+$/.test(cleanedValue);
-    })
-    .test("valid-length", "Утасны дугаар 8 орон байх ёстой", (value) => {
-      if (!value) return false;
-      const cleanedValue = value.split(/[\s\-+]/).join("");
-      return cleanedValue.length === 8 || 
-             (cleanedValue.startsWith("976") && cleanedValue.length === 11);
+    .required("Утас оруулна уу")
+    .test("phone", "Зөвхөн тоо, 8 эсвэл 11 орон", (v) => {
+      if (!v) return false;
+      const num = v.replace(/[^\d]/g, "");
+      return num.length === 8 || (num.startsWith("976") && num.length === 11);
     }),
-  districtId: Yup.string().required("Дүүрэг хороо сонгоно уу"),
-  cityId: Yup.string().required("Хот, аймаг сонгоно уу"),
-  baghorooId: Yup.string().required("Хороо, баг сонгоно уу"),
+  cityId: Yup.string().required("Хот/Аймаг сонгоно уу"),
+  districtId: Yup.string().required("Дүүрэг/Сум сонгоно уу"),
+  baghorooId: Yup.string().required("Хороо/Баг сонгоно уу"),
 });
 
+// ==================== MUTATIONS ====================
 const CREATE_SHIPPING_ADDRESS = gql`
   mutation CreateShippingAddress(
-    $addressDetail: String!
     $addressTitle: String!
+    $addressDetail: String!
     $phone: String!
-    $cityId: String!
-    $districtId: String!
-    $baghorooId: String!
+    $cityId: String
+    $districtId: String
+    $baghorooId: String
+    $latitude: String
+    $longitude: String
     $setAsDefault: Boolean
   ) {
     createShippingAddress(
-      addressDetail: $addressDetail
       addressTitle: $addressTitle
+      addressDetail: $addressDetail
       phone: $phone
       cityId: $cityId
       districtId: $districtId
       baghorooId: $baghorooId
+      latitude: $latitude
+      longitude: $longitude
       setAsDefault: $setAsDefault
     ) {
-      address {
-        id
-        phone
-        addressDetail
-        addressTitle
-      }
       success
       message
+      address {
+        id
+        addressTitle
+        addressDetail
+        phone
+        isDefault
+      }
     }
   }
 `;
 
-interface FormSubmit {
-  addressDetail: string;
+const UPDATE_SHIPPING_ADDRESS = gql`
+  mutation UpdateShippingAddress(
+    $addressId: Int!
+    $addressTitle: String
+    $addressDetail: String
+    $phone: String
+    $cityId: String
+    $districtId: String
+    $baghorooId: String
+    $latitude: String
+    $longitude: String
+    $setAsDefault: Boolean
+  ) {
+    updateShippingAddress(
+      addressId: $addressId
+      addressTitle: $addressTitle
+      addressDetail: $addressDetail
+      phone: $phone
+      cityId: $cityId
+      districtId: $districtId
+      baghorooId: $baghorooId
+      latitude: $latitude
+      longitude: $longitude
+      setAsDefault: $setAsDefault
+    ) {
+      success
+      message
+      address {
+        id
+        addressTitle
+        addressDetail
+        phone
+        isDefault
+      }
+    }
+  }
+`;
+
+// ==================== QUERY FOR EDIT ====================
+const GET_ADDRESS = gql`
+  query GetAddress($addressId: Int!) {
+    userProfile {
+      shippingAddresses {
+        id
+        addressTitle
+        addressDetail
+        phone
+        cityId: city_id
+        districtId: district_id
+        baghorooId: baghoroo_id
+        latitude
+        longitude
+        isDefault
+      }
+    }
+  }
+`;
+
+interface FormData {
   addressTitle: string;
+  addressDetail: string;
   phone: string;
   cityId: string;
   districtId: string;
   baghorooId: string;
+  latitude?: string;
+  longitude?: string;
+  setAsDefault?: boolean;
 }
 
-const UserAddressForm: React.FC<{ onSuccess?: () => void }> = ({
+interface Props {
+  addressId?: number; // Хэрвээ байвал → Edit, байхгүй бол → Create
+  onSuccess?: () => void;
+  onCancel?: () => void;
+}
+
+const UserAddressForm: React.FC<Props> = ({
+  addressId,
   onSuccess,
+  onCancel,
 }) => {
+  const isEdit = !!addressId;
+  const [loading, setLoading] = useState(false);
   const typedLocations = locations as LocationNType;
 
-  const [loading, setLoading] = useState(false);
-  const [createAddress] = useMutation(CREATE_SHIPPING_ADDRESS, {
-    onCompleted: (data) => {
-      if (data.createShippingAddress.success) {
-        message.success(
-          data.createShippingAddress.message || "Хаяг амжилттай нэмэгдлээ!"
-        );
-        onSuccess?.();
-      } else {
-        message.error(data.createShippingAddress.message || "Алдаа гарлаа");
-      }
-    },
-    onError: (err) => {
-      message.error("Серверт алдаа гарлаа: " + err.message);
-    },
-    refetchQueries: ["userProfile"], // Профайл дахин ачаална
-  });
-
-  const { control, handleSubmit, watch } = useForm<FormSubmit>({
+  const { control, handleSubmit, watch, setValue, reset } = useForm<FormData>({
     resolver: yupResolver(formSchema),
     defaultValues: {
       addressTitle: "",
       addressDetail: "",
       phone: "",
+      cityId: "",
       districtId: "",
       baghorooId: "",
-      cityId: "",
+      setAsDefault: false,
     },
   });
 
-  const cityIdValue = watch("cityId");
-  const computedShipmentLocations = shipmentLocations(
-    cityIdValue,
-    watch("districtId")
-  );
+  // Edit бол өгөгдөл ачаална
+  const { data: queryData, loading: queryLoading } = useQuery(GET_ADDRESS, {
+    variables: { addressId },
+    skip: !isEdit,
+  });
 
-  const onSubmit = async (data: FormSubmit) => {
+  useEffect(() => {
+    if (isEdit && queryData) {
+      const addr = queryData.userProfile.shippingAddresses.find(
+        (a: { id: number }) => a.id === addressId
+      );
+      if (addr) {
+        reset({
+          addressTitle: addr.addressTitle || "",
+          addressDetail: addr.addressDetail || "",
+          phone: addr.phone || "",
+          cityId: addr.cityId || "",
+          districtId: addr.districtId || "",
+          baghorooId: addr.baghorooId || "",
+          latitude: addr.latitude || "",
+          longitude: addr.longitude || "",
+          setAsDefault: addr.isDefault || false,
+        });
+      }
+    }
+  }, [queryData, isEdit, addressId, reset]);
+
+  const [createAddress] = useMutation(CREATE_SHIPPING_ADDRESS);
+  const [updateAddress] = useMutation(UPDATE_SHIPPING_ADDRESS);
+
+  const cityIdValue = watch("cityId");
+  const districtIdValue = watch("districtId");
+  const computedLocations = shipmentLocations(cityIdValue, districtIdValue);
+
+  const onSubmit = async (data: FormData) => {
     setLoading(true);
     try {
-      await createAddress({
-        variables: {
-          ...data,
-          setAsDefault: true,
-        },
-      });
+      if (isEdit) {
+        await updateAddress({
+          variables: {
+            addressId,
+            ...data,
+            cityId: data.cityId || null,
+            districtId: data.districtId || null,
+            baghorooId: data.baghorooId || null,
+          },
+        });
+        message.success("Хаяг амжилттай засагдлаа!");
+      } else {
+        await createAddress({
+          variables: {
+            ...data,
+            cityId: data.cityId || null,
+            districtId: data.districtId || null,
+            baghorooId: data.baghorooId || null,
+          },
+        });
+        message.success("Хаяг амжилттай нэмэгдлээ!");
+      }
+      onSuccess?.();
+    } catch (err: unknown) {
+      message.error((err as Error)?.message || "Алдаа гарлаа");
     } finally {
       setLoading(false);
     }
   };
+
+  if (queryLoading && isEdit) {
+    return (
+      <div className="flex justify-center py-10">
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   return (
     <HookFormProvider
       loading={loading}
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}
+      onCancel={onCancel}
+      submitText={isEdit ? "Хадгалах" : "Нэмэх"}
     >
-      <HookFormInput<FormSubmit>
-        control={control}
-        name="addressTitle"
-        label="Хаягын нэр"
-        placeholder="Гэр, Ажлын газар гэх мэт"
-        prefixIcon={undefined}
-        isMobile={false}
-      />
-      <HookFormSelect
-        control={control}
-        options={Object.values(typedLocations)}
-        name={"cityId"}
-        label="Хот/Аймаг"
-      />
-      {cityIdValue && (
+      <div className="space-y-4">
+        <HookFormInput
+          control={control}
+          name="addressTitle"
+          label="Хаягын нэр"
+          placeholder="Гэр, Ажил гэх мэт"
+        />
+
         <HookFormSelect
           control={control}
-          options={computedShipmentLocations?.districts}
-          name={"districtId"}
-          label="Дүүрэг/Сум"
+          name="cityId"
+          label="Хот / Аймаг"
+          options={Object.values(typedLocations)}
+          placeholder="Сонгоно уу"
         />
-      )}
-      {watch("districtId") && (
-        <HookFormSelect
+
+        {cityIdValue && (
+          <HookFormSelect
+            control={control}
+            name="districtId"
+            label="Дүүрэг / Сум"
+            options={computedLocations?.districts || []}
+            placeholder="Сонгоно уу"
+          />
+        )}
+
+        {districtIdValue && (
+          <HookFormSelect
+            control={control}
+            name="baghorooId"
+            label="Хороо / Баг"
+            options={computedLocations?.baghoroo || []}
+            placeholder="Сонгоно уу"
+          />
+        )}
+
+        <HookFormInput
           control={control}
-          options={computedShipmentLocations?.baghoroo || []}
-          name={"baghorooId"}
-          label="Хороо/Баг"
+          name="phone"
+          label="Утасны дугаар"
+          placeholder="88123456"
+          prefixIcon={Phone}
+          inputProps={{ maxLength: 15 }}
         />
-      )}
 
-      <HookFormInput<FormSubmit>
-        control={control}
-        name="phone"
-        label="Бараа хүлээн авах утасны дугаар"
-        placeholder="Утасны дугаар"
-        prefixIcon={Phone}
-        inputProps={{ maxLength: 15 }}
-        type={"text"}
-      />
+        <HookFormInput
+          control={control}
+          name="addressDetail"
+          label="Дэлгэрэнгүй хаяг"
+          placeholder="Байр, орц, тоот, давхар"
+          type="textarea"
+          textareaRows={3}
+        />
 
-      <HookFormInput<FormSubmit>
-        control={control}
-        name="addressDetail"
-        label="Дэлгэрэнгүй хаяг"
-        placeholder="Бараа хүлээн авах дэлгэрэнгүй хаяг"
-        type={"textarea"}
-      />
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            checked={watch("setAsDefault")}
+            onChange={(e) => setValue("setAsDefault", e.target.checked)}
+          />
+          <label className="text-sm text-gray-700">
+            Үндсэн хүргэлтийн хаяг болгох
+          </label>
+        </div>
+      </div>
     </HookFormProvider>
   );
 };
