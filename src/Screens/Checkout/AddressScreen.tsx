@@ -16,7 +16,7 @@ import { validSchema2 } from "../../lib/form-schemas";
 import CustomerTypeComp from "../../components/Checkout/CustomerType";
 import PaymentMethods from "../../components/Checkout/PaymentMethods";
 import ShipmentMethods from "../../components/Checkout/ShipmentMethods";
-import { CustomerType, LocationNType, StepValues } from "../../types/Common";
+import { CheckoutLocations, CustomerType, LocationNType, StepValues } from "../../types/Common";
 import { CREATE_ORDER_CHECKOUT, setDeliveryMethodGQL } from "../../api/cart";
 
 import { getCartAsync } from "../../Redux/cartActions";
@@ -30,11 +30,6 @@ const isFalseLocation = (value?: string) => {
   return value === "false" ? "" : value;
 };
 
-export interface Locations {
-  city?: string;
-  district?: string;
-  baghoroo?: string;
-}
 
 const CheckoutScreen: React.FC = () => {
   const { openNotification } = useContext(Context);
@@ -60,7 +55,7 @@ const CheckoutScreen: React.FC = () => {
   const [paymentMessage, setPaymentMessage] = useState<string>("");
 
   const [cartLoading, setCartLoading] = useState(loading);
-  const [locationsState, setLocationsState] = useState<Locations>({
+  const [locationsState, setLocationsState] = useState<CheckoutLocations>({
     city: "11",
   });
 
@@ -202,7 +197,7 @@ const CheckoutScreen: React.FC = () => {
     watch("district")
   );
 
-  const updateLocation = (newLocations: Locations) => {
+  const updateLocation = (newLocations: CheckoutLocations) => {
     setLocationsState((prev) => ({ ...prev, ...newLocations }));
   };
 

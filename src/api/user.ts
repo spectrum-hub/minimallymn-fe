@@ -7,6 +7,7 @@ export const USER_INFO = gql`
       message
       userData
       pdata
+      address
     }
   }
 `;
@@ -36,6 +37,7 @@ export const USER_INFO_UPDATE = gql`
       userData
       pdata
       clientIp
+
     }
   }
 `;

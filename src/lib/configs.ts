@@ -1,7 +1,7 @@
 export const websiteId = "1";
 // export const baseURL = "https://minim-admini.minimally.mn/";
 
-export const baseURL = "http://172.25.227.154:8069/"; 
+export const baseURL = "http://172.25.235.122:8069/"; 
  
 export const categoryImageUrl = (id: number) =>
   `${baseURL}/web/image/product.public.category/${id}/image_128`;

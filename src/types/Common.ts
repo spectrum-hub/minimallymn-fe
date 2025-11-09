@@ -291,3 +291,10 @@ export interface LocationNType {
 }
 
 export type ApiContextType = "commerce" | "minimally";
+
+
+export interface CheckoutLocations {
+  city?: string;
+  district?: string;
+  baghoroo?: string;
+}
