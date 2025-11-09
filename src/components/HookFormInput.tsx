@@ -11,6 +11,8 @@ import {
 } from "react-hook-form";
 import { Input, InputProps, Form, Select, SelectProps } from "antd";
 import { LucideIcon } from "lucide-react";
+import { TextAreaProps } from "antd/es/input";
+const { TextArea, Password } = Input;
 
 interface HookFormInputProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -19,12 +21,13 @@ interface HookFormInputProps<
   label?: string;
   placeholder?: string;
   prefixIcon?: LucideIcon;
-  type?: "text" | "password" | "number";
+  type?: "text" | "password" | "number" | "textarea";
   disabled?: boolean;
   loading?: boolean;
   isMobile?: boolean;
-  inputProps?: InputProps;
+  inputProps?: InputProps | TextAreaProps;
   styles?: React.CSSProperties;
+  textAreaRows: number;
 }
 
 const HookFormInput = <
@@ -32,6 +35,7 @@ const HookFormInput = <
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >({
   control,
+  textAreaRows = 4,
   name,
   label,
   placeholder = "",
@@ -64,23 +68,42 @@ const HookFormInput = <
         const hasError = !!error;
         const isDisabled = disabled || loading || fieldDisabled;
 
-        const InputComponent = type === "password" ? Input.Password : Input;
+        //  TextArea : InputProps | TextAreaProps
 
-        return (
-          <Form.Item
-            label={label}
-            validateStatus={error ? "error" : ""}
-            help={error?.message}
-            layout="vertical"
-          >
-            <InputComponent
-              size={isMobile ? "small" : "middle"}
-              id={name}
-              value={value ?? ""}
-              onChange={onChange}
-              onBlur={onBlur}
+        const commonProps = {
+          size: isMobile ? "small" : "middle",
+          id: name,
+          value: value ?? "",
+          onChange: onChange,
+          onBlur: onBlur,
+          placeholder: placeholder,
+          status: hasError ? "error" : "",
+          disabled: isDisabled,
+          style: styles,
+        };
+
+        const inputComponent = () => {
+          if (type === "password") {
+            return (
+              <Password
+                {...(commonProps as InputProps)}
+                {...(inputProps as InputProps)}
+              />
+            );
+          } else if (type === "textarea") {
+            return (
+              <TextArea
+                {...(commonProps as TextAreaProps)}
+                {...(inputProps as TextAreaProps)}
+                rows={textAreaRows}
+              />
+            );
+          }
+          return (
+            <Input
+              {...(commonProps as InputProps)}
+              {...(inputProps as InputProps)}
               ref={ref}
-              placeholder={placeholder}
               prefix={
                 PrefixIcon ? (
                   <PrefixIcon
@@ -89,11 +112,18 @@ const HookFormInput = <
                   />
                 ) : null
               }
-              status={hasError ? "error" : ""}
-              disabled={isDisabled}
-              style={styles}
-              {...inputProps}
             />
+          );
+        };
+
+        return (
+          <Form.Item
+            label={label}
+            validateStatus={error ? "error" : ""}
+            help={error?.message}
+            layout="vertical"
+          >
+            {inputComponent}
           </Form.Item>
         );
       }}

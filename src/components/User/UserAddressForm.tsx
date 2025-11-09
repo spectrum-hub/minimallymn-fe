@@ -113,7 +113,7 @@ const UserAddressForm: React.FC<{ onSuccess?: () => void }> = ({
       await createAddress({
         variables: {
           ...data,
-          setAsDefault: true, // эсвэл checkbox нэмж болно
+          setAsDefault: true,
         },
       });
     } finally {
