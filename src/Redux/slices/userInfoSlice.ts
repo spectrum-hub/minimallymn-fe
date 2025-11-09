@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UserInfoType } from "../../types/Auth";
+import { UserProfileQueryResult } from "../../types/Auth";
 import { apolloClient } from "../../lib/apolloClient";
 import { gql } from "@apollo/client";
 
@@ -31,7 +31,7 @@ export const UPDATE_PASSWORD = gql`
 `;
 
 interface UserInfoState {
-  data: UserInfoType | null;
+  data: UserProfileQueryResult | null;
   loading: boolean;
   error: string | null;
   message: string | null;
@@ -186,7 +186,7 @@ const userInfoSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    setUserInfo: (state, action: PayloadAction<UserInfoType | null>) => {
+    setUserInfo: (state, action: PayloadAction<UserProfileQueryResult | null>) => {
       state.data = action.payload;
       state.loading = false;
     },

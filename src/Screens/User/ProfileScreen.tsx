@@ -9,7 +9,7 @@ import { userInfoAsync, userInfoUpdateAsyncNew } from "../../Redux/userActions";
 import AccountLayout from "../../components/Layouts/account";
 import { useNotification } from "../../Hooks/use-notification";
 import { useHistoryNavigate } from "../../Hooks/use-navigate";
-import { Button, Avatar, Card, List, Modal } from "antd";
+import { Button, Avatar, Card, List } from "antd";
 import {
   EditOutlined,
   DeleteOutlined,
@@ -36,7 +36,8 @@ const ProfileScreen: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { data, loading } =
     useSelector((state: RootState) => state.userInfo) ?? {};
-  const { street, name, email } = data?.userInfo?.pdata ?? {};
+  const { fullname, email, shippingAddresses, shippingAddressesConfig } =
+    data?.userProfile ?? {};
   const authState = useSelector((state: RootState) => state.auth);
   const { historyNavigate } = useHistoryNavigate();
   const { openNotification } = useNotification();
@@ -55,17 +56,17 @@ const ProfileScreen: React.FC = () => {
     formState: { errors },
   } = useForm<FormType>({
     resolver: yupResolver(AccountFormSchema),
-    defaultValues: { name: name || "", email: email || "" },
+    defaultValues: { name: fullname || "", email: email || "" },
   });
 
   useEffect(() => {
-    if (data?.userInfo?.pdata) {
+    if (data?.userProfile) {
       reset({
-        name: name || "",
+        name: fullname || "",
         email: email && email !== "false" ? email : "",
       });
     }
-  }, [data, name, email, reset]);
+  }, [data, fullname, email, reset]);
 
   const handleOpenDrawer = () => {
     setLoading(true);
@@ -103,22 +104,6 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
-  // Dummy хаягууд (та өөрийн датагаар солино)
-  const deliveryAddresses = [
-    {
-      id: 1,
-      title: "Гэр",
-      address: "БЗД, 26-р хороо, Амгалан, 12-р байр 34 тоот",
-      isDefault: true,
-    },
-    {
-      id: 2,
-      title: "Ажлын газар",
-      address: "СБД, 1-р хороо, Централ тауэр, 12 давхар",
-    },
-    { id: 3, title: "Хөдөө", address: "Дорнод аймаг, Чойбалсан, 5-р баг" },
-  ];
-
   return (
     <AccountLayout>
       <div className="max-w-4xl mx-auto space-y-8 pb-28 lg:pb-8">
@@ -133,7 +118,7 @@ const ProfileScreen: React.FC = () => {
               />
               <div>
                 <h2 className="text-2xl text-white font-bold">
-                  {name || "Хэрэглэгч"}
+                  {fullname || "Хэрэглэгч"}
                 </h2>
                 <p className="text-white/80 flex items-center gap-2 mt-1">
                   <MailOutlined />
@@ -212,7 +197,7 @@ const ProfileScreen: React.FC = () => {
         <Card
           title={
             <span className="text-lg font-semibold">
-              Миний хаягууд ({deliveryAddresses.length})
+              {shippingAddressesConfig?.title} ({shippingAddresses?.length})
             </span>
           }
           className="shadow-lg border-0 rounded-2xl"
@@ -223,13 +208,13 @@ const ProfileScreen: React.FC = () => {
               className="bg-green-600 hover:bg-green-700 border-0 rounded-xl font-medium"
               onClick={() => handleOpenDrawer()}
             >
-              Хаяг нэмэх
+              {shippingAddressesConfig?.addText}
             </Button>
           }
         >
           <List
             itemLayout="horizontal"
-            dataSource={deliveryAddresses}
+            dataSource={shippingAddresses}
             renderItem={(item) => (
               <List.Item
                 actions={[
@@ -239,10 +224,10 @@ const ProfileScreen: React.FC = () => {
                     className="text-blue-600"
                     key={1}
                   >
-                    Засах
+                    {shippingAddressesConfig?.editText}
                   </Button>,
                   <Button type="text" danger icon={<DeleteOutlined />} key={2}>
-                    Устгах
+                    {shippingAddressesConfig?.deleteText}
                   </Button>,
                 ]}
                 className="hover:bg-gray-50 rounded-xl px-2 -mx-2 transition-all"
@@ -250,7 +235,7 @@ const ProfileScreen: React.FC = () => {
                 <List.Item.Meta
                   title={
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold">{item.title}</span>
+                      <span className="font-semibold">{item.addressTitle}</span>
                       {item.isDefault && (
                         <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">
                           Үндсэн
@@ -259,7 +244,7 @@ const ProfileScreen: React.FC = () => {
                     </div>
                   }
                   description={
-                    <span className="text-gray-600">{item.address}</span>
+                    <span className="text-gray-600">{item.addressDetail}</span>
                   }
                 />
               </List.Item>

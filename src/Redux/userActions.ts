@@ -1,7 +1,6 @@
 import { Dispatch } from "redux";
 import { apolloClient } from "../lib/apolloClient";
-import { USER_INFO, USER_INFO_UPDATE } from "../api/user";
-import { UserInfoType } from "../types/Auth";
+import { USER_PROFILE, USER_INFO_UPDATE } from "../api/user";
 import {
   setUserFailure,
   setUserInfo,
@@ -13,12 +12,14 @@ export const userInfoAsync = () => async (dispatch: Dispatch) => {
   try {
     dispatch(setUserRequest());
 
-    const response = await apolloClient.mutate({
-      mutation: USER_INFO,
+    const response = await apolloClient.query({
+      query: USER_PROFILE,
+      // fetchPolicy: "no-cache",
     });
 
+    // console.log(response?.data?.userProfile);
     dispatch(setUserInfo(response?.data));
-    
+
     return {
       success: true,
       message: response?.data.message,
@@ -49,8 +50,6 @@ interface UserDataNew {
   email?: string;
 }
 
-
-
 export const userInfoUpdateAsync =
   (userData: UserData) => async (dispatch: Dispatch) => {
     try {
@@ -68,19 +67,20 @@ export const userInfoUpdateAsync =
         },
       });
 
-      const userInfo: UserInfoType = response.data?.userInfo;
 
-      if (!userInfo?.success) {
+      const userProfile = response.data?.userInfo;
+
+      if (!userProfile?.success) {
         throw new Error(
-          userInfo?.message ??
+          userProfile?.message ??
             "Хэрэглэгчийн мэдээллийг шинэчлэхэд алдаа гарлаа."
         );
       }
 
-      dispatch(setUserInfo(userInfo));
+      dispatch(setUserInfo(userProfile));
       return {
         success: true,
-        message: userInfo.message,
+        message: userProfile.message,
       };
     } catch (err: unknown) {
       const errorMessage =
@@ -111,7 +111,7 @@ export const userInfoUpdateAsyncNew =
         },
       });
 
-      const userInfo: UserInfoType = response.data?.userInfo;
+      const userInfo = response.data?.userInfo;
 
       if (!userInfo?.success) {
         throw new Error(
@@ -174,9 +174,12 @@ export const userPhoneUpdateAsync =
       const userInfo = response.data?.updatePhone;
 
       if (!userInfo?.success) {
-        dispatch(setUserFailure(userInfo?.message ?? "Failed to process phone update request"));
+        dispatch(
+          setUserFailure(
+            userInfo?.message ?? "Failed to process phone update request"
+          )
+        );
         return userInfo?.message ?? "Failed to process phone update request";
-        
       } else {
         dispatch(setUserInfo(userInfo));
       }
