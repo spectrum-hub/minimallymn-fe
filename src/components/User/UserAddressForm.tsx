@@ -171,7 +171,7 @@ const UserAddressForm: React.FC<{ onSuccess?: () => void }> = ({
         control={control}
         name="addressDetail"
         label="Дэлгэрэнгүй хаяг"
-        placeholder="БГД, 3-р хороо, Энхтайваны өргөн чөлөө 123, 45 байр 67 орц"
+        placeholder="Бараа хүлээн авах дэлгэрэнгүй хаяг"
       />
     </HookFormProvider>
   );
