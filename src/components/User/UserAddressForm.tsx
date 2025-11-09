@@ -19,8 +19,18 @@ const formSchema = Yup.object().shape({
     .required("Хаягын нэр оруулна уу")
     .min(2, "Нэр хэт богино"),
   phone: Yup.string()
-    .matches(/^\+?[976]\d{7,11}$/, "Утасны дугаар буруу байна")
-    .required("Утасны дугаар оруулна уу"),
+    .required("Утасны дугаар оруулна уу")
+    .test("is-number", "Зөвхөн тоо оруулна уу", (value) => {
+      if (!value) return false;
+      const cleanedValue = value.split(/[\s\-+]/).join("");
+      return /^\d+$/.test(cleanedValue);
+    })
+    .test("valid-length", "Утасны дугаар 8 орон байх ёстой", (value) => {
+      if (!value) return false;
+      const cleanedValue = value.split(/[\s\-+]/).join("");
+      return cleanedValue.length === 8 || 
+             (cleanedValue.startsWith("976") && cleanedValue.length === 11);
+    }),
   districtId: Yup.string().required("Дүүрэг хороо сонгоно уу"),
   cityId: Yup.string().required("Хот, аймаг сонгоно уу"),
   baghorooId: Yup.string().required("Хороо, баг сонгоно уу"),
@@ -130,8 +140,8 @@ const UserAddressForm: React.FC<{ onSuccess?: () => void }> = ({
       <HookFormInput<FormSubmit>
         control={control}
         name="addressTitle"
-        label="Хаягын авагчийн нэр"
-        placeholder="Овог нэрээ бүрэн бичнэ үү"
+        label="Хаягын нэр"
+        placeholder="Гэр, Ажлын газар гэх мэт"
         prefixIcon={undefined}
         isMobile={false}
       />
@@ -161,10 +171,11 @@ const UserAddressForm: React.FC<{ onSuccess?: () => void }> = ({
       <HookFormInput<FormSubmit>
         control={control}
         name="phone"
-        label="Утасны дугаар"
-        placeholder="+97699123456"
+        label="Бараа хүлээн авах утасны дугаар"
+        placeholder="Утасны дугаар"
         prefixIcon={Phone}
         inputProps={{ maxLength: 15 }}
+        type={"text"}
       />
 
       <HookFormInput<FormSubmit>
@@ -172,6 +183,7 @@ const UserAddressForm: React.FC<{ onSuccess?: () => void }> = ({
         name="addressDetail"
         label="Дэлгэрэнгүй хаяг"
         placeholder="Бараа хүлээн авах дэлгэрэнгүй хаяг"
+        type={"textarea"}
       />
     </HookFormProvider>
   );

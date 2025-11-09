@@ -5,14 +5,12 @@ import {
   ControllerProps,
   FieldPath,
   FieldValues,
-  ControllerFieldState,
-  ControllerRenderProps,
-  UseFormStateReturn,
 } from "react-hook-form";
 import { Input, InputProps, Form, Select, SelectProps } from "antd";
 import { LucideIcon } from "lucide-react";
-import { TextAreaProps } from "antd/es/input";
-const { TextArea, Password } = Input;
+
+const { TextArea } = Input;
+const Password = Input.Password;
 
 interface HookFormInputProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -25,9 +23,13 @@ interface HookFormInputProps<
   disabled?: boolean;
   loading?: boolean;
   isMobile?: boolean;
-  inputProps?: InputProps | TextAreaProps;
+  inputProps?: InputProps;
+  textareaProps?: Omit<
+    React.ComponentProps<typeof TextArea>,
+    "value" | "onChange" | "onBlur"
+  >;
+  textareaRows?: number;
   styles?: React.CSSProperties;
-  textAreaRows: number;
 }
 
 const HookFormInput = <
@@ -35,7 +37,6 @@ const HookFormInput = <
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >({
   control,
-  textAreaRows = 4,
   name,
   label,
   placeholder = "",
@@ -44,12 +45,14 @@ const HookFormInput = <
   disabled = false,
   loading = false,
   inputProps = {},
+  textareaProps = {},
+  textareaRows = 4,
   rules,
   shouldUnregister,
   defaultValue,
   styles = {},
   isMobile,
-}: HookFormInputProps<TFieldValues, TName>): React.ReactElement => {
+}: HookFormInputProps<TFieldValues, TName>) => {
   return (
     <Controller
       control={control}
@@ -58,60 +61,71 @@ const HookFormInput = <
       shouldUnregister={shouldUnregister}
       defaultValue={defaultValue}
       render={({
-        field: { onChange, onBlur, value, name, ref, disabled: fieldDisabled },
+        field: { onChange, onBlur, value, ref, disabled: fieldDisabled },
         fieldState: { error },
-      }: {
-        field: ControllerRenderProps<TFieldValues, TName>;
-        fieldState: ControllerFieldState;
-        formState: UseFormStateReturn<TFieldValues>;
       }) => {
         const hasError = !!error;
         const isDisabled = disabled || loading || fieldDisabled;
 
-        //  TextArea : InputProps | TextAreaProps
-
-        const commonProps = {
-          size: isMobile ? "small" : "middle",
-          id: name,
-          value: value ?? "",
-          onChange: onChange,
-          onBlur: onBlur,
-          placeholder: placeholder,
-          status: hasError ? "error" : "",
+        const baseProps = {
+          size: isMobile ? ("small" as const) : ("middle" as const),
+          placeholder,
           disabled: isDisabled,
           style: styles,
+          status: hasError ? ("error" as const) : undefined,
         };
 
-        const inputComponent = () => {
-          if (type === "password") {
-            return (
-              <Password
-                {...(commonProps as InputProps)}
-                {...(inputProps as InputProps)}
-              />
-            );
-          } else if (type === "textarea") {
+        const prefix = PrefixIcon ? (
+          <PrefixIcon
+            size={18}
+            className={hasError ? "text-red-500" : "text-gray-400"}
+          />
+        ) : null;
+
+        const renderInput = () => {
+          if (type === "textarea") {
             return (
               <TextArea
-                {...(commonProps as TextAreaProps)}
-                {...(inputProps as TextAreaProps)}
-                rows={textAreaRows}
+                {...baseProps}
+                {...textareaProps}
+                value={value ?? ""}
+                onChange={onChange}
+                onBlur={onBlur}
+                rows={textareaRows}
+                autoSize={
+                  textareaRows === undefined
+                    ? { minRows: 3, maxRows: 8 }
+                    : false
+                }
+                // prefix TextArea-д хэцүү байдаг тул хасав
               />
             );
           }
+
+          if (type === "password") {
+            return (
+              <Password
+                {...baseProps}
+                {...inputProps}
+                ref={ref}
+                value={value}
+                onChange={onChange}
+                onBlur={onBlur}
+                prefix={prefix}
+              />
+            );
+          }
+
           return (
             <Input
-              {...(commonProps as InputProps)}
-              {...(inputProps as InputProps)}
+              {...baseProps}
+              {...inputProps}
               ref={ref}
-              prefix={
-                PrefixIcon ? (
-                  <PrefixIcon
-                    size={18}
-                    className={hasError ? "text-red-400" : "text-gray-400"}
-                  />
-                ) : null
-              }
+              type={type === "number" ? "number" : "text"}
+              value={value}
+              onChange={onChange}
+              onBlur={onBlur}
+              prefix={prefix}
             />
           );
         };
@@ -119,17 +133,19 @@ const HookFormInput = <
         return (
           <Form.Item
             label={label}
-            validateStatus={error ? "error" : ""}
+            validateStatus={hasError ? "error" : ""}
             help={error?.message}
             layout="vertical"
           >
-            {inputComponent}
+            {renderInput()}
           </Form.Item>
         );
       }}
     />
   );
 };
+
+// ==================== SELECT ====================
 
 interface Option {
   value: string | number;
@@ -144,7 +160,6 @@ interface HookFormSelectProps<
   label?: string;
   placeholder?: string;
   options: Option[];
-  prefixIcon?: LucideIcon;
   disabled?: boolean;
   loading?: boolean;
   isMobile?: boolean;
@@ -164,7 +179,6 @@ const HookFormSelect = <
   label,
   placeholder = "Сонгоно уу",
   options = [],
-  prefixIcon: PrefixIcon,
   disabled = false,
   loading = false,
   isMobile = false,
@@ -176,7 +190,7 @@ const HookFormSelect = <
   shouldUnregister,
   defaultValue,
   styles = {},
-}: HookFormSelectProps<TFieldValues, TName>): React.ReactElement => {
+}: HookFormSelectProps<TFieldValues, TName>) => {
   return (
     <Controller
       control={control}
@@ -185,12 +199,8 @@ const HookFormSelect = <
       shouldUnregister={shouldUnregister}
       defaultValue={defaultValue}
       render={({
-        field: { onChange, onBlur, value, name, ref },
+        field: { onChange, onBlur, value, ref },
         fieldState: { error },
-      }: {
-        field: ControllerRenderProps<TFieldValues, TName>;
-        fieldState: ControllerFieldState;
-        formState: UseFormStateReturn<TFieldValues>;
       }) => {
         const hasError = !!error;
         const isDisabled = disabled || loading;
@@ -201,14 +211,12 @@ const HookFormSelect = <
             validateStatus={hasError ? "error" : ""}
             help={error?.message}
             layout="vertical"
-            className="mb-4"
           >
             <Select
-              id={name}
-              value={value ?? (mode === "multiple" ? [] : undefined)}
+              ref={ref}
+              value={value}
               onChange={onChange}
               onBlur={onBlur}
-              ref={ref}
               size={isMobile ? "small" : "middle"}
               placeholder={placeholder}
               options={options}
@@ -218,20 +226,9 @@ const HookFormSelect = <
               allowClear={allowClear}
               showSearch={showSearch}
               optionFilterProp="label"
-              prefix={
-                PrefixIcon ? (
-                  <PrefixIcon
-                    size={18}
-                    className={hasError ? "text-red-400" : "text-gray-400"}
-                  />
-                ) : null
-              }
-              status={hasError ? "error" : ""}
-              className={`rounded-xl ${hasError ? "border-red-300" : ""}`}
-              style={{
-                ...styles,
-              }}
-              popupClassName="rounded-xl"
+              status={hasError ? "error" : undefined}
+              style={{ width: "100%", ...styles }}
+              popupClassName="rounded-lg"
               {...selectProps}
             />
           </Form.Item>
