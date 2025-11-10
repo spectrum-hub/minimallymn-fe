@@ -2,7 +2,7 @@ import { gql, useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { message, Checkbox } from "antd";
+import { message } from "antd";
 import { useState, useEffect, useRef } from "react";
 import { Phone } from "lucide-react";
 
