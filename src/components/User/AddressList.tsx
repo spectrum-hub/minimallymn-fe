@@ -14,6 +14,7 @@ import {
 import { useDrawerCtx } from "../../Hooks/use-modal-drawer";
 import UserAddressForm from "../../components/User/UserAddressForm";
 import { ShippingAddress } from "../../types/Auth";
+import { getLocationData } from "../../utils/location";
 
 const DELETE_SHIPPING_ADDRESS = gql`
   mutation DeleteShippingAddress($addressId: Int!) {
@@ -207,11 +208,10 @@ const AddressList: React.FC = () => {
                 </div>
               }
               description={
-                <span className="text-gray-600">{item.addressDetail}
-                -{item.cityId}-
-                {item.districtId}-
-                {item.baghorooId}
-                </span>
+                <div className="text-gray-600">
+                  <p>{item?.addressDetail}</p>
+                  {getLocationData(item)}
+                </div>
               }
             />
           </List.Item>
