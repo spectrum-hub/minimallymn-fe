@@ -182,15 +182,19 @@ const AddressList: React.FC<Props> = ({
       }
       className="shadow-lg rounded"
       extra={
-        <Button
-          type="primary"
-          size={"small"}
-          icon={<PlusOutlined />}
-          className="rounded text-xs"
-          onClick={() => handleOpenDrawer()}
-        >
-          {addText}
-        </Button>
+        localAddresses.length < 5 ? (
+          <Button
+            type="primary"
+            size={"small"}
+            icon={<PlusOutlined />}
+            className="rounded text-xs"
+            onClick={() => handleOpenDrawer()}
+          >
+            {addText}
+          </Button>
+        ) : (
+          ""
+        )
       }
     >
       <List
