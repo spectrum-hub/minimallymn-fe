@@ -1,10 +1,9 @@
-// components/forms/UserAddressForm.tsx
 import { gql, useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { message, Checkbox } from "antd";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Phone } from "lucide-react";
 
 import locations from "../../lib/locations.json";
@@ -13,6 +12,13 @@ import { LocationNType } from "../../types/Common";
 import { shipmentLocations } from "../../lib/checkout";
 import { HookFormInput, HookFormSelect } from "../HookFormInput";
 import { ShippingAddress } from "../../types/Auth";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../Redux/store";
+import {
+  setUserFailure,
+  setUserInfo,
+  setUserRequest,
+} from "../../Redux/slices/userInfoSlice";
 
 const formSchema = Yup.object().shape({
   addressTitle: Yup.string()
@@ -121,32 +127,36 @@ interface FormData {
 }
 
 interface Props {
-  addressId?: number; // Хэрвээ байвал → Edit, байхгүй бол → Create
   onSuccess?: () => void;
   onCancel?: () => void;
   editAddressData?: ShippingAddress;
 }
 
 const UserAddressForm: React.FC<Props> = ({
-  addressId,
   onSuccess,
   onCancel,
   editAddressData,
 }) => {
-  const isEdit = !!addressId;
+  const isEdit = !!editAddressData?.id;
   const [loading, setLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const prevCityIdRef = useRef<string>("");
+  const prevDistrictIdRef = useRef<string>("");
   const typedLocations = locations as LocationNType;
+  const dispatch = useDispatch<AppDispatch>();
+  const { data } = useSelector((state: RootState) => state.userInfo) ?? {};
+  const userProfileData = data?.userProfile;
 
   const { control, handleSubmit, watch, setValue, reset } = useForm<FormData>({
     resolver: yupResolver(formSchema),
     defaultValues: {
-      addressTitle: "",
-      addressDetail: "",
-      phone: "",
-      cityId: "",
-      districtId: "",
-      baghorooId: "",
-      setAsDefault: false,
+      addressTitle: editAddressData?.addressTitle ?? "",
+      addressDetail: editAddressData?.addressDetail ?? "",
+      phone: editAddressData?.phone ?? "",
+      cityId: editAddressData?.cityId ?? "",
+      districtId: editAddressData?.districtId ?? "",
+      baghorooId: editAddressData?.baghorooId ?? "",
+      setAsDefault: editAddressData?.isDefault ?? false,
     },
   });
 
@@ -164,7 +174,9 @@ const UserAddressForm: React.FC<Props> = ({
         setAsDefault: editAddressData.isDefault || false,
       });
     }
-  }, [isEdit, addressId, reset, editAddressData]);
+    // Component mount хийгдсэний дараа initialized болгох
+    setIsInitialized(true);
+  }, [isEdit, reset, editAddressData]);
 
   const [createAddress] = useMutation(CREATE_SHIPPING_ADDRESS);
   const [updateAddress] = useMutation(UPDATE_SHIPPING_ADDRESS);
@@ -173,34 +185,87 @@ const UserAddressForm: React.FC<Props> = ({
   const districtIdValue = watch("districtId");
   const computedLocations = shipmentLocations(cityIdValue, districtIdValue);
 
-  const onSubmit = async (data: FormData) => {
+  // cityId өөрчлөгдөхөд districtId болон baghorooId-ийг reset хийх (зөвхөн хэрэглэгч өөрчлөх үед)
+  useEffect(() => {
+    // Эхний populate хийгдсэн ба cityId өөрчлөгдсөн бол
+    if (isInitialized && prevCityIdRef.current !== cityIdValue) {
+      setValue("districtId", "");
+      setValue("baghorooId", "");
+    }
+    prevCityIdRef.current = cityIdValue;
+  }, [cityIdValue, isInitialized, setValue]);
+
+  // districtId өөрчлөгдөхөд baghorooId-ийг reset хийх (зөвхөн хэрэглэгч өөрчлөх үед)
+  useEffect(() => {
+    // Эхний populate хийгдсэн ба districtId өөрчлөгдсөн бол
+    if (isInitialized && prevDistrictIdRef.current !== districtIdValue) {
+      setValue("baghorooId", "");
+    }
+    prevDistrictIdRef.current = districtIdValue;
+  }, [districtIdValue, isInitialized, setValue]);
+
+  const onSubmit = async (formData: FormData) => {
     setLoading(true);
+    console.log({ formData });
     try {
+      let updatedAddress: ShippingAddress | null = null;
       if (isEdit) {
-        await updateAddress({
+        dispatch(setUserRequest());
+        const response = await updateAddress({
           variables: {
-            addressId,
-            ...data,
-            cityId: data.cityId || null,
-            districtId: data.districtId || null,
-            baghorooId: data.baghorooId || null,
+            addressId: editAddressData?.id,
+            ...formData,
+            cityId: formData.cityId || null,
+            districtId: formData.districtId || null,
+            baghorooId: formData.baghorooId || null,
+            latitude: formData.latitude || null,
+            longitude: formData.longitude || null,
+            setAsDefault: formData.setAsDefault,
           },
         });
+
+        updatedAddress = response.data?.updateShippingAddress?.address;
+        console.log({ updatedAddress });
         message.success("Хаяг амжилттай засагдлаа!");
       } else {
-        await createAddress({
+        const response = await createAddress({
           variables: {
-            ...data,
-            cityId: data.cityId || null,
-            districtId: data.districtId || null,
-            baghorooId: data.baghorooId || null,
+            ...formData,
+            cityId: formData.cityId || null,
+            districtId: formData.districtId || null,
+            baghorooId: formData.baghorooId || null,
+            latitude: formData.latitude || null,
+            longitude: formData.longitude || null,
+            setAsDefault: formData.setAsDefault,
           },
         });
+
+        updatedAddress = response.data?.createShippingAddress?.address;
         message.success("Хаяг амжилттай нэмэгдлээ!");
+      }
+
+      if (userProfileData && updatedAddress) {
+        const newShippingAddresses = isEdit
+          ? userProfileData.shippingAddresses.map((addr) =>
+              addr.id === editAddressData?.id
+                ? { ...addr, ...formData }
+                : addr
+            )
+          : [...userProfileData.shippingAddresses, updatedAddress];
+
+        const updatedProfileData = {
+          ...userProfileData,
+          shippingAddresses: newShippingAddresses,
+        };
+
+        console.log({ updatedProfileData });
+        dispatch(setUserInfo({ userProfile: updatedProfileData }));
       }
       onSuccess?.();
     } catch (err: unknown) {
-      message.error((err as Error)?.message || "Алдаа гарлаа");
+      const errMsj = (err as Error)?.message || "Алдаа гарлаа";
+      message.error(errMsj);
+      dispatch(setUserFailure(errMsj));
     } finally {
       setLoading(false);
     }

@@ -100,12 +100,7 @@ const AddressList: React.FC = () => {
       width: "500px",
       content: (
         <UserAddressForm
-          addressId={editAddressData?.id}
           editAddressData={editAddressData}
-          onSuccess={() => {
-            dispatch(userInfoAsync());
-            closeDrawer();
-          }}
           onCancel={() => closeDrawer()}
         />
       ),
@@ -212,7 +207,11 @@ const AddressList: React.FC = () => {
                 </div>
               }
               description={
-                <span className="text-gray-600">{item.addressDetail}</span>
+                <span className="text-gray-600">{item.addressDetail}
+                -{item.cityId}-
+                {item.districtId}-
+                {item.baghorooId}
+                </span>
               }
             />
           </List.Item>
