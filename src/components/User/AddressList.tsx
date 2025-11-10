@@ -31,6 +31,8 @@ const AddressList: React.FC = () => {
   const { shippingAddresses, shippingAddressesConfig } =
     data?.userProfile ?? {};
 
+  const { addText, editText, deleteText, title } =
+    shippingAddressesConfig ?? {};
   const { openNotification } = useNotification();
   // Local state for optimistic UI
   const [localAddresses, setLocalAddresses] = useState(shippingAddresses || []);
@@ -122,7 +124,7 @@ const AddressList: React.FC = () => {
     <Card
       title={
         <span className="text-lg font-semibold">
-          {shippingAddressesConfig?.title} ({localAddresses?.length || 0})
+          {title} ({localAddresses?.length || 0})
         </span>
       }
       className="shadow-lg border-0 rounded-2xl"
@@ -133,7 +135,7 @@ const AddressList: React.FC = () => {
           className="bg-green-600 hover:bg-green-700 border-0 rounded-xl font-medium"
           onClick={() => handleOpenDrawer()}
         >
-          {shippingAddressesConfig?.addText}
+          {addText}
         </Button>
       }
     >
@@ -149,7 +151,7 @@ const AddressList: React.FC = () => {
                 className="text-blue-600"
                 key={1}
               >
-                {shippingAddressesConfig?.editText}
+                {editText}
               </Button>,
 
               <Button
@@ -165,7 +167,7 @@ const AddressList: React.FC = () => {
                 }}
                 disabled={mainAddress?.id === item.id}
               >
-                {shippingAddressesConfig?.deleteText}
+                {deleteText}
               </Button>,
             ]}
             className="hover:bg-gray-50 rounded-xl px-2 -mx-2 transition-all"
