@@ -86,26 +86,32 @@ const ProfileScreen: React.FC = () => {
     emailForm.reset({ email: initialEmail });
   }, [emailForm, fullnameForm, initialEmail, initialFullname]);
 
-  const handleResponse = (res: any) => {
-    const msg = res?.data?.updateUserNameEmail?.message;
-    if (msg) {
-      openNotification({ body: msg, type: "success" });
-    } else {
-      openNotification({
-        body: "Мэдээлэл амжилттай хадгалагдлаа! 🎉",
-        type: "success",
-      });
-    }
-    // refresh profile after successful update
-    dispatch(getUserProfile());
-  };
+  const handleResponse = useCallback(
+    (res: { data?: { updateUserNameEmail?: { message?: string } } }) => {
+      const msg = res?.data?.updateUserNameEmail?.message;
+      if (msg) {
+        openNotification({ body: msg, type: "success" });
+      } else {
+        openNotification({
+          body: "Мэдээлэл амжилттай хадгалагдлаа! 🎉",
+          type: "success",
+        });
+      }
+      // refresh profile after successful update
+      dispatch(getUserProfile());
+    },
+    [dispatch, openNotification]
+  );
 
-  const handleError = (err: unknown) => {
-    openNotification({
-      body: (err as Error)?.message || "Алдаа гарлаа. Дахин оролдоно уу.",
-      type: "error",
-    });
-  };
+  const handleError = useCallback(
+    (err: unknown) => {
+      openNotification({
+        body: (err as Error)?.message || "Алдаа гарлаа. Дахин оролдоно уу.",
+        type: "error",
+      });
+    },
+    [openNotification]
+  );
 
   const onSubmitFullname = useCallback(
     async (values: FullnameForm) => {
