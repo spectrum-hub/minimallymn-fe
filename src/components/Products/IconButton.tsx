@@ -1,10 +1,10 @@
 import { Spin } from "antd";
-import { Eye, Heart, Trash2 } from "lucide-react";
+import { Eye, Heart, Trash2, CircleCheckBig  } from "lucide-react";
 import { FC } from "react";
 
 interface Props {
   onClick?: () => void;
-  icon: "heart" | "eye" | "delete";
+  icon: "heart" | "eye" | "delete" | "check";
   className?: string;
   loading?: boolean;
 }
@@ -25,6 +25,8 @@ const IconButton: FC<Props> = ({ onClick, icon, className, loading }) => {
       {!loading && icon === "heart" ? <Heart className="h-4 w-4" /> : <></>}
       {!loading && icon === "eye" ? <Eye className="h-4 w-4" /> : <></>}
       {!loading && icon === "delete" ? <Trash2 className="h-4 w-4" /> : <></>}
+      {!loading && icon === "check" ? <CircleCheckBig className="h-4 w-4" /> : <></>}
+      
     </button>
   );
 };

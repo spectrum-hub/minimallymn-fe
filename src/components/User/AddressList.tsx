@@ -15,6 +15,7 @@ import UserAddressForm from "../../components/User/UserAddressForm";
 import { ShippingAddress } from "../../types/Auth";
 import { getLocationData } from "../../utils/location";
 import { setUserInfo, setUserRequest } from "../../Redux/slices/userInfoSlice";
+import { Circle, CircleCheckBig } from "lucide-react";
 
 const DELETE_SHIPPING_ADDRESS = gql`
   mutation DeleteShippingAddress($addressId: Int!) {
@@ -25,8 +26,17 @@ const DELETE_SHIPPING_ADDRESS = gql`
   }
 `;
 
-const AddressList: React.FC = () => {
+interface Props {
+  isCheckout?: boolean;
+  setSelectedAddress?: (arg: string) => void;
+}
+const AddressList: React.FC<Props> = ({
+  setSelectedAddress,
+  isCheckout = false,
+}) => {
   const { showDrawer, closeDrawer, setLoading } = useDrawerCtx();
+
+  const [selectedAddressId, setSelectedAddressId] = useState<number>();
 
   const dispatch = useDispatch<AppDispatch>();
   const { data, loading } =
@@ -34,8 +44,7 @@ const AddressList: React.FC = () => {
   const { shippingAddresses, shippingAddressesConfig } =
     data?.userProfile ?? {};
 
-  const { addText, editText, deleteText, title } =
-    shippingAddressesConfig ?? {};
+  const { addText, editText, title } = shippingAddressesConfig ?? {};
   const { openNotification } = useNotification();
   // Local state for optimistic UI
   const [localAddresses, setLocalAddresses] = useState(shippingAddresses || []);
@@ -77,6 +86,12 @@ const AddressList: React.FC = () => {
       },
     }
   );
+
+  useEffect(() => {
+    if (localAddresses && localAddresses?.length === 1) {
+      setSelectedAddressId(localAddresses[0].id);
+    }
+  }, [localAddresses]);
 
   const handleOpenDrawer = () => {
     showDrawer({
@@ -142,6 +157,15 @@ const AddressList: React.FC = () => {
     });
   };
 
+  const handleSelectAddressCheckout = (item: ShippingAddress) => {
+    if (!isCheckout) {
+      return;
+    }
+    console.log(item);
+    setSelectedAddressId(item.id);
+
+    // setSelectedAddress
+  };
   const mainAddress = (localAddresses ?? []).find((addr) => {
     const validIds = (localAddresses ?? [])
       .map((a) => a?.id)
@@ -152,16 +176,17 @@ const AddressList: React.FC = () => {
   return (
     <Card
       title={
-        <span className="text-lg font-semibold">
+        <span className="text-sm">
           {title} ({localAddresses?.length || 0})
         </span>
       }
-      className="shadow-lg border-0 rounded-2xl"
+      className="shadow-lg rounded"
       extra={
         <Button
           type="primary"
+          size={"small"}
           icon={<PlusOutlined />}
-          className="bg-green-600 hover:bg-green-700 border-0 rounded-xl font-medium"
+          className="rounded text-xs"
           onClick={() => handleOpenDrawer()}
         >
           {addText}
@@ -169,7 +194,7 @@ const AddressList: React.FC = () => {
       }
     >
       <List
-        itemLayout="horizontal"
+        size="small"
         dataSource={localAddresses}
         loading={loading}
         renderItem={(item) => (
@@ -178,7 +203,7 @@ const AddressList: React.FC = () => {
               <Button
                 type="text"
                 icon={<EditOutlined />}
-                className="text-blue-600"
+                className="text-xs"
                 key={1}
                 onClick={() => handleEditAddress(item)}
               >
@@ -197,16 +222,43 @@ const AddressList: React.FC = () => {
                   }
                 }}
                 disabled={mainAddress?.id === item.id}
-              >
-                {deleteText}
-              </Button>,
+              ></Button>,
             ]}
             className="hover:bg-gray-50 rounded-xl px-2 -mx-2 transition-all"
           >
             <List.Item.Meta
+              {...(isCheckout
+                ? {
+                    avatar: (
+                      <Button
+                        shape={"circle"}
+                        type={"dashed"}
+                        onClick={() => handleSelectAddressCheckout(item)}
+                      >
+                        {selectedAddressId === item.id ? (
+                          <CircleCheckBig />
+                        ) : (
+                          <Circle />
+                        )}
+                      </Button>
+                    ),
+                  }
+                : {})}
               title={
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold">{item.addressTitle}</span>
+                  {isCheckout ? (
+                    <Button
+                      type={"text"}
+                      size={"small"}
+                      className="text-sm"
+                      onClick={() => handleSelectAddressCheckout(item)}
+                    >
+                      {item.addressTitle}
+                    </Button>
+                  ) : (
+                    <span>{item.addressTitle}</span>
+                  )}
+
                   {mainAddress?.id === item.id && (
                     <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">
                       Үндсэн
@@ -215,9 +267,9 @@ const AddressList: React.FC = () => {
                 </div>
               }
               description={
-                <div className="text-gray-600">
-                  <p>{item?.addressDetail}</p>
-                  <span>{getLocationData(item)}</span>
+                <div className="text-gray-800">
+                  <span className="text-sm">{getLocationData(item)}</span>
+                  <p className="text-xs">{item?.addressDetail}</p>
                 </div>
               }
             />

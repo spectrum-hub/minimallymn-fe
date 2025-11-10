@@ -1,12 +1,10 @@
-import { FC, useContext, useEffect, useMemo } from "react";
+import { FC, useContext, useMemo } from "react";
 import { Cart, PaymentMethods as TPaymentMethod } from "../../types/Cart";
 import { baseURL } from "../../lib/configs";
-import { Circle,  CircleCheckBig } from "lucide-react";
+import { Circle, CircleCheckBig } from "lucide-react";
 
 import { pleaseLoginNotifWithPayment } from "./helpers";
 import { Context } from "../../context/NotificationCtx";
-import { DrawerContext } from "../../context/DrawerContext";
-import LoginScreen from "../../Screens/Auth/LoginScreen";
 
 interface Prop {
   cart?: Cart;
@@ -14,7 +12,7 @@ interface Prop {
   onChangePayment: (arg: string) => void;
   paymentCode?: string;
   errorMessage?: string;
-  userPhone?: string
+  userPhone?: string;
 }
 
 const TPaymentMethods: FC<Prop> = ({
@@ -26,15 +24,8 @@ const TPaymentMethods: FC<Prop> = ({
   userPhone,
 }) => {
   const { openNotification } = useContext(Context);
-  const drawerCtx = useContext(DrawerContext);
 
   const image = `${baseURL}/web/image/payment.method/`;
-
-  useEffect(() => {
-    if (isAuth) {
-      drawerCtx.closeDrawer();
-    }
-  }, [drawerCtx, isAuth]);
 
   const nPayments = useMemo(() => {
     if (!cart?.paymentMethods) return [];
@@ -48,9 +39,7 @@ const TPaymentMethods: FC<Prop> = ({
         if (payment.code !== "wire_transfer") {
           return {
             ...payment,
-            description:
-              "Харилцагчийн дугаар: " +
-              (userPhone ?? ""),
+            description: "Харилцагчийн дугаар: " + (userPhone ?? ""),
           };
         }
         return payment;
@@ -60,19 +49,10 @@ const TPaymentMethods: FC<Prop> = ({
   const handleChangePayment = (payment: TPaymentMethod) => {
     if (!isAuth && payment.isAuthRequired) {
       openNotification(pleaseLoginNotifWithPayment(payment.name));
-      drawerCtx.showDrawer({
-        title: "Нэвтрэх",
-        content: <LoginScreen isDrawer={true} />,
-        width: "400px",
-        placement: "right",
-      });
-      drawerCtx.setLoading(false);
     } else {
       onChangePayment(payment.code);
     }
   };
-
-
 
   if (!cart?.deliveryCarriers || cart?.deliveryCarriers.length === 0) {
     return null;

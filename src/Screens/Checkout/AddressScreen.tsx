@@ -30,10 +30,12 @@ import { Context } from "../../context/NotificationCtx";
 import ErrorMessege from "../../components/Checkout/ErrorMessege";
 import { useHistoryNavigate } from "../../Hooks/use-navigate";
 import CheckoutWarnings from "../../components/Checkout/CheckoutWarningMessages";
+import AddressList from "../../components/User/AddressList";
+import { useDrawerCtx } from "../../Hooks/use-modal-drawer";
 
 const CheckoutScreen: React.FC = () => {
   const { openNotification } = useContext(Context);
-
+  const { showDrawer, closeDrawer, setLoading } = useDrawerCtx();
   const { historyNavigate } = useHistoryNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const authState = useSelector((state: RootState) => state.auth);
@@ -118,7 +120,6 @@ const CheckoutScreen: React.FC = () => {
   const {
     control,
     watch,
-    resetField,
     setValue,
     reset,
     handleSubmit,
@@ -193,25 +194,11 @@ const CheckoutScreen: React.FC = () => {
     }
   }, [cityValue, locationsState.city, setValue, typedLocations]);
 
-  const computedShipmentLocations = shipmentLocations(
-    cityValue,
-    watch("district")
-  );
 
   const updateLocation = (newLocations: CheckoutLocations) => {
     setLocationsState((prev) => ({ ...prev, ...newLocations }));
   };
 
-  const handleSelectChange = (
-    value: string | number,
-    field: any,
-    name: keyof StepValues,
-    resetFields?: (keyof StepValues)[]
-  ) => {
-    field.onChange(value);
-    updateLocation({ [name]: value });
-    resetFields?.forEach((field) => resetField(field));
-  };
 
   const onSubmit = async (data: StepValues) => {
     try {
@@ -301,49 +288,10 @@ const CheckoutScreen: React.FC = () => {
     />
   );
 
-  const renderSelect = (
-    name: keyof StepValues,
-    label: string,
-    options: any[],
-    disabled?: boolean,
-    resetFields?: (keyof StepValues)[]
-  ) => (
-    <Controller
-      control={control}
-      name={name}
-      render={({ field, fieldState }) => (
-        <Form.Item
-          label={label}
-          validateStatus={fieldState.error ? "error" : ""}
-          help={fieldState.error?.message}
-          layout="vertical"
-        >
-          <Select
-            {...field}
-            onChange={(value) => {
-              console.log(value);
-              if (value === "false") {
-                console.log(value);
-              }
-              handleSelectChange(value, field, name, resetFields);
-            }}
-            className="min-w-36 max-w-64"
-            options={options}
-            disabled={disabled}
-            size={"large"}
-          />
-        </Form.Item>
-      )}
-    />
-  );
-
   if (!cartItem?.orderLines?.length) {
     return <EmptyCart />;
   }
 
-  console.log(orderCreateStatus);
-
-  console.log("selectedPaymentCode", selectedPaymentCode);
   return (
     <div className="form-payment-delivery-address py-2 bg-gradient-to-b from-gray-50 to-white px-0">
       <div className="grid lg:grid-cols-3 gap-4  mx-auto">
@@ -376,60 +324,14 @@ const CheckoutScreen: React.FC = () => {
                     {renderInput("register_org", "Байгууллагын регистер")}
                   </div>
                 )}
+
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {renderInput("firstname", "Нэр")}
                   {renderInput("s_phone", "Холбогдох утас")}
                   {renderInput("email", "И-мэйл хаяг")}
                 </div>
-                <h2 className="form-address-title">Хүргэлтийн хаяг</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  {renderSelect(
-                    "city",
-                    "Хот/Аймаг",
-                    Object.values(typedLocations),
-                    false,
-                    ["district", "baghoroo"]
-                  )}
-                  {renderSelect(
-                    "district",
-                    "Дүүрэг/Сум",
-                    computedShipmentLocations?.districts,
-                    !cityValue,
-                    ["baghoroo"]
-                  )}
 
-                  {renderSelect(
-                    "baghoroo",
-                    "Хороо/Баг",
-                    computedShipmentLocations?.baghoroo || [],
-                    !watch("district")
-                  )}
-                </div>
-                <Controller
-                  control={control}
-                  name="s_address"
-                  render={({ field, fieldState }) => (
-                    <Form.Item
-                      label={
-                        <span className="text-gray-700 ">
-                          Хүргэлтийн дэлгэрэнгүй хаяг, Нэмэлт тайлбар
-                        </span>
-                      }
-                      validateStatus={fieldState.error ? "error" : ""}
-                      help={fieldState.error?.message}
-                      layout="vertical"
-                    >
-                      <Input.TextArea
-                        {...field}
-                        value={
-                          String(field.value) === "false" ? "" : field.value
-                        }
-                        rows={4}
-                        className="rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-400 transition-all"
-                      />
-                    </Form.Item>
-                  )}
-                />
+                <AddressList isCheckout />
               </div>
 
               <div className="space-y-4">

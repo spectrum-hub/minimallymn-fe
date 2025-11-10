@@ -128,7 +128,6 @@ interface FormData {
 }
 
 interface Props {
-  onSuccess?: () => void;
   onCancel?: () => void;
   editAddressData?: ShippingAddress;
 }
