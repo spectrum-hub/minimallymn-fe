@@ -240,16 +240,24 @@ const UserAddressForm: React.FC<Props> = ({
           },
         });
 
+        console.log("createAddress response.data", response.data);
+
         updatedAddress = response.data?.createShippingAddress?.address;
-        message.success("Хаяг амжилттай нэмэгдлээ!");
+        message.success(response?.data?.createShippingAddress?.message);
       }
+
+      console.log(updatedAddress?.id);
 
       if (userProfileData && updatedAddress) {
         const newShippingAddresses = isEdit
           ? userProfileData.shippingAddresses.map((addr) =>
               addr.id === editAddressData?.id
                 ? { ...addr, ...formData }
-                : addr
+                : {                    
+                    ...addr,
+                    id: updatedAddress.id,
+                    addressDetail: updatedAddress?.addressDetail
+                  }
             )
           : [...userProfileData.shippingAddresses, updatedAddress];
 

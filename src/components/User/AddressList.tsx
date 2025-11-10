@@ -210,7 +210,7 @@ const AddressList: React.FC = () => {
               description={
                 <div className="text-gray-600">
                   <p>{item?.addressDetail}</p>
-                  {getLocationData(item)}
+                  <span>{getLocationData(item)}</span>
                 </div>
               }
             />
