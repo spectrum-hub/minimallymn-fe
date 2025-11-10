@@ -258,12 +258,6 @@ const AddressList: React.FC<Props> = ({
                   ) : (
                     <span>{item.addressTitle}</span>
                   )}
-
-                  {mainAddress?.id === item.id && (
-                    <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">
-                      Үндсэн
-                    </span>
-                  )}
                 </div>
               }
               description={
