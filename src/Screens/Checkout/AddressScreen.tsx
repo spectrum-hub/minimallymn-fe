@@ -169,8 +169,18 @@ const CheckoutScreen: React.FC = () => {
   }, [loading]);
 
   const onSubmit = async (data: StepValues) => {
+    console.log(data);
     try {
-      const { s_address, s_phone, firstname, email } = data;
+      const { s_phone, firstname, email } = data;
+
+      // Хаяг сонгоогүй бол notification өгөх
+      if (!selectedAddressText) {
+        openNotification({
+          type: "warning",
+          body: <div>Хүргэлтийн хаяг сонгоно уу</div>,
+        });
+        return;
+      }
 
       setCartLoading(true);
 
@@ -183,7 +193,7 @@ const CheckoutScreen: React.FC = () => {
           phone: s_phone,
           name: firstname,
           email,
-          note: s_address,
+          note: selectedAddressText,
           paymentMethod: selectedPaymentCode,
           deliveryMethod: deliveryId,
           checkoutWarningMessages: checkoutWarningMessages,
@@ -301,7 +311,10 @@ const CheckoutScreen: React.FC = () => {
 
                 <AddressList
                   isCheckout={true}
-                  setSelectedAddress={setSelectedAddressText}
+                  setSelectedAddress={(s) => {
+                    setSelectedAddressText(s);
+                    setValue("address", s);
+                  }}
                 />
               </div>
 
@@ -356,14 +369,31 @@ const CheckoutScreen: React.FC = () => {
 
               <div className="mt-6 flex justify-end">
                 <Button
-                  // ref={(e) => {
-                  //   console.log("aaaaaa", e);
-                  // }}
                   size="large"
                   htmlType="submit"
                   type="primary"
                   loading={cartLoading}
                   className={` w-full max-w-80 rounded-lg h-12 payment-pay-button`}
+                  onClick={() => {
+                    // Form validation алдааг шалгах
+                    const formErrors = formMethods.formState.errors;
+                    if (Object.keys(formErrors).length > 0) {
+                      console.log("Form validation errors:", formErrors);
+                      openNotification({
+                        type: "error",
+                        body: (
+                          <div>
+                            Мэдээллээ бүрэн бөглөнө үү
+                            {Object.entries(formErrors).map(([key, error]) => (
+                              <div key={key} className="text-xs">
+                                • {error?.message || key}
+                              </div>
+                            ))}
+                          </div>
+                        ),
+                      });
+                    }
+                  }}
                 >
                   {cartLoading ? "Processing..." : "Төлбөр төлөх"}
                 </Button>
