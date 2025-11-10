@@ -16,7 +16,12 @@ import { validSchema2 } from "../../lib/form-schemas";
 import CustomerTypeComp from "../../components/Checkout/CustomerType";
 import PaymentMethods from "../../components/Checkout/PaymentMethods";
 import ShipmentMethods from "../../components/Checkout/ShipmentMethods";
-import { CheckoutLocations, CustomerType, LocationNType, StepValues } from "../../types/Common";
+import {
+  CheckoutLocations,
+  CustomerType,
+  LocationNType,
+  StepValues,
+} from "../../types/Common";
 import { CREATE_ORDER_CHECKOUT, setDeliveryMethodGQL } from "../../api/cart";
 
 import { getCartAsync } from "../../Redux/cartActions";
@@ -33,6 +38,7 @@ const CheckoutScreen: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const authState = useSelector((state: RootState) => state.auth);
   const userInfo = useSelector((state: RootState) => state.userInfo);
+
   const checkoutWarningMessages = useSelector(
     (state: RootState) =>
       state.layouts.data?.themeGrid?.checkoutWarningMessages || []
@@ -54,6 +60,14 @@ const CheckoutScreen: React.FC = () => {
     city: "11",
   });
 
+  useEffect(() => {
+    if (!authState?.isAuthenticated) {
+      historyNavigate(
+        "/auth/login?notification=Худалдан авалтаа үргэлжлүүлхийн тулд нэвтэрнэ үү"
+      );
+    }
+  }, [authState?.isAuthenticated, historyNavigate]);
+
   const [selectedPaymentCode, setSelectedPaymentCode] =
     useState<string>("wire_transfer");
   const [userPhoneNumber, setUserPhoneNumber] = useState<string>();
@@ -68,7 +82,6 @@ const CheckoutScreen: React.FC = () => {
   const [checkoutWarningMessagesState, setCheckoutWarningMessagesState] =
     useState<Record<number, string> | undefined>();
 
-  console.log(checkoutWarningMessagesState);
   const handleToggleWarning = (id: number, text: string) => {
     setCheckoutWarningMessagesState((prev) => {
       if (!prev) {
@@ -159,7 +172,8 @@ const CheckoutScreen: React.FC = () => {
   useEffect(() => {
     if (userData?.fullname) {
       reset({
-        firstname: userData?.fullname === userData?.phone ? "" : userData?.fullname,
+        firstname:
+          userData?.fullname === userData?.phone ? "" : userData?.fullname,
         s_phone: userData?.phone,
         email: userPartnerData?.email,
       });
@@ -256,8 +270,6 @@ const CheckoutScreen: React.FC = () => {
       setCartLoading(false);
     }
   };
-
-
 
   const renderInput = (name: keyof StepValues, label: string) => (
     <Controller

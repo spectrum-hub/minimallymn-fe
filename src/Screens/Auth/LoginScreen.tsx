@@ -12,6 +12,8 @@ import useWindowWidth from "../../Hooks/use-window-width";
 import { DrawerContext } from "../../context/DrawerContext";
 import { scrollToTop } from "../../lib/helpers";
 import { useHistoryNavigate } from "../../Hooks/use-navigate";
+import { useSearchParams } from "react-router";
+import { useNotification } from "../../Hooks/use-notification";
 
 export type FormName = "login" | "reset_password" | "login_by_otp";
 
@@ -24,9 +26,11 @@ const AuthScreen: FC<{
   isDrawer?: boolean;
 }> = ({ isDrawer = false }) => {
   const drawerCtx = useContext(DrawerContext);
+  const { openNotification } = useNotification();
+  const [searchParams] = useSearchParams();
 
   const dispatch: AppDispatch = useDispatch();
- const { historyNavigate } = useHistoryNavigate();
+  const { historyNavigate } = useHistoryNavigate();
   const authState = useSelector((state: RootState) => state.auth);
   const { isMobile } = useWindowWidth();
 
@@ -57,6 +61,17 @@ const AuthScreen: FC<{
     }
   }, [authState?.isAuthenticated, isDrawer, historyNavigate]);
 
+  let i = 0;
+  useEffect(() => {
+    if (searchParams?.get("notification") && i === 0) {
+      openNotification({
+        type: "info",
+        body: <div>{searchParams?.get("notification")}</div>,
+      });
+      i++;
+    }
+  }, [openNotification, searchParams, i]);
+
   const onSubmit = async (data: FormSubmit) => {
     if (authState.loading) {
       return;
@@ -78,24 +93,40 @@ const AuthScreen: FC<{
   };
 
   return (
-    <div className={`min-h-screen flex items-center justify-center bg-gray-50 ${isDrawer ? 'min-h-full bg-transparent' : 'px-4 py-8 sm:px-6'}`}>
+    <div
+      className={`min-h-screen flex items-center justify-center bg-gray-50 ${
+        isDrawer ? "min-h-full bg-transparent" : "px-4 py-8 sm:px-6"
+      }`}
+    >
       <div className="w-full max-w-sm">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
           <div className="text-center mb-6 sm:mb-8">
-            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Нэвтрэх</h1>
-            <p className="text-xs sm:text-sm text-gray-600 mt-2">Өөрийн бүртгэлдээ нэвтрэх</p>
+            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
+              Нэвтрэх
+            </h1>
+            <p className="text-xs sm:text-sm text-gray-600 mt-2">
+              Өөрийн бүртгэлдээ нэвтрэх
+            </p>
           </div>
 
           <Spin spinning={loading} tip="" className="relative">
-            {loading && <div className="absolute inset-0 bg-white/80 backdrop-blur-sm rounded-2xl z-10" />}
+            {loading && (
+              <div className="absolute inset-0 bg-white/80 backdrop-blur-sm rounded-2xl z-10" />
+            )}
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 sm:space-y-6">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-5 sm:space-y-6"
+            >
               <Controller
                 control={control}
                 name="phone"
                 render={({ field, fieldState }) => (
                   <div className="space-y-2">
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="phone"
+                      className="block text-sm font-medium text-gray-700"
+                    >
                       Утасны дугаар
                     </label>
                     <div className="relative">
@@ -107,7 +138,9 @@ const AuthScreen: FC<{
                           <Phone
                             size={18}
                             className={
-                              fieldState.invalid ? "text-red-400" : "text-gray-400"
+                              fieldState.invalid
+                                ? "text-red-400"
+                                : "text-gray-400"
                             }
                           />
                         }
@@ -115,9 +148,9 @@ const AuthScreen: FC<{
                         disabled={loading}
                         size="large"
                         className={`rounded-xl border-gray-200 ${
-                          fieldState.invalid 
-                            ? 'border-red-300 focus:border-red-500' 
-                            : 'hover:border-gray-300 focus:border-blue-500'
+                          fieldState.invalid
+                            ? "border-red-300 focus:border-red-500"
+                            : "hover:border-gray-300 focus:border-blue-500"
                         }`}
                         style={{
                           height: isMobile ? 52 : 48,
@@ -139,7 +172,10 @@ const AuthScreen: FC<{
                 name="password"
                 render={({ field, fieldState }) => (
                   <div className="space-y-2">
-                    <label htmlFor="pass" className="block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="pass"
+                      className="block text-sm font-medium text-gray-700"
+                    >
                       Нууц үг
                     </label>
                     <div className="relative">
@@ -151,7 +187,9 @@ const AuthScreen: FC<{
                           <Lock
                             size={18}
                             className={
-                              fieldState.invalid ? "text-red-400" : "text-gray-400"
+                              fieldState.invalid
+                                ? "text-red-400"
+                                : "text-gray-400"
                             }
                           />
                         }
@@ -159,9 +197,9 @@ const AuthScreen: FC<{
                         disabled={loading}
                         size="large"
                         className={`rounded-xl border-gray-200 ${
-                          fieldState.invalid 
-                            ? 'border-red-300 focus:border-red-500' 
-                            : 'hover:border-gray-300 focus:border-blue-500'
+                          fieldState.invalid
+                            ? "border-red-300 focus:border-red-500"
+                            : "hover:border-gray-300 focus:border-blue-500"
                         }`}
                         style={{
                           height: isMobile ? 52 : 48,
@@ -179,11 +217,13 @@ const AuthScreen: FC<{
               />
 
               {!loading && authState?.message && (
-                <div className={`p-4 rounded-xl text-sm ${
-                  authState.error 
-                    ? 'bg-red-50 text-red-700 border border-red-200' 
-                    : 'bg-green-50 text-green-700 border border-green-200'
-                }`}>
+                <div
+                  className={`p-4 rounded-xl text-sm ${
+                    authState.error
+                      ? "bg-red-50 text-red-700 border border-red-200"
+                      : "bg-green-50 text-green-700 border border-green-200"
+                  }`}
+                >
                   {authState.message}
                 </div>
               )}
@@ -199,7 +239,7 @@ const AuthScreen: FC<{
                   fontSize: 16,
                 }}
               >
-                {loading ? 'Нэвтэрч байна...' : 'Нэвтрэх'}
+                {loading ? "Нэвтэрч байна..." : "Нэвтрэх"}
               </Button>
             </form>
 
@@ -216,9 +256,7 @@ const AuthScreen: FC<{
 
             <div className="mt-8 pt-6 border-t border-gray-100">
               <div className="text-center">
-                <p className="text-sm text-gray-600 mb-4">
-                  Шинэ хэрэглэгч бол
-                </p>
+                <p className="text-sm text-gray-600 mb-4">Шинэ хэрэглэгч бол</p>
                 <button
                   onClick={() => navigateLink("register")}
                   disabled={loading}
