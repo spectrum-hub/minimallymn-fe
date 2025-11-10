@@ -13,43 +13,43 @@ export interface RecentlyViewedPid {
 }
 
 export interface ShippingAddress {
-  id: number;
-  addressTitle: string;
-  addressDetail: string;
-  cityId: string;
-  districtId: string;
-  baghorooId: string;
-  phone: string;
+  id?: number;
+  addressTitle?: string;
+  addressDetail?: string;
+  cityId?: string;
+  districtId?: string;
+  baghorooId?: string;
+  phone?: string;
   latitude?: string;
   longitude?: string;
   isDefault?: boolean; // backend-д is_default байгаа ч зарим response-д байхгүй байж болно
 }
 
 export interface ShippingAddressesConfig {
-  title: string;
-  addText: string;
-  editText: string;
-  deleteText: string;
+  title?: string;
+  addText?: string;
+  editText?: string;
+  deleteText?: string;
 }
 
 export interface UserProfileData {
-  success: boolean;
-  message: string;
-  userId: number;
+  success?: boolean;
+  message?: string;
+  userId?: number;
   clientIp?: string;
-  phone: string;
-  phone2: string;
-  userType: "individual" | "company";
-  companyRegister: string;
-  email: string;
+  phone?: string;
+  phone2?: string;
+  userType?: "individual" | "company";
+  companyRegister?: string;
+  email?: string;
   fullname?: string;
-  birthday: string;
-  gender: string;
-  textRequests: string[] | null;
-  recentSearchList: string[] | null;
-  recentlyViewedPids: RecentlyViewedPid[];
-  shippingAddresses: ShippingAddress[];
-  shippingAddressesConfig: ShippingAddressesConfig;
+  birthday?: string;
+  gender?: string;
+  textRequests?: string[] | null;
+  recentSearchList?: string[] | null;
+  recentlyViewedPids?: RecentlyViewedPid[];
+  shippingAddresses?: ShippingAddress[];
+  shippingAddressesConfig?: ShippingAddressesConfig;
 }
 
 // Main response interface

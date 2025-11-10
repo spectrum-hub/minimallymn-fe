@@ -19,6 +19,7 @@ import {
   setUserInfo,
   setUserRequest,
 } from "../../Redux/slices/userInfoSlice";
+import { useDrawerCtx } from "../../Hooks/use-modal-drawer";
 
 const formSchema = Yup.object().shape({
   addressTitle: Yup.string()
@@ -132,11 +133,9 @@ interface Props {
   editAddressData?: ShippingAddress;
 }
 
-const UserAddressForm: React.FC<Props> = ({
-  onSuccess,
-  onCancel,
-  editAddressData,
-}) => {
+const UserAddressForm: React.FC<Props> = ({ onCancel, editAddressData }) => {
+  const { closeDrawer } = useDrawerCtx();
+
   const isEdit = !!editAddressData?.id;
   const [loading, setLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -205,10 +204,11 @@ const UserAddressForm: React.FC<Props> = ({
   }, [districtIdValue, isInitialized, setValue]);
 
   const onSubmit = async (formData: FormData) => {
+    if (!userProfileData?.userId) {
+      return;
+    }
     setLoading(true);
-    console.log({ formData });
     try {
-      let updatedAddress: ShippingAddress | null = null;
       if (isEdit) {
         dispatch(setUserRequest());
         const response = await updateAddress({
@@ -224,10 +224,28 @@ const UserAddressForm: React.FC<Props> = ({
           },
         });
 
-        updatedAddress = response.data?.updateShippingAddress?.address;
+        const updatedAddress = response.data?.updateShippingAddress?.address;
         console.log({ updatedAddress });
-        message.success("Хаяг амжилттай засагдлаа!");
+        const newShippingAddresses = userProfileData?.shippingAddresses?.map(
+          (addr) =>
+            addr.id === editAddressData?.id ? { ...addr, ...formData } : addr
+        );
+
+        const updatedProfileData = {
+          ...userProfileData,
+          shippingAddresses: newShippingAddresses?.filter(
+            (addr): addr is ShippingAddress => addr !== null
+          ),
+        };
+
+        dispatch(setUserInfo({ userProfile: updatedProfileData }));
+
+        message.success(
+          response.data?.updateShippingAddress?.message ??
+            "Хаяг амжилттай засагдлаа!"
+        );
       } else {
+        dispatch(setUserRequest());
         const response = await createAddress({
           variables: {
             ...formData,
@@ -240,36 +258,31 @@ const UserAddressForm: React.FC<Props> = ({
           },
         });
 
-        console.log("createAddress response.data", response.data);
+        const createdDataResponse = response?.data?.createShippingAddress;
+        const createdDataAddress = createdDataResponse?.address;
+        const createdDataMessage = createdDataResponse?.message;
+        const createdDataId = createdDataResponse?.address?.id;
 
-        updatedAddress = response.data?.createShippingAddress?.address;
-        message.success(response?.data?.createShippingAddress?.message);
+        dispatch(
+          setUserInfo({
+            userProfile: {
+              ...userProfileData,
+              shippingAddresses: [
+                ...(userProfileData?.shippingAddresses ?? []),
+                {
+                  id: createdDataId,
+                  ...formData,
+                  addressDetail: createdDataAddress?.addressDetail,
+                },
+              ],
+            },
+          })
+        );
+        message.success(createdDataMessage ?? "");
       }
 
-      console.log(updatedAddress?.id);
+      closeDrawer();
 
-      if (userProfileData && updatedAddress) {
-        const newShippingAddresses = isEdit
-          ? userProfileData.shippingAddresses.map((addr) =>
-              addr.id === editAddressData?.id
-                ? { ...addr, ...formData }
-                : {                    
-                    ...addr,
-                    id: updatedAddress.id,
-                    addressDetail: updatedAddress?.addressDetail
-                  }
-            )
-          : [...userProfileData.shippingAddresses, updatedAddress];
-
-        const updatedProfileData = {
-          ...userProfileData,
-          shippingAddresses: newShippingAddresses,
-        };
-
-        console.log({ updatedProfileData });
-        dispatch(setUserInfo({ userProfile: updatedProfileData }));
-      }
-      onSuccess?.();
     } catch (err: unknown) {
       const errMsj = (err as Error)?.message || "Алдаа гарлаа";
       message.error(errMsj);
@@ -340,16 +353,6 @@ const UserAddressForm: React.FC<Props> = ({
           type="textarea"
           textareaRows={3}
         />
-
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            checked={watch("setAsDefault")}
-            onChange={(e) => setValue("setAsDefault", e.target.checked)}
-          />
-          <label className="text-sm text-gray-700">
-            Үндсэн хүргэлтийн хаяг болгох
-          </label>
-        </div>
       </div>
     </HookFormProvider>
   );

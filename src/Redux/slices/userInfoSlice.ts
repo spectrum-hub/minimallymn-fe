@@ -187,7 +187,7 @@ const userInfoSlice = createSlice({
       state.error = null;
     },
     setUserInfo: (state, action: PayloadAction<UserProfileQueryResult | null>) => {
-      state.data = action.payload;
+      state.data = action?.payload;
       state.loading = false;
     },
     setUserFailure: (state, action: PayloadAction<string>) => {

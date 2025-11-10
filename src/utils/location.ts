@@ -10,7 +10,7 @@ export function getLocationData(item?: {
 
   const typedLocations = locations as LocationNType;
 
-  const city = typedLocations[item.cityId];
+  const city = typedLocations?.[item.cityId];
   if (!city) return "";
 
   const parts: string[] = [city.label];
@@ -34,12 +34,12 @@ export function getLocationData(item?: {
 
 export function getCityName(code: string) {
   const typedLocations = locations as LocationNType;
-  return typedLocations[code]?.label ?? "";
+  return typedLocations?.[code]?.label ?? "";
 }
 
 export function getDistrictName(cityId: string, districtId: string) {
   const typedLocations = locations as LocationNType;
-  return typedLocations[cityId]?.sumDuureg?.[districtId]?.label ?? "";
+  return typedLocations?.[cityId]?.sumDuureg?.[districtId]?.label ?? "";
 }
 
 export function getBaghorooName(
@@ -49,7 +49,7 @@ export function getBaghorooName(
 ) {
   const typedLocations = locations as LocationNType;
   return (
-    typedLocations[cityId]?.sumDuureg?.[districtId]?.baghoroo?.[baghorooId]
+    typedLocations?.[cityId]?.sumDuureg?.[districtId]?.baghoroo?.[baghorooId]
       ?.label ?? ""
   );
 }

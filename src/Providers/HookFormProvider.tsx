@@ -19,6 +19,11 @@ const HookFormProvider = <T extends FieldValues>({
   submitText = "Хадгалах",
   onCancel,
 }: HookFormProviderProps<T>): JSX.Element => {
+
+  const styleBtn: React.CSSProperties = {
+    minHeight: 36,
+  };
+  
   return (
     <Spin spinning={loading} tip="Хадгалж байна...">
       <form
@@ -33,9 +38,9 @@ const HookFormProvider = <T extends FieldValues>({
             htmlType="submit"
             loading={loading}
             type="primary"
-            size="large"
-            className="w-full rounded-xl font-medium"
-            style={{ height: 48 }}
+            size="small"
+            className="w-full rounded-xl "
+            style={styleBtn}
           >
             {loading ? "Хадгалж байна..." : submitText}
           </Button>
@@ -43,11 +48,10 @@ const HookFormProvider = <T extends FieldValues>({
             <Button
               htmlType="button"
               loading={loading}
-              type="primary"
-              size="large"
-              className="w-full rounded-xl font-medium"
-              style={{ height: 48 }}
+              size="small"
+              className="w-full rounded-xl "
               onClick={onCancel}
+              style={styleBtn}
             >
               Цуцлах
             </Button>

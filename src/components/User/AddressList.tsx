@@ -15,6 +15,7 @@ import { useDrawerCtx } from "../../Hooks/use-modal-drawer";
 import UserAddressForm from "../../components/User/UserAddressForm";
 import { ShippingAddress } from "../../types/Auth";
 import { getLocationData } from "../../utils/location";
+import { setUserInfo, setUserRequest } from "../../Redux/slices/userInfoSlice";
 
 const DELETE_SHIPPING_ADDRESS = gql`
   mutation DeleteShippingAddress($addressId: Int!) {
@@ -29,7 +30,8 @@ const AddressList: React.FC = () => {
   const { showDrawer, closeDrawer, setLoading } = useDrawerCtx();
 
   const dispatch = useDispatch<AppDispatch>();
-  const { data } = useSelector((state: RootState) => state.userInfo) ?? {};
+  const { data, loading } =
+    useSelector((state: RootState) => state.userInfo) ?? {};
   const { shippingAddresses, shippingAddressesConfig } =
     data?.userProfile ?? {};
 
@@ -38,6 +40,8 @@ const AddressList: React.FC = () => {
   const { openNotification } = useNotification();
   // Local state for optimistic UI
   const [localAddresses, setLocalAddresses] = useState(shippingAddresses || []);
+
+  const userProfileData = data?.userProfile;
 
   // Sync local state with Redux state
   useEffect(() => {
@@ -55,8 +59,6 @@ const AddressList: React.FC = () => {
             body: data.deleteShippingAddress.message,
             type: "success",
           });
-          // Redux state-ийг шинэчлэх
-          dispatch(userInfoAsync());
         } else {
           openNotification({
             body: data.deleteShippingAddress.message,
@@ -81,15 +83,7 @@ const AddressList: React.FC = () => {
     showDrawer({
       title: "Хаяг нэмэх",
       width: "500px",
-      content: (
-        <UserAddressForm
-          onSuccess={() => {
-            dispatch(userInfoAsync());
-            closeDrawer();
-          }}
-          onCancel={() => closeDrawer()}
-        />
-      ),
+      content: <UserAddressForm onCancel={() => closeDrawer()} />,
     });
     // Drawer нээгдсэний дараа loading-ийг унтраах
     setTimeout(() => setLoading(false), 100);
@@ -119,13 +113,23 @@ const AddressList: React.FC = () => {
     }
 
     const confirmDelete = () => {
-      // Optimistic UI: Шууд жагсаалтаас хас
-      setLocalAddresses((prev) => prev.filter((addr) => addr.id !== addressId));
-
-      // Server рүү хүсэлт илгээх
-      deleteAddress({
-        variables: { addressId },
-      });
+      if (userProfileData?.userId) {
+        // Server рүү хүсэлт илгээх
+        deleteAddress({
+          variables: { addressId },
+        }).then(() => {
+          dispatch(setUserRequest());
+          const nlocalAddresses = localAddresses?.filter(
+            (addr) => addr.id !== addressId
+          );
+          setLocalAddresses(nlocalAddresses);
+          const updatedProfileData = {
+            ...userProfileData,
+            shippingAddresses: nlocalAddresses,
+          };
+          dispatch(setUserInfo({ userProfile: updatedProfileData }));
+        });
+      }
     };
 
     Modal.confirm({
@@ -139,9 +143,12 @@ const AddressList: React.FC = () => {
     });
   };
 
-  const mainAddress = localAddresses.find(
-    (addr) => addr.id === Math.min(...localAddresses.map((a) => a.id))
-  );
+  const mainAddress = (localAddresses ?? []).find((addr) => {
+    const validIds = (localAddresses ?? [])
+      .map((a) => a?.id)
+      .filter((id): id is number => id !== undefined);
+    return validIds.length > 0 && addr.id === Math.min(...validIds);
+  });
 
   return (
     <Card
@@ -165,6 +172,7 @@ const AddressList: React.FC = () => {
       <List
         itemLayout="horizontal"
         dataSource={localAddresses}
+        loading={loading}
         renderItem={(item) => (
           <List.Item
             actions={[
@@ -185,7 +193,7 @@ const AddressList: React.FC = () => {
                 key={2}
                 loading={deleteLoading}
                 onClick={() => {
-                  if (mainAddress?.id !== item.id) {
+                  if (mainAddress?.id !== item.id && item?.id) {
                     handleDeleteAddress(item?.id, item?.isDefault);
                   }
                 }}
