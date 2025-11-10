@@ -1,9 +1,9 @@
 // components/forms/UserAddressForm.tsx
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { message, Spin, Checkbox } from "antd";
+import { message, Checkbox } from "antd";
 import { useState, useEffect } from "react";
 import { Phone } from "lucide-react";
 
@@ -12,6 +12,7 @@ import HookFormProvider from "../../Providers/HookFormProvider";
 import { LocationNType } from "../../types/Common";
 import { shipmentLocations } from "../../lib/checkout";
 import { HookFormInput, HookFormSelect } from "../HookFormInput";
+import { ShippingAddress } from "../../types/Auth";
 
 const formSchema = Yup.object().shape({
   addressTitle: Yup.string()
@@ -107,26 +108,6 @@ const UPDATE_SHIPPING_ADDRESS = gql`
   }
 `;
 
-// ==================== QUERY FOR EDIT ====================
-const GET_ADDRESS = gql`
-  query GetAddress($addressId: Int!) {
-    userProfile {
-      shippingAddresses {
-        id
-        addressTitle
-        addressDetail
-        phone
-        cityId: city_id
-        districtId: district_id
-        baghorooId: baghoroo_id
-        latitude
-        longitude
-        isDefault
-      }
-    }
-  }
-`;
-
 interface FormData {
   addressTitle: string;
   addressDetail: string;
@@ -143,12 +124,14 @@ interface Props {
   addressId?: number; // Хэрвээ байвал → Edit, байхгүй бол → Create
   onSuccess?: () => void;
   onCancel?: () => void;
+  editAddressData?: ShippingAddress;
 }
 
 const UserAddressForm: React.FC<Props> = ({
   addressId,
   onSuccess,
   onCancel,
+  editAddressData,
 }) => {
   const isEdit = !!addressId;
   const [loading, setLoading] = useState(false);
@@ -167,32 +150,21 @@ const UserAddressForm: React.FC<Props> = ({
     },
   });
 
-  // Edit бол өгөгдөл ачаална
-  const { data: queryData, loading: queryLoading } = useQuery(GET_ADDRESS, {
-    variables: { addressId },
-    skip: !isEdit,
-  });
-
   useEffect(() => {
-    if (isEdit && queryData) {
-      const addr = queryData.userProfile.shippingAddresses.find(
-        (a: { id: number }) => a.id === addressId
-      );
-      if (addr) {
-        reset({
-          addressTitle: addr.addressTitle || "",
-          addressDetail: addr.addressDetail || "",
-          phone: addr.phone || "",
-          cityId: addr.cityId || "",
-          districtId: addr.districtId || "",
-          baghorooId: addr.baghorooId || "",
-          latitude: addr.latitude || "",
-          longitude: addr.longitude || "",
-          setAsDefault: addr.isDefault || false,
-        });
-      }
+    if (isEdit && editAddressData) {
+      reset({
+        addressTitle: editAddressData.addressTitle || "",
+        addressDetail: editAddressData.addressDetail || "",
+        phone: editAddressData.phone || "",
+        cityId: editAddressData.cityId || "",
+        districtId: editAddressData.districtId || "",
+        baghorooId: editAddressData.baghorooId || "",
+        latitude: editAddressData.latitude || "",
+        longitude: editAddressData.longitude || "",
+        setAsDefault: editAddressData.isDefault || false,
+      });
     }
-  }, [queryData, isEdit, addressId, reset]);
+  }, [isEdit, addressId, reset, editAddressData]);
 
   const [createAddress] = useMutation(CREATE_SHIPPING_ADDRESS);
   const [updateAddress] = useMutation(UPDATE_SHIPPING_ADDRESS);
@@ -233,14 +205,6 @@ const UserAddressForm: React.FC<Props> = ({
       setLoading(false);
     }
   };
-
-  if (queryLoading && isEdit) {
-    return (
-      <div className="flex justify-center py-10">
-        <Spin size="large" />
-      </div>
-    );
-  }
 
   return (
     <HookFormProvider

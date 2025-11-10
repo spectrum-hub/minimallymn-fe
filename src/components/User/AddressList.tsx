@@ -13,6 +13,7 @@ import {
 } from "@ant-design/icons";
 import { useDrawerCtx } from "../../Hooks/use-modal-drawer";
 import UserAddressForm from "../../components/User/UserAddressForm";
+import { ShippingAddress } from "../../types/Auth";
 
 const DELETE_SHIPPING_ADDRESS = gql`
   mutation DeleteShippingAddress($addressId: Int!) {
@@ -24,7 +25,7 @@ const DELETE_SHIPPING_ADDRESS = gql`
 `;
 
 const AddressList: React.FC = () => {
-  const { setLoading, showDrawer } = useDrawerCtx();
+  const { showDrawer, closeDrawer, setLoading } = useDrawerCtx();
 
   const dispatch = useDispatch<AppDispatch>();
   const { data } = useSelector((state: RootState) => state.userInfo) ?? {};
@@ -76,16 +77,42 @@ const AddressList: React.FC = () => {
   );
 
   const handleOpenDrawer = () => {
-    setLoading(true);
     showDrawer({
-      title: "Хайлт",
-      placement: "right",
-      content: <UserAddressForm />,
-      width: "400px",
+      title: "Хаяг нэмэх",
+      width: "500px",
+      content: (
+        <UserAddressForm
+          onSuccess={() => {
+            dispatch(userInfoAsync());
+            closeDrawer();
+          }}
+          onCancel={() => closeDrawer()}
+        />
+      ),
     });
-    setLoading(false);
+    // Drawer нээгдсэний дараа loading-ийг унтраах
+    setTimeout(() => setLoading(false), 100);
   };
 
+  const handleEditAddress = (editAddressData: ShippingAddress) => {
+    showDrawer({
+      title: "Хаяг засах",
+      width: "500px",
+      content: (
+        <UserAddressForm
+          addressId={editAddressData?.id}
+          editAddressData={editAddressData}
+          onSuccess={() => {
+            dispatch(userInfoAsync());
+            closeDrawer();
+          }}
+          onCancel={() => closeDrawer()}
+        />
+      ),
+    });
+    // Drawer нээгдсэний дараа loading-ийг унтраах
+    setTimeout(() => setLoading(false), 100);
+  };
   const handleDeleteAddress = (addressId: number, isDefault?: boolean) => {
     if (isDefault) {
       openNotification({
@@ -150,6 +177,7 @@ const AddressList: React.FC = () => {
                 icon={<EditOutlined />}
                 className="text-blue-600"
                 key={1}
+                onClick={() => handleEditAddress(item)}
               >
                 {editText}
               </Button>,

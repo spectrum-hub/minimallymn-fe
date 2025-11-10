@@ -26,11 +26,6 @@ import ErrorMessege from "../../components/Checkout/ErrorMessege";
 import { useHistoryNavigate } from "../../Hooks/use-navigate";
 import CheckoutWarnings from "../../components/Checkout/CheckoutWarningMessages";
 
-const isFalseLocation = (value?: string) => {
-  return value === "false" ? "" : value;
-};
-
-
 const CheckoutScreen: React.FC = () => {
   const { openNotification } = useContext(Context);
 
@@ -47,10 +42,10 @@ const CheckoutScreen: React.FC = () => {
   const { refetchCart } = useCart();
 
   const { isAuthenticated } = authState ?? {};
-  const userData = userInfo?.data?.userInfo?.userData;
-  const userPartnerData = userInfo?.data?.userInfo?.pdata;
+  const userData = userInfo?.data?.userProfile;
+  const userPartnerData = userInfo?.data?.userProfile;
 
-  const isAuth = isAuthenticated && !!userData?.login;
+  const isAuth = isAuthenticated;
 
   const [paymentMessage, setPaymentMessage] = useState<string>("");
 
@@ -99,13 +94,9 @@ const CheckoutScreen: React.FC = () => {
   const formMethods = useForm<StepValues>({
     resolver: yupResolver(validSchema2),
     defaultValues: {
-      city: userData?.city_id === "false" ? "11" : userData?.city_id,
-      district: isFalseLocation(userData?.district_id),
-      baghoroo: isFalseLocation(userData?.baghoroo_id),
-      firstname: userData?.name,
-      s_phone: userData?.login,
+      firstname: userData?.fullname,
+      s_phone: userData?.phone,
       email: userPartnerData?.email,
-      s_address: userPartnerData?.street,
       paymentCode: "wire_transfer",
       deliveryId: undefined,
     },
@@ -166,17 +157,13 @@ const CheckoutScreen: React.FC = () => {
   }, [cartItem, isDeliverySet, refetchCart, setDeliveryMethodFunc, setValue]);
 
   useEffect(() => {
-    if (userData?.name) {
+    if (userData?.fullname) {
       reset({
-        city: userData?.city_id === "false" ? "11" : userData?.city_id,
-        district: isFalseLocation(userData?.district_id),
-        baghoroo: isFalseLocation(userData?.baghoroo_id),
-        firstname: userData?.name === userData?.login ? "" : userData?.name,
-        s_phone: userData?.login,
+        firstname: userData?.fullname === userData?.phone ? "" : userData?.fullname,
+        s_phone: userData?.phone,
         email: userPartnerData?.email,
-        s_address: userPartnerData?.street,
       });
-      setUserPhoneNumber(userData?.login);
+      setUserPhoneNumber(userData?.phone);
     }
   }, [userData, reset, userPartnerData, isAuth]);
 
