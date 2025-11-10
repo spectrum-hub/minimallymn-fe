@@ -48,27 +48,8 @@ const phoneSchema = Yup.object().shape({
     .min(8, "Утасны дугаараа зөв оруулна уу")
     .max(8, "Утасны дугаараа зөв оруулна уу"),
 });
-export const validSchema1 = Yup.object().shape({
-  city: Yup.string().required("Заавал бөглөх"),
-  district: Yup.string().required("Заавал бөглөх "),
-  baghoroo: Yup.string().required("Заавал бөглөх"),
-  firstname: Yup.string().required("Заавал бөглөх"),
-  register_org: Yup.string().notRequired(),
-  s_phone: Yup.string()
-    .required("Утасны дугаар оруулна уу")
-    .matches(/^[0-9]+$/, "Утасны дугаараа зөв оруулна уу")
-    .min(8, "Утасны дугаараа зөв оруулна уу")
-    .max(8, "Утасны дугаараа зөв оруулна уу"),
-  customer_type: Yup.string().required(),
-  s_address: Yup.string().required("Хүргэлтийн дэлгэрэнгүй хаягаа оруулна уу "),
-  email: Yup.string().notRequired(),
-  customer_notes: Yup.string().notRequired(),
-});
 
-export const validSchema2 = validSchema1.shape({
-    city: Yup.string().required("Заавал бөглөх"),
-  district: Yup.string().required("Заавал бөглөх "),
-  baghoroo: Yup.string().required("Заавал бөглөх"),
+export const validSchema2 = Yup.object().shape({
   firstname: Yup.string().required("Заавал бөглөх"),
   register_org: Yup.string().notRequired(),
   s_phone: Yup.string()
@@ -77,7 +58,7 @@ export const validSchema2 = validSchema1.shape({
     .min(8, "Утасны дугаараа зөв оруулна уу")
     .max(8, "Утасны дугаараа зөв оруулна уу"),
   customer_type: Yup.string().required(),
-  s_address: Yup.string().required("Хүргэлтийн дэлгэрэнгүй хаягаа оруулна уу "),
+  address: Yup.string().required("Хүргэлтийн дэлгэрэнгүй хаягаа оруулна уу "),
   email: Yup.string().notRequired(),
   customer_notes: Yup.string().notRequired(),
   deliveryId: Yup.number().when("paymentCode", {

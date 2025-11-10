@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import locations from "../../lib/locations.json";
+
 import { useMutation } from "@apollo/client";
-import { Form, Select, Button, Input } from "antd";
+import { Form, Button, Input } from "antd";
 import React, { useState, useEffect, useCallback, useContext } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, FormProvider, Controller } from "react-hook-form";
 
 import EmptyCart from "../../components/cart/Empty";
 import { useDispatch, useSelector } from "react-redux";
-import { shipmentLocations } from "../../lib/checkout";
 import { AppDispatch, RootState } from "../../Redux/store";
 import CartItemList from "../../components/cart/CartItemList";
 import PaymentInfo from "../../components/Checkout/PaymentInfo";
@@ -16,12 +15,7 @@ import { validSchema2 } from "../../lib/form-schemas";
 import CustomerTypeComp from "../../components/Checkout/CustomerType";
 import PaymentMethods from "../../components/Checkout/PaymentMethods";
 import ShipmentMethods from "../../components/Checkout/ShipmentMethods";
-import {
-  CheckoutLocations,
-  CustomerType,
-  LocationNType,
-  StepValues,
-} from "../../types/Common";
+import { CustomerType, StepValues } from "../../types/Common";
 import { CREATE_ORDER_CHECKOUT, setDeliveryMethodGQL } from "../../api/cart";
 
 import { getCartAsync } from "../../Redux/cartActions";
@@ -31,11 +25,9 @@ import ErrorMessege from "../../components/Checkout/ErrorMessege";
 import { useHistoryNavigate } from "../../Hooks/use-navigate";
 import CheckoutWarnings from "../../components/Checkout/CheckoutWarningMessages";
 import AddressList from "../../components/User/AddressList";
-import { useDrawerCtx } from "../../Hooks/use-modal-drawer";
 
 const CheckoutScreen: React.FC = () => {
   const { openNotification } = useContext(Context);
-  const { showDrawer, closeDrawer, setLoading } = useDrawerCtx();
   const { historyNavigate } = useHistoryNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const authState = useSelector((state: RootState) => state.auth);
@@ -58,9 +50,8 @@ const CheckoutScreen: React.FC = () => {
   const [paymentMessage, setPaymentMessage] = useState<string>("");
 
   const [cartLoading, setCartLoading] = useState(loading);
-  const [locationsState, setLocationsState] = useState<CheckoutLocations>({
-    city: "11",
-  });
+
+  const [selectedAddressText, setSelectedAddressText] = useState<string>();
 
   useEffect(() => {
     if (!authState?.isAuthenticated) {
@@ -117,17 +108,8 @@ const CheckoutScreen: React.FC = () => {
     },
   });
 
-  const {
-    control,
-    watch,
-    setValue,
-    reset,
-    handleSubmit,
-    getValues,
-  } = formMethods;
+  const { control, setValue, reset, handleSubmit, getValues } = formMethods;
 
-  const typedLocations = locations as LocationNType;
-  const cityValue = watch("city");
   const cartItem = cart?.carts?.[0];
 
   const [executeCreateOrder] = useMutation(CREATE_ORDER_CHECKOUT);
@@ -186,20 +168,6 @@ const CheckoutScreen: React.FC = () => {
     setCartLoading(loading);
   }, [loading]);
 
-  useEffect(() => {
-    const initialCity = cityValue || "11";
-    if (!locationsState.city) {
-      updateLocation({ city: initialCity });
-      setValue("city", initialCity);
-    }
-  }, [cityValue, locationsState.city, setValue, typedLocations]);
-
-
-  const updateLocation = (newLocations: CheckoutLocations) => {
-    setLocationsState((prev) => ({ ...prev, ...newLocations }));
-  };
-
-
   const onSubmit = async (data: StepValues) => {
     try {
       const { s_address, s_phone, firstname, email } = data;
@@ -211,7 +179,7 @@ const CheckoutScreen: React.FC = () => {
         undefined;
       const result = await executeCreateOrder({
         variables: {
-          address: s_address,
+          address: selectedAddressText,
           phone: s_phone,
           name: firstname,
           email,
@@ -331,7 +299,10 @@ const CheckoutScreen: React.FC = () => {
                   {renderInput("email", "И-мэйл хаяг")}
                 </div>
 
-                <AddressList isCheckout />
+                <AddressList
+                  isCheckout={true}
+                  setSelectedAddress={setSelectedAddressText}
+                />
               </div>
 
               <div className="space-y-4">

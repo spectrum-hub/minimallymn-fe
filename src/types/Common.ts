@@ -220,13 +220,10 @@ export interface Step1Values {
 }
 
 export interface StepValues {
-  baghoroo: string;
-  city: string;
   customer_type: string;
-  district: string;
   email?: string | null;
   firstname: string;
-  s_address: string;
+  address: string;
   s_phone: string;
   register_org?: string | null;
   customer_notes?: string | null;
@@ -291,7 +288,6 @@ export interface LocationNType {
 }
 
 export type ApiContextType = "commerce" | "minimally";
-
 
 export interface CheckoutLocations {
   city?: string;

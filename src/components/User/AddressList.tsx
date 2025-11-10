@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Redux/store";
 import { gql, useMutation } from "@apollo/client";
@@ -31,8 +31,8 @@ interface Props {
   setSelectedAddress?: (arg: string) => void;
 }
 const AddressList: React.FC<Props> = ({
-  setSelectedAddress,
   isCheckout = false,
+  setSelectedAddress,
 }) => {
   const { showDrawer, closeDrawer, setLoading } = useDrawerCtx();
 
@@ -87,11 +87,22 @@ const AddressList: React.FC<Props> = ({
     }
   );
 
+  const selectedAddressText = useCallback(
+    (item: ShippingAddress) => {
+      const locationData = getLocationData(item);
+      const addressDelgerengui = `Хаяг: ${item.addressTitle}, ${locationData}, Дэлгэрэнгүй хаяг: ${item?.addressDetail} Утас: ${item.phone}`;
+      console.log(addressDelgerengui);
+      setSelectedAddress?.(addressDelgerengui);
+    },
+    [setSelectedAddress]
+  );
+
   useEffect(() => {
     if (localAddresses && localAddresses?.length === 1) {
       setSelectedAddressId(localAddresses[0].id);
+      selectedAddressText(localAddresses?.[0]);
     }
-  }, [localAddresses]);
+  }, [localAddresses, selectedAddressText]);
 
   const handleOpenDrawer = () => {
     showDrawer({
@@ -161,9 +172,9 @@ const AddressList: React.FC<Props> = ({
     if (!isCheckout) {
       return;
     }
-    console.log(item);
-    setSelectedAddressId(item.id);
 
+    setSelectedAddressId(item.id);
+    selectedAddressText(item);
     // setSelectedAddress
   };
   const mainAddress = (localAddresses ?? []).find((addr) => {
