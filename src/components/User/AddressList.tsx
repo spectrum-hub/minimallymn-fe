@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Redux/store";
 import { gql, useMutation } from "@apollo/client";
-import { userInfoAsync } from "../../Redux/userActions";
 import { useNotification } from "../../Hooks/use-notification";
 import { Button, Card, List, Modal } from "antd";
 import {
