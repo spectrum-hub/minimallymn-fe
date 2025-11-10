@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
 import { apolloClient } from "../lib/apolloClient";
-import { USER_PROFILE, USER_INFO_UPDATE } from "../api/user";
+import { USER_PROFILE } from "../api/user";
 import {
   setUserFailure,
   setUserInfo,
@@ -8,7 +8,7 @@ import {
 } from "./slices/userInfoSlice";
 import { gql } from "@apollo/client";
 
-export const userInfoAsync = () => async (dispatch: Dispatch) => {
+export const getUserProfile = () => async (dispatch: Dispatch) => {
   try {
     dispatch(setUserRequest());
 
@@ -16,10 +16,7 @@ export const userInfoAsync = () => async (dispatch: Dispatch) => {
       query: USER_PROFILE,
       // fetchPolicy: "no-cache",
     });
-
-    // console.log(response?.data?.userProfile);
     dispatch(setUserInfo(response?.data));
-
     return {
       success: true,
       message: response?.data.message,
@@ -36,108 +33,6 @@ export const userInfoAsync = () => async (dispatch: Dispatch) => {
   }
 };
 
-interface UserData {
-  cityId: string;
-  districtId: string;
-  baghorooId: string;
-  street?: string;
-  name: string;
-  email?: string;
-}
-
-interface UserDataNew {
-  name: string;
-  email?: string;
-}
-
-export const userInfoUpdateAsync =
-  (userData: UserData) => async (dispatch: Dispatch) => {
-    try {
-      dispatch(setUserRequest());
-
-      const response = await apolloClient.mutate({
-        mutation: USER_INFO_UPDATE,
-        variables: {
-          cityId: userData.cityId,
-          districtId: userData.districtId,
-          baghorooId: userData.baghorooId,
-          street: userData.street,
-          name: userData.name,
-          email: userData.email,
-        },
-      });
-
-
-      const userProfile = response.data?.userInfo;
-
-      if (!userProfile?.success) {
-        throw new Error(
-          userProfile?.message ??
-            "Хэрэглэгчийн мэдээллийг шинэчлэхэд алдаа гарлаа."
-        );
-      }
-
-      dispatch(setUserInfo(userProfile));
-      return {
-        success: true,
-        message: userProfile.message,
-      };
-    } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Unknown error occurred";
-      dispatch(setUserFailure(errorMessage));
-      console.error("User Info Update Error:", err);
-      return {
-        success: false,
-        message: errorMessage,
-      };
-    }
-  };
-
-export const userInfoUpdateAsyncNew =
-  (userData: UserDataNew) => async (dispatch: Dispatch) => {
-    try {
-      dispatch(setUserRequest());
-
-      const response = await apolloClient.mutate({
-        mutation: USER_INFO_UPDATE,
-        variables: {
-          // cityId: userData.cityId,
-          // districtId: userData.districtId,
-          // baghorooId: userData.baghorooId,
-          // street: userData.street,
-          name: userData.name,
-          email: userData.email,
-        },
-      });
-
-      const userInfo = response.data?.userInfo;
-
-      if (!userInfo?.success) {
-        throw new Error(
-          userInfo?.message ??
-            "Хэрэглэгчийн мэдээллийг шинэчлэхэд алдаа гарлаа."
-        );
-      }
-
-      dispatch(setUserInfo(userInfo));
-      return {
-        success: true,
-        message: userInfo.message,
-      };
-    } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Unknown error occurred";
-      dispatch(setUserFailure(errorMessage));
-      console.error("User Info Update Error:", err);
-      return {
-        success: false,
-        message: errorMessage,
-      };
-    }
-  };
-
-// GraphQL Mutation
 export const USER_PHONE_UPDATE = gql`
   mutation updatePhone($phone: String!, $otp: String, $action: String!) {
     updatePhone(phone: $phone, otp: $otp, action: $action) {

@@ -4,29 +4,60 @@ import { AppDispatch, RootState } from "../../Redux/store";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-
-import { userInfoAsync, userInfoUpdateAsyncNew } from "../../Redux/userActions";
 import AccountLayout from "../../components/Layouts/account";
 import { useNotification } from "../../Hooks/use-notification";
 import { useHistoryNavigate } from "../../Hooks/use-navigate";
-import { Button, Avatar, Card } from "antd";
+import { Button, Avatar, Card, Input } from "antd";
 import { EditOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import AddressList from "../../components/User/AddressList";
+import { getUserProfile } from "../../Redux/userActions";
+import { setUserRequest } from "../../Redux/slices/userInfoSlice";
+import { gql, useMutation } from "@apollo/client";
 
-const AccountFormSchema = Yup.object().shape({
-  name: Yup.string().required("Нэрээ заавал оруулна уу"),
-  email: Yup.string().email("Зөв и-мэйл хаяг оруулна уу").optional(),
+const UpdateFullNameMutate = gql`
+  mutation updateUserNameEmail($fullname: String) {
+    updateUserNameEmail(fullname: $fullname) {
+      userId
+      success
+      message
+    }
+  }
+`;
+const UpdateEmailMutate = gql`
+  mutation updateUserNameEmail($email: String) {
+    updateUserNameEmail(email: $email) {
+      userId
+      success
+      message
+    }
+  }
+`;
+
+const AccountFormEmailSchema = Yup.object().shape({
+  email: Yup.string().email("Зөв и-мэйл хаяг оруулна уу").required(),
+});
+const AccountFormFullNameSchema = Yup.object().shape({
+  fullname: Yup.string()
+    .required("Нэрээ заавал оруулна уу")
+    .min(2, "Хэт богино"),
 });
 
-interface FormType {
-  name: string;
-  email?: string;
+interface FormTypeFullname {
+  fullname: string;
+}
+interface FormTypeEmail {
+  email: string;
 }
 
 const ProfileScreen: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { data } = useSelector((state: RootState) => state.userInfo) ?? {};
+  const userProfileData = data?.userProfile;
   const { fullname, email } = data?.userProfile ?? {};
+
+  const [updateFullname] = useMutation(UpdateFullNameMutate);
+  const [updateEmail] = useMutation(UpdateEmailMutate);
+
   const authState = useSelector((state: RootState) => state.auth);
   const { historyNavigate } = useHistoryNavigate();
   const { openNotification } = useNotification();
@@ -38,40 +69,80 @@ const ProfileScreen: React.FC = () => {
     }
   }, [authState?.isAuthenticated, historyNavigate]);
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormType>({
-    resolver: yupResolver(AccountFormSchema),
-    defaultValues: { name: fullname || "", email: email || "" },
+  const emailUpdateForm = useForm<FormTypeEmail>({
+    resolver: yupResolver(AccountFormEmailSchema),
+    defaultValues: { email: email || "" },
+  });
+
+  const fullnameUpdateForm = useForm<FormTypeFullname>({
+    resolver: yupResolver(AccountFormFullNameSchema),
+    defaultValues: { fullname: fullname || "" },
   });
 
   useEffect(() => {
     if (data?.userProfile) {
-      reset({
-        name: fullname || "",
+      emailUpdateForm.reset({
         email: email && email !== "false" ? email : "",
       });
     }
-  }, [data, fullname, email, reset]);
+  }, [data?.userProfile, email, emailUpdateForm]);
 
-  const onSubmit = async (formData: FormType) => {
+  useEffect(() => {
+    if (data?.userProfile) {
+      fullnameUpdateForm.reset({
+        fullname: fullname || "",
+      });
+    }
+  }, [data?.userProfile, fullname, fullnameUpdateForm]);
+
+  const onSubmitEmail = async (formData: FormTypeEmail) => {
+    if (!userProfileData?.userId) {
+      return;
+    }
     setIsSubmitting(true);
     try {
-      const result = await dispatch(
-        userInfoUpdateAsyncNew({
-          name: formData.name,
-          email: formData.email || undefined,
-        })
-      );
-
-      dispatch(userInfoAsync());
+      dispatch(setUserRequest());
+      const response = await updateEmail({
+        variables: {
+          email: formData?.email,
+        },
+      });
       openNotification({
-        body: result.message ?? "Мэдээлэл амжилттай хадгалагдлаа! 🎉",
+        body:
+          response?.data?.updateUserNameEmail?.message ??
+          "Мэдээлэл амжилттай хадгалагдлаа! 🎉",
         type: "success",
       });
+      dispatch(getUserProfile());
+    } catch (error) {
+      openNotification({
+        body: (error as Error)?.message || "Алдаа гарлаа. Дахин оролдоно уу.",
+        type: "error",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const onSubmitFullname = async (formData: FormTypeFullname) => {
+    if (!userProfileData?.userId) {
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      dispatch(setUserRequest());
+      const response = await updateFullname({
+        variables: {
+          fullname: formData?.fullname,
+        },
+      });
+      openNotification({
+        body:
+          response?.data?.updateUserNameEmail?.message ??
+          "Мэдээлэл амжилттай хадгалагдлаа! 🎉",
+        type: "success",
+      });
+      dispatch(getUserProfile());
     } catch (error) {
       openNotification({
         body: (error as Error)?.message || "Алдаа гарлаа. Дахин оролдоно уу.",
@@ -96,13 +167,11 @@ const ProfileScreen: React.FC = () => {
               />
               <div>
                 <h2 className="text-2xl text-white font-bold">
-                  {fullname || "Хэрэглэгч"}
+                  {data?.userProfile?.phone}
                 </h2>
                 <p className="text-white/80 flex items-center gap-2 mt-1">
                   <MailOutlined />
-                  {email && email !== "false"
-                    ? email
-                    : "И-мэйл хаяг оруулаагүй"}
+                  {email && email !== "false" ? email : ""}
                 </p>
               </div>
             </div>
@@ -113,65 +182,71 @@ const ProfileScreen: React.FC = () => {
         <Card
           title={<span className="text-lg font-semibold">Хувийн мэдээлэл</span>}
           extra={<EditOutlined className="text-gray-500" />}
-          className="shadow-lg border-0 rounded-2xl"
+          className="shadow-lg border-0 rounded-2xl "
         >
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <UserOutlined className="text-gray-500" />
-                Овог нэр
-              </label>
+          <form onSubmit={fullnameUpdateForm.handleSubmit(onSubmitFullname)}>
+            <label htmlFor="fullname">Овог нэр</label>
+            <div className="flex flex-row justify-center items-center gap-0 max-w-xl ">
               <Controller
-                control={control}
-                name="name"
+                control={fullnameUpdateForm.control}
+                name="fullname"
                 render={({ field }) => (
-                  <input
+                  <Input
                     {...field}
-                    className={`w-full px-4 py-3 rounded-xl border-2 text-base transition-all bg-white
-                      focus:outline-none focus:ring-4 focus:ring-gray-900/10 focus:border-gray-900
-                      ${errors.name ? "border-red-400" : "border-gray-200"}`}
-                    placeholder="Жишээ: Бат-Эрдэнэ"
+                    prefix={<UserOutlined className="text-gray-500" />}
+                    placeholder="Таны нэр"
+                    className="rounded-r-none"
                   />
                 )}
               />
-              {errors.name && (
-                <p className="text-red-500 text-sm">{errors.name.message}</p>
-              )}
+              <Button
+                type="primary"
+                size="small"
+                loading={isSubmitting}
+                htmlType="submit"
+                style={{
+                  height: 32,
+                }}
+                className="rounded-l-none"
+              >
+                {isSubmitting ? "Хадгалж байна..." : "Хадгалах"}
+              </Button>
             </div>
+          </form>
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <MailOutlined className="text-gray-500" />
-                И-мэйл хаяг (заавал биш)
-              </label>
+          <br />
+
+          <form onSubmit={emailUpdateForm.handleSubmit(onSubmitEmail)}>
+            <label htmlFor="email">Имэйл хаяг</label>
+            <div className="flex flex-row justify-center items-center gap-0 max-w-xl ">
               <Controller
-                control={control}
+                control={emailUpdateForm.control}
                 name="email"
                 render={({ field }) => (
-                  <input
+                  <Input
                     {...field}
-                    type="email"
-                    className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-base bg-white
-                      focus:outline-none focus:ring-4 focus:ring-gray-900/10 focus:border-gray-900 transition-all"
                     placeholder="example@mail.mn"
+                    prefix={<UserOutlined className="text-gray-500" />}
+                    className="rounded-r-none"
                   />
                 )}
               />
+              <Button
+                type="primary"
+                size="small"
+                loading={isSubmitting}
+                htmlType="submit"
+                style={{
+                  height: 32,
+                }}
+                className="rounded-l-none"
+              >
+                {isSubmitting ? "Хадгалж байна..." : "Хадгалах"}
+              </Button>
             </div>
-
-            <Button
-              type="primary"
-              size="large"
-              loading={isSubmitting}
-              htmlType="submit"
-              className="w-full h-12 text-base font-semibold bg-gray-900 hover:bg-black rounded-xl"
-            >
-              {isSubmitting ? "Хадгалж байна..." : "Хадгалах"}
-            </Button>
           </form>
         </Card>
 
-        {/* Хүргэлтийн хаягууд */}
         <AddressList />
       </div>
     </AccountLayout>

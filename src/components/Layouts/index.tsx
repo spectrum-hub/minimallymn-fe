@@ -13,7 +13,7 @@ import sha256 from "crypto-js/sha256";
 import { AUTH_SESSION_ID, CLIENT_CUSTOMER_TOKEN } from "../../Constants";
 import { AppDispatch, RootState } from "../../Redux/store";
 import { checkAuthStatus } from "../../Redux/slices/authSlice";
-import { userInfoAsync } from "../../Redux/userActions";
+import { getUserProfile } from "../../Redux/userActions";
 import { getCartAsync } from "../../Redux/cartActions";
 import { getCatgoriesAsync, getLayoutsAsync } from "../../Redux/layoutActions";
 import useWindowWidth from "../../Hooks/use-window-width";
@@ -79,7 +79,7 @@ const useFetchData = (
           dispatch(getCatgoriesAsync()),
           dispatch(getCartAsync()),
           isAuthenticated && !loading
-            ? dispatch(userInfoAsync())
+            ? dispatch(getUserProfile())
             : Promise.resolve(),
         ]);
       } catch (error) {
