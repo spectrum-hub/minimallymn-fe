@@ -9,16 +9,9 @@ import { userInfoAsync, userInfoUpdateAsyncNew } from "../../Redux/userActions";
 import AccountLayout from "../../components/Layouts/account";
 import { useNotification } from "../../Hooks/use-notification";
 import { useHistoryNavigate } from "../../Hooks/use-navigate";
-import { Button, Avatar, Card, List } from "antd";
-import {
-  EditOutlined,
-  DeleteOutlined,
-  PlusOutlined,
-  MailOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import { useDrawerCtx } from "../../Hooks/use-modal-drawer";
-import UserAddressForm from "../../components/User/UserAddressForm";
+import { Button, Avatar, Card } from "antd";
+import { EditOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
+import AddressList from "../../components/User/AddressList";
 
 const AccountFormSchema = Yup.object().shape({
   name: Yup.string().required("Нэрээ заавал оруулна уу"),
@@ -31,13 +24,9 @@ interface FormType {
 }
 
 const ProfileScreen: React.FC = () => {
-  const { setLoading, showDrawer } = useDrawerCtx();
-
   const dispatch = useDispatch<AppDispatch>();
-  const { data, loading } =
-    useSelector((state: RootState) => state.userInfo) ?? {};
-  const { fullname, email, shippingAddresses, shippingAddressesConfig } =
-    data?.userProfile ?? {};
+  const { data } = useSelector((state: RootState) => state.userInfo) ?? {};
+  const { fullname, email } = data?.userProfile ?? {};
   const authState = useSelector((state: RootState) => state.auth);
   const { historyNavigate } = useHistoryNavigate();
   const { openNotification } = useNotification();
@@ -67,17 +56,6 @@ const ProfileScreen: React.FC = () => {
       });
     }
   }, [data, fullname, email, reset]);
-
-  const handleOpenDrawer = () => {
-    setLoading(true);
-    showDrawer({
-      title: "Хайлт",
-      placement: "right",
-      content: <UserAddressForm />,
-      width: "400px",
-    });
-    setLoading(false);
-  };
 
   const onSubmit = async (formData: FormType) => {
     setIsSubmitting(true);
@@ -194,63 +172,7 @@ const ProfileScreen: React.FC = () => {
         </Card>
 
         {/* Хүргэлтийн хаягууд */}
-        <Card
-          title={
-            <span className="text-lg font-semibold">
-              {shippingAddressesConfig?.title} ({shippingAddresses?.length})
-            </span>
-          }
-          className="shadow-lg border-0 rounded-2xl"
-          extra={
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              className="bg-green-600 hover:bg-green-700 border-0 rounded-xl font-medium"
-              onClick={() => handleOpenDrawer()}
-            >
-              {shippingAddressesConfig?.addText}
-            </Button>
-          }
-        >
-          <List
-            itemLayout="horizontal"
-            dataSource={shippingAddresses}
-            renderItem={(item) => (
-              <List.Item
-                actions={[
-                  <Button
-                    type="text"
-                    icon={<EditOutlined />}
-                    className="text-blue-600"
-                    key={1}
-                  >
-                    {shippingAddressesConfig?.editText}
-                  </Button>,
-                  <Button type="text" danger icon={<DeleteOutlined />} key={2}>
-                    {shippingAddressesConfig?.deleteText}
-                  </Button>,
-                ]}
-                className="hover:bg-gray-50 rounded-xl px-2 -mx-2 transition-all"
-              >
-                <List.Item.Meta
-                  title={
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold">{item.addressTitle}</span>
-                      {item.isDefault && (
-                        <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">
-                          Үндсэн
-                        </span>
-                      )}
-                    </div>
-                  }
-                  description={
-                    <span className="text-gray-600">{item.addressDetail}</span>
-                  }
-                />
-              </List.Item>
-            )}
-          />
-        </Card>
+        <AddressList />
       </div>
     </AccountLayout>
   );
