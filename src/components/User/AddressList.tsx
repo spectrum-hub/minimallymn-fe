@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Redux/store";
 import { gql, useMutation } from "@apollo/client";
@@ -10,12 +10,12 @@ import {
   PlusOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { useDrawerCtx } from "../../Hooks/use-modal-drawer";
 import UserAddressForm from "../../components/User/UserAddressForm";
 import { ShippingAddress } from "../../types/Auth";
 import { getLocationData } from "../../utils/location";
 import { setUserInfo, setUserRequest } from "../../Redux/slices/userInfoSlice";
 import { Circle, CircleCheckBig } from "lucide-react";
+import { DrawerContext } from "../../context/DrawerContext";
 
 const DELETE_SHIPPING_ADDRESS = gql`
   mutation DeleteShippingAddress($addressId: Int!) {
@@ -34,7 +34,7 @@ const AddressList: React.FC<Props> = ({
   isCheckout = false,
   setSelectedAddress,
 }) => {
-  const { showDrawer, closeDrawer, setLoading } = useDrawerCtx();
+  const drawerCtx = useContext(DrawerContext);
 
   const [selectedAddressId, setSelectedAddressId] = useState<number>();
 
@@ -105,28 +105,26 @@ const AddressList: React.FC<Props> = ({
   }, [localAddresses, selectedAddressText]);
 
   const handleOpenDrawer = () => {
-    showDrawer({
+    drawerCtx.showDrawer({
       title: "Хаяг нэмэх",
       width: "500px",
-      content: <UserAddressForm onCancel={() => closeDrawer()} />,
+      content: <UserAddressForm onCancel={() => drawerCtx.closeDrawer()} />,
     });
-    // Drawer нээгдсэний дараа loading-ийг унтраах
-    setTimeout(() => setLoading(false), 100);
+    drawerCtx.setLoading(false);
   };
 
   const handleEditAddress = (editAddressData: ShippingAddress) => {
-    showDrawer({
+    drawerCtx.showDrawer({
       title: "Хаяг засах",
       width: "500px",
       content: (
         <UserAddressForm
           editAddressData={editAddressData}
-          onCancel={() => closeDrawer()}
+          onCancel={() => drawerCtx.closeDrawer()}
         />
       ),
     });
-    // Drawer нээгдсэний дараа loading-ийг унтраах
-    setTimeout(() => setLoading(false), 100);
+    drawerCtx.setLoading(false);
   };
   const handleDeleteAddress = (addressId: number, isDefault?: boolean) => {
     if (isDefault) {
