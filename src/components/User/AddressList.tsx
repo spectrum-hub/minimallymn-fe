@@ -192,15 +192,31 @@ const AddressList: React.FC<Props> = ({
       className="shadow-lg rounded"
       extra={
         localAddresses.length < 5 ? (
-          <Button
-            type="primary"
-            size={"small"}
-            icon={<PlusOutlined />}
-            className="rounded text-xs"
+          <button
+            type="button"
+            className="
+              group relative overflow-hidden
+              rounded-xl text-xs h-9 px-4
+              bg-gradient-to-r from-gray-500 to-gray-600
+              hover:from-slate-600 hover:to-gray-700
+              text-white font-medium
+              shadow-md hover:shadow-lg
+              transform hover:scale-105
+              transition-all duration-300 ease-in-out
+              flex items-center gap-2
+              border-0
+            "
             onClick={() => handleOpenDrawer()}
           >
-            {addText}
-          </Button>
+            <PlusOutlined
+              className="transform group-hover:rotate-90 transition-transform duration-300"
+              style={{
+                fontSize: 16,
+              }}
+            />
+            <span className="relative z-10">{addText}</span>
+            <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+          </button>
         ) : (
           ""
         )
