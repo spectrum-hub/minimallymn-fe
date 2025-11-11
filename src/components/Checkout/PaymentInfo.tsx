@@ -67,6 +67,7 @@ const PaymentInfo: FC<PaymentInfoProps> = ({
     }));
   }, [cart]);
 
+
   const items = [
     { label: "Захиалгын дугаар", value: cart?.name ? `#${cart.name}` : "-" },
     { label: "Барааны тоо", value: cartTotalItems ?? 0 },

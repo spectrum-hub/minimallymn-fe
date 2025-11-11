@@ -109,7 +109,8 @@ const CheckoutScreen: React.FC = () => {
     },
   });
 
-  const { control, setValue, reset, handleSubmit, getValues } = formMethods;
+  const { control, setValue, reset, handleSubmit, getValues, watch } =
+    formMethods;
 
   const cartItem = cart?.carts?.[0];
 
@@ -136,7 +137,7 @@ const CheckoutScreen: React.FC = () => {
   );
 
   useEffect(() => {
-    if (cartItem?.isDeliverySelected || cartItem?.orderLines?.length === 0) {
+    if (cartItem?.orderLines?.length === 0) {
       return;
     }
     const deliveries = cartItem?.deliveryCarriers;
@@ -151,7 +152,13 @@ const CheckoutScreen: React.FC = () => {
         setCartLoading(false);
       }
     }
-  }, [cartItem, isDeliverySet, refetchCart, setDeliveryMethodFunc, setValue]);
+  }, [
+    cartItem?.deliveryCarriers,
+    cartItem?.orderLines?.length,
+    refetchCart,
+    setDeliveryMethodFunc,
+    setValue,
+  ]);
 
   useEffect(() => {
     if (userData?.fullname) {
