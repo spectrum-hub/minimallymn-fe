@@ -20,7 +20,7 @@ const ShipmentMethods: FC<ShipmentMethodsProps> = ({
 
   useEffect(() => {
     if (cart?.deliveryCarriers?.length === 1) {
-      onChange(cart.deliveryCarriers[0].productId);
+      onChange(cart.deliveryCarriers[0].id);
     }
   }, [cart, onChange]);
 
@@ -28,17 +28,18 @@ const ShipmentMethods: FC<ShipmentMethodsProps> = ({
     return null;
   }
 
+  console.log(cart.deliveryCarriers);
   return (
     <div className="flex flex-wrap gap-4 mx-auto">
-      {/* cart.deliveryCarriers.length */}
-      {cart.deliveryCarriers.map((delivery) => (
+      {cart.deliveryCarriers.length}
+      {cart?.deliveryCarriers?.map((delivery) => (
         <ShipmentButton
           key={delivery.id}
           shipping={delivery}
           isSelected={
-            value === delivery.productId || cart?.deliveryCarriers?.length === 1
+            value === delivery.id || cart?.deliveryCarriers?.length === 1
           }
-          onClick={() => onChange(delivery.productId)}
+          onClick={() => onChange(delivery.id)}
         />
       ))}
       {fieldState.error?.message && (
