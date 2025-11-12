@@ -59,7 +59,59 @@ function CartItems({ screen = "cart" }: Readonly<Props>) {
   };
 
   const removeItem = async (item: OrderLine) => {
-    if (item?.quantity) await updateQuantity(item, -item.quantity);
+    if (item?.quantity) {
+      await updateQuantity(item, -item.quantity);
+
+      /***
+       * 
+        const carts = cart?.carts ?? [];
+        for (let cartIndex = 0; cartIndex < carts?.length; cartIndex++) {
+          const deliveryProductId =
+            carts?.[cartIndex]?.selectedDelivery?.productId;
+          const orderLineLength =
+            carts?.[cartIndex]?.orderLines?.filter((c) => c.isDelivery === true)
+              ?.length ?? 0;
+
+          console.log(carts);
+          console.log(carts?.[cartIndex]);
+
+          console.log(
+            "deliveryProductId, orderLineLength",
+            deliveryProductId,
+            orderLineLength
+          );
+          for (
+            let lineIndex = 0;
+            lineIndex < (carts?.[cartIndex]?.orderLines ?? [])?.length;
+            lineIndex++
+          ) {
+            const orderLine = carts?.[cartIndex]?.orderLines?.[lineIndex];
+
+            if (deliveryProductId && orderLineLength === 1) {
+              console.log("de");
+              console.log(
+                "deliveryProductId, orderLineLength",
+                deliveryProductId,
+                orderLineLength
+              );
+              await executeUpdateCartItem({
+                variables: {
+                  lineId: orderLine?.id,
+                  productId: deliveryProductId,
+                  addQty: -1,
+                  setQty: 0,
+                },
+              });
+            }
+          }
+        }
+
+      *
+      */
+
+
+
+    }
   };
 
   const isCartScreen = screen === "cart";
