@@ -61,12 +61,16 @@ const PaymentInfo: FC<PaymentInfoProps> = ({
   );
 
   const deliveries = useMemo(() => {
-    return (cart?.selectedDeliveriers ?? []).map((d) => ({
-      label: d.product?.name,
-      value: `${d?.priceTotal?.toLocaleString?.() ?? 0}₮`,
-    }));
-  }, [cart]);
+    const fixedDeliveryPrice = cart?.selectedDelivery?.fixedPrice ?? null;
 
+    if (!fixedDeliveryPrice) {
+      return;
+    }
+    return {
+      label: cart?.selectedDelivery?.name,
+      value: `${fixedDeliveryPrice?.toLocaleString?.() ?? 0}₮`,
+    };
+  }, [cart]);
 
   const items = [
     { label: "Захиалгын дугаар", value: cart?.name ? `#${cart.name}` : "-" },
@@ -76,7 +80,7 @@ const PaymentInfo: FC<PaymentInfoProps> = ({
       value: `${cart?.amountTotal?.toLocaleString?.() ?? "0"}₮`,
     },
     { label: "НӨАТ", value: "0₮" },
-    ...deliveries,
+    deliveries,
   ];
 
   const paymentAcnts = (paymentAccounts ?? []).flatMap((payAcnt) => [

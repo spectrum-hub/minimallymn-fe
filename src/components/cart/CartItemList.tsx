@@ -71,51 +71,56 @@ function CartItems({ screen = "cart" }: Readonly<Props>) {
         screen === "cart" ? "4" : "2"
       } w-full`}
     >
-      {cart?.orderLines?.map((item) => (
-        <Spin key={item.id} spinning={loadingItems[String(item.id)] ?? false}>
-          <div className={styles.cart_item_container}>
-            <img
-              src={imageBaseUrl(item?.product?.id)}
-              alt={item?.lineName}
-              className={
-                (styles.cart_image,
-                isCartScreen
-                  ? "w-16 h-16 md:w-24 md:h-24"
-                  : "w-10 h-10 md:w-10 md:h-10")
-              }
-            />
-            <div className="flex-1">
-              <div className="flex justify-between items-start">
-                <NavLink
-                  to={productLink(item)}
-                  className={`${
-                    isCartScreen ? "md:text-[16px]" : "md:text-[12px]"
-                  } ${styles.cartItemLink}`}
-                >
-                  <p>{item?.lineName}</p>
-                  <p>
-                    {item.priceSubtotal
-                      ? `${item.priceSubtotal.toLocaleString()}₮`
-                      : null}
-                  </p>
-                </NavLink>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeItem(item);
-                  }}
-                  className={styles.cartItemRemove}
-                >
-                  <X className="w-5 h-5" strokeWidth={1.5} />
-                </button>
+      {(cart?.orderLines ?? [])
+        ?.filter((l) => l.isDelivery === false)
+        ?.map((item) => (
+          <Spin key={item.id} spinning={loadingItems[String(item.id)] ?? false}>
+            <div className={styles.cart_item_container}>
+              <img
+                src={imageBaseUrl(item?.product?.id)}
+                alt={item?.lineName}
+                className={
+                  (styles.cart_image,
+                  isCartScreen
+                    ? "w-16 h-16 md:w-24 md:h-24"
+                    : "w-10 h-10 md:w-10 md:h-10")
+                }
+              />
+              <div className="flex-1">
+                <div className="flex justify-between items-start">
+                  <NavLink
+                    to={productLink(item)}
+                    className={`${
+                      isCartScreen ? "md:text-[16px]" : "md:text-[12px]"
+                    } ${styles.cartItemLink}`}
+                  >
+                    <p>{item?.lineName}</p>
+                    <p>
+                      {item.priceSubtotal
+                        ? `${item.priceSubtotal.toLocaleString()}₮`
+                        : null}
+                    </p>
+                  </NavLink>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeItem(item);
+                    }}
+                    className={styles.cartItemRemove}
+                  >
+                    <X className="w-5 h-5" strokeWidth={1.5} />
+                  </button>
+                </div>
+                {isCartScreen ? (
+                  <QuantityChanger
+                    updateQuantity={updateQuantity}
+                    item={item}
+                  />
+                ) : null}
               </div>
-              {isCartScreen ? (
-                <QuantityChanger updateQuantity={updateQuantity} item={item} />
-              ) : null}
             </div>
-          </div>
-        </Spin>
-      ))}
+          </Spin>
+        ))}
     </div>
   ));
 }

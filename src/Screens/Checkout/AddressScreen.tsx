@@ -39,50 +39,31 @@ const CheckoutScreen: React.FC = () => {
       state.layouts.data?.themeGrid?.checkoutWarningMessages || []
   );
   const { cart, loading } = useSelector((state: RootState) => state.cart);
-
   const { refetchCart } = useCart();
 
   const { isAuthenticated } = authState ?? {};
   const userData = userInfo?.data?.userProfile;
   const userPartnerData = userInfo?.data?.userProfile;
-
   const isAuth = isAuthenticated;
 
   const [paymentMessage, setPaymentMessage] = useState<string>("");
-
   const [cartLoading, setCartLoading] = useState(loading);
-
   const [selectedAddressText, setSelectedAddressText] = useState<string>();
-
-  useEffect(() => {
-    if (!authState?.isAuthenticated) {
-      historyNavigate(
-        "/auth/login?notification=Худалдан авалтаа үргэлжлүүлхийн тулд нэвтэрнэ үү"
-      );
-    }
-  }, [authState?.isAuthenticated, historyNavigate]);
 
   const [selectedPaymentCode, setSelectedPaymentCode] =
     useState<string>("wire_transfer");
   const [userPhoneNumber, setUserPhoneNumber] = useState<string>();
-
-  const [deliveryId, setDeliveryId] = useState<number>();
-  const [isDeliverySet, setIsDeliverySet] = useState<boolean>(false);
+  const [deliveryId, setDeliveryId] = useState<number | undefined>();
   const [customerType, setCustomerType] = useState<CustomerType>("citizen");
-  const [orderCreateStatus, setOrderCreateStatus] = useState<
-    "pending" | "failed" | "success"
-  >("pending");
 
   const [checkoutWarningMessagesState, setCheckoutWarningMessagesState] =
     useState<Record<number, string> | undefined>();
 
+  // Toggle warning message
   const handleToggleWarning = (id: number, text: string) => {
     setCheckoutWarningMessagesState((prev) => {
-      if (!prev) {
-        return { [id]: text };
-      }
+      if (!prev) return { [id]: text };
       if (prev[id]) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { [id]: _, ...rest } = prev;
         return rest;
       }
@@ -98,6 +79,7 @@ const CheckoutScreen: React.FC = () => {
     });
   };
 
+  // Form setup
   const formMethods = useForm<StepValues>({
     resolver: yupResolver(validSchema2),
     defaultValues: {
@@ -109,187 +91,141 @@ const CheckoutScreen: React.FC = () => {
     },
   });
 
-  const { control, setValue, reset, handleSubmit, getValues, watch } =
+  const { control, setValue, reset, handleSubmit, getValues, formState } =
     formMethods;
-
   const cartItem = cart?.carts?.[0];
 
   const [executeCreateOrder] = useMutation(CREATE_ORDER_CHECKOUT);
-  const [executeSetDeliveryMethod] = useMutation(setDeliveryMethodGQL);
 
-  const setDeliveryMethodFunc = useCallback(
-    async (deliveryId: number) => {
-      try {
-        const result = await executeSetDeliveryMethod({
-          variables: { carrierId: deliveryId },
-        });
-
-        if (result.data?.isSuccess) {
-          setIsDeliverySet(true);
-          return true;
-        }
-      } catch (error) {
-        console.error("Delivery method setting failed", error);
-      }
-      return false;
-    },
-    [executeSetDeliveryMethod]
-  );
-
-  useEffect(() => {
-    if (cartItem?.orderLines?.length === 0) {
-      return;
-    }
-    const deliveries = cartItem?.deliveryCarriers;
-    if (deliveries?.length === 1) {
-      const deliveryId = deliveries?.[0]?.id;
-      if (deliveryId) {
-        setCartLoading(true);
-        setValue("deliveryId", deliveryId);
-        setDeliveryId(deliveryId);
-        setDeliveryMethodFunc(deliveryId);
-        refetchCart();
-        setCartLoading(false);
-      }
-    }
-  }, [
-    cartItem?.deliveryCarriers,
-    cartItem?.orderLines?.length,
-    refetchCart,
-    setDeliveryMethodFunc,
-    setValue,
-  ]);
-
+  // Set user info
   useEffect(() => {
     if (userData?.fullname) {
       reset({
         firstname:
-          userData?.fullname === userData?.phone ? "" : userData?.fullname,
-        s_phone: userData?.phone,
+          userData.fullname === userData.phone ? "" : userData.fullname,
+        s_phone: userData.phone,
         email: userPartnerData?.email,
       });
-      setUserPhoneNumber(userData?.phone);
+      setUserPhoneNumber(userData.phone);
     }
-  }, [userData, reset, userPartnerData, isAuth]);
-
+  }, [userData, userPartnerData, reset]);
+  // Sync loading
   useEffect(() => {
     setCartLoading(loading);
   }, [loading]);
 
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      historyNavigate(
+        "/auth/login?notification=Худалдан авалтаа үргэлжлүүлхийн тулд нэвтэрнэ үү"
+      );
+    }
+  }, [isAuthenticated, historyNavigate]);
+
+  // Submit order
   const onSubmit = async (data: StepValues) => {
-    console.log(data);
+    if (!selectedAddressText) {
+      openNotification({
+        type: "warning",
+        body: <div>Хүргэлтийн хаяг сонгоно уу</div>,
+      });
+      return;
+    }
+
+    setCartLoading(true);
+
+    const checkoutWarningMessages =
+      Object.values(checkoutWarningMessagesState ?? {}).join(", ") || undefined;
+
     try {
-      const { s_phone, firstname, email } = data;
-
-      // Хаяг сонгоогүй бол notification өгөх
-      if (!selectedAddressText) {
-        openNotification({
-          type: "warning",
-          body: <div>Хүргэлтийн хаяг сонгоно уу</div>,
-        });
-        return;
-      }
-
-      setCartLoading(true);
-
-      const checkoutWarningMessages =
-        Object.values(checkoutWarningMessagesState ?? {}).join(",  ") ||
-        undefined;
       const result = await executeCreateOrder({
         variables: {
           address: selectedAddressText,
-          phone: s_phone,
-          name: firstname,
-          email,
+          phone: data.s_phone,
+          name: data.firstname,
+          email: data.email,
           note: selectedAddressText,
           paymentMethod: selectedPaymentCode,
           deliveryMethod: deliveryId,
-          checkoutWarningMessages: checkoutWarningMessages,
+          checkoutWarningMessages,
         },
       });
+
       const orderResult = result?.data?.checkoutOrder;
+
       if (orderResult?.isSuccess) {
-        setOrderCreateStatus("success");
         await dispatch(getCartAsync());
         historyNavigate(`/orders/${orderResult.values?.order_id}`);
-        setPaymentMessage("");
-        setCartLoading(false);
       } else {
         openNotification({
           type: "error",
           body: <div>Захиалга амжилтгүй боллоо</div>,
         });
 
-        const paymentResult = orderResult?.values;
-
         if (
           selectedPaymentCode === "storepay" &&
-          paymentResult.status === "Failed"
+          orderResult?.values?.status === "Failed"
         ) {
-          setOrderCreateStatus("failed");
           const msg =
-            paymentResult?.payment_response?.msgList?.[0]?.text ??
+            orderResult.values.payment_response?.msgList?.[0]?.text ||
             "Storepay амжилтгүй боллоо";
-          const m = `${userPhoneNumber} - дугаартай ${msg}`;
-          setPaymentMessage(m);
-          setCartLoading(false);
+          setPaymentMessage(`${userPhoneNumber} - дугаартай ${msg}`);
         }
-
-        setCartLoading(false);
       }
     } catch (error) {
       console.error("Checkout error:", error);
-      setOrderCreateStatus("failed");
+      openNotification({
+        type: "error",
+        body: <div>--------Сервертэй холбогдоход алдаа гарлаа</div>,
+      });
+    } finally {
       setCartLoading(false);
     }
   };
 
+  // Render input
   const renderInput = (name: keyof StepValues, label: string) => (
     <Controller
       control={control}
       name={name}
-      render={({ field, fieldState }) => {
-        return (
-          <Form.Item
-            label={label}
-            validateStatus={fieldState.error ? "error" : ""}
-            help={fieldState.error?.message}
-            layout="vertical"
-          >
-            <Input
-              {...field}
-              onChange={(v) => {
-                field.onChange(v);
-                if (name === "s_phone") {
-                  setUserPhoneNumber(v.target.value);
-                }
-              }}
-              value={String(field.value) === "false" ? "" : field?.value ?? ""}
-              className="w-full max-w-64"
-              size={"large"}
-            />
-          </Form.Item>
-        );
-      }}
+      render={({ field, fieldState }) => (
+        <Form.Item
+          label={label}
+          validateStatus={fieldState.error ? "error" : ""}
+          help={fieldState.error?.message}
+          layout="vertical"
+        >
+          <Input
+            {...field}
+            onChange={(e) => {
+              field.onChange(e);
+              if (name === "s_phone") setUserPhoneNumber(e.target.value);
+            }}
+            value={field.value ?? ""}
+            className="w-full max-w-64"
+            size="large"
+          />
+        </Form.Item>
+      )}
     />
   );
 
-  if (!cartItem?.orderLines?.length) {
-    return <EmptyCart />;
-  }
+  if (!cartItem?.orderLines?.length) return <EmptyCart />;
 
   return (
     <div className="form-payment-delivery-address py-2 bg-gradient-to-b from-gray-50 to-white px-0">
-      <div className="grid lg:grid-cols-3 gap-4  mx-auto">
+      <div className="grid lg:grid-cols-3 gap-4 mx-auto">
         <div className="lg:col-span-2">
           <FormProvider {...formMethods}>
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="bg-white shadow-lg rounded-xl p-4 max-w-[700px] "
+              className="bg-white shadow-lg rounded-xl p-4 max-w-[700px]"
             >
               <h2 className="text-sm md:text-md py-2 border-b border-gray-300">
                 Төлбөр, Хүргэлтийн мэдээлэл
               </h2>
+
               <div className="mb-4">
                 <Controller
                   control={control}
@@ -305,6 +241,7 @@ const CheckoutScreen: React.FC = () => {
                     />
                   )}
                 />
+
                 {customerType === "organization" && (
                   <div className="bg-gray-50 max-w-52">
                     {renderInput("register_org", "Байгууллагын регистер")}
@@ -331,13 +268,23 @@ const CheckoutScreen: React.FC = () => {
                 <Controller
                   control={control}
                   name="deliveryId"
-                  render={(props) => (
-                    <ShipmentMethods cart={cart?.carts?.[0]} {...props} />
+                  render={({ field, fieldState }) => (
+                    <ShipmentMethods
+                      cart={cart?.carts?.[0]}
+                      value={field.value}
+                      onChange={(id: number) => {
+                        field.onChange(id);
+                        setDeliveryId(id);
+                        /// setdeliveryIdFunc(id);
+                      }}
+                      message={fieldState?.error?.message}
+                    />
                   )}
                 />
+
                 <h2 className="font-bold text-md">Төлбөрийн сонголт</h2>
 
-                {selectedPaymentCode === "storepay" && (
+                {selectedPaymentCode === "storepay" && paymentMessage && (
                   <ErrorMessege
                     message={paymentMessage}
                     messageBold={getValues("paymentCode")}
@@ -347,22 +294,20 @@ const CheckoutScreen: React.FC = () => {
                 <Controller
                   control={control}
                   name="paymentCode"
-                  render={({ field: { onChange }, fieldState }) => {
-                    return (
-                      <PaymentMethods
-                        cart={cart?.carts?.[0]}
-                        errorMessage={fieldState?.error?.message}
-                        isAuth={isAuth}
-                        onChangePayment={(paymentCode) => {
-                          setPaymentMessage("");
-                          onChange(paymentCode);
-                          setSelectedPaymentCode(paymentCode);
-                        }}
-                        paymentCode={selectedPaymentCode}
-                        userPhone={userPhoneNumber}
-                      />
-                    );
-                  }}
+                  render={({ field: { onChange }, fieldState }) => (
+                    <PaymentMethods
+                      cart={cart?.carts?.[0]}
+                      errorMessage={fieldState?.error?.message}
+                      isAuth={isAuth}
+                      onChangePayment={(code) => {
+                        setPaymentMessage("");
+                        onChange(code);
+                        setSelectedPaymentCode(code);
+                      }}
+                      paymentCode={selectedPaymentCode}
+                      userPhone={userPhoneNumber}
+                    />
+                  )}
                 />
               </div>
 
@@ -381,22 +326,21 @@ const CheckoutScreen: React.FC = () => {
                   htmlType="submit"
                   type="primary"
                   loading={cartLoading}
-                  className={` w-full max-w-80 rounded-lg h-12 payment-pay-button`}
+                  className="w-full max-w-80 rounded-lg h-12 payment-pay-button"
                   onClick={() => {
-                    // Form validation алдааг шалгах
-                    const formErrors = formMethods.formState.errors;
-                    if (Object.keys(formErrors).length > 0) {
-                      console.log("Form validation errors:", formErrors);
+                    if (Object.keys(formState.errors).length > 0) {
                       openNotification({
                         type: "error",
                         body: (
                           <div>
                             Мэдээллээ бүрэн бөглөнө үү
-                            {Object.entries(formErrors).map(([key, error]) => (
-                              <div key={key} className="text-xs">
-                                • {error?.message || key}
-                              </div>
-                            ))}
+                            {Object.entries(formState.errors).map(
+                              ([key, error]) => (
+                                <div key={key} className="text-xs">
+                                  • {error?.message || key}
+                                </div>
+                              )
+                            )}
                           </div>
                         ),
                       });
@@ -412,7 +356,6 @@ const CheckoutScreen: React.FC = () => {
 
         <div className="flex flex-col gap-4">
           <CartItemList screen="address" />
-
           <PaymentInfo
             cartItem={cartItem}
             cartLoading={cartLoading}

@@ -1,23 +1,21 @@
 import { FC, useEffect } from "react";
-import { ControllerFieldState } from "react-hook-form";
 import { Cart, DeliveryCarriers } from "../../types/Cart";
-import { TControllerRenderProps } from "../../types/Common";
 import { CheckCircle } from "lucide-react"; // Replacing Ant Design icon with Lucide for consistency
 import { formatPriceWithSign } from "../../lib/helpers";
 
 interface ShipmentMethodsProps {
   cart?: Cart;
-  fieldState: ControllerFieldState;
-  field: TControllerRenderProps;
+  onChange: (arg: number) => void;
+  value?: number;
+  message?: string;
 }
 
 const ShipmentMethods: FC<ShipmentMethodsProps> = ({
+  onChange,
+  value,
   cart,
-  field,
-  fieldState,
+  message,
 }) => {
-  const { onChange, value } = field;
-
   useEffect(() => {
     if (cart?.deliveryCarriers?.length === 1) {
       onChange(cart.deliveryCarriers[0].id);
@@ -28,7 +26,6 @@ const ShipmentMethods: FC<ShipmentMethodsProps> = ({
     return null;
   }
 
-  console.log(cart.deliveryCarriers);
   return (
     <div className="flex flex-wrap gap-4 mx-auto">
       {cart.deliveryCarriers.length}
@@ -42,10 +39,8 @@ const ShipmentMethods: FC<ShipmentMethodsProps> = ({
           onClick={() => onChange(delivery.id)}
         />
       ))}
-      {fieldState.error?.message && (
-        <p className="text-red-500 text-sm mt-2 text-center">
-          {fieldState.error.message}
-        </p>
+      {message && (
+        <p className="text-red-500 text-sm mt-2 text-center">{message}</p>
       )}
     </div>
   );

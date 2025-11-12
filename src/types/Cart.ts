@@ -13,10 +13,13 @@ export interface OrderLine {
   isDelivery?: boolean;
   priceTax?: number;
   state?: string;
-  
 }
 
-export type PaymentTypes = "pocketzero" | "storepay"| "wire_transfer" | "lendmn"
+export type PaymentTypes =
+  | "pocketzero"
+  | "storepay"
+  | "wire_transfer"
+  | "lendmn";
 
 export interface PaymentMethods {
   sequence: number;
@@ -38,7 +41,15 @@ export interface DeliveryCarriers {
   deliveryType: string;
   productId: number;
 }
+
+export interface SelectedDelivery {
+  fixedPrice?: number;
+  name?: string;
+  deliveryId?: number;
+  productId?: number;
+}
 export interface Cart {
+  carrierId: number;
   id?: number;
   name?: string;
   amountTotal?: number;
@@ -48,8 +59,9 @@ export interface Cart {
   total?: number;
   paymentMethods?: PaymentMethods[];
   deliveryCarriers?: DeliveryCarriers[];
-  selectedDeliveriers?: OrderLine[];
-  isDeliverySelected?: boolean
+  selectedDelivery?: SelectedDelivery;
+
+  isDeliverySelected?: boolean;
 }
 
 export interface CreateOrder {

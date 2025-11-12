@@ -55,7 +55,6 @@ export const setDeliveryMethodGQL = gql`
   mutation setDeliveryMethod($carrierId: Int!) {
     setDeliveryMethod(carrierId: $carrierId) {
       isSuccess
-      values
     }
   }
 `;
@@ -90,7 +89,8 @@ export const CREATE_ORDER_CHECKOUT = gql`
 // Queries
 export const GET_CARTS = gql`
   query Cart {
-    carts(page: 1, pageSize: 100, deliveryMethodId: 3) {
+    carts {
+      warningText
       id
       name
       amountTotal
@@ -102,25 +102,13 @@ export const GET_CARTS = gql`
       amountUntaxed
       note
       isDeliverySelected
-      selectedDeliveriers {
-        id
-        quantity
-        priceUnit
-        lineName
-        discount
-        priceSubtotal
-        priceTotal
-        isDelivery
-        priceTax
-        state
-        productId
-        product {
-          id
-          name
-          description
-          price
-        }
+      selectedDelivery {
+        fixedPrice
+        name
+        deliveryId
+        productId 
       }
+      orderLinesTotal
       orderLines {
         id
         quantity
@@ -156,7 +144,7 @@ export const GET_CARTS = gql`
       }
       deliveryCarriers {
         id
-        amount
+        freeDeliveryAmount
         fixedPrice
         freeOver
         name
