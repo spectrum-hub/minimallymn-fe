@@ -17,7 +17,11 @@ import CustomerTypeComp from "../../components/Checkout/CustomerType";
 import PaymentMethods from "../../components/Checkout/PaymentMethods";
 import ShipmentMethods from "../../components/Checkout/ShipmentMethods";
 import { CustomerType, StepValues } from "../../types/Common";
-import { CREATE_ORDER_CHECKOUT, setDeliveryMethodGQL } from "../../api/cart";
+import {
+  CartCreateUpdate,
+  CREATE_ORDER_CHECKOUT,
+  setDeliveryMethodGQL,
+} from "../../api/cart";
 
 import { getCartAsync } from "../../Redux/cartActions";
 import { useCart } from "../../Hooks/use-cart";
@@ -26,6 +30,7 @@ import ErrorMessege from "../../components/Checkout/ErrorMessege";
 import { useHistoryNavigate } from "../../Hooks/use-navigate";
 import CheckoutWarnings from "../../components/Checkout/CheckoutWarningMessages";
 import AddressList from "../../components/User/AddressList";
+import { DeliveryCarriers } from "../../types/Cart";
 
 const CheckoutScreen: React.FC = () => {
   const { openNotification } = useContext(Context);
@@ -96,6 +101,53 @@ const CheckoutScreen: React.FC = () => {
   const cartItem = cart?.carts?.[0];
 
   const [executeCreateOrder] = useMutation(CREATE_ORDER_CHECKOUT);
+
+  const [executeDeliveryMethod, { loading: deliveryLoading }] =
+    useMutation(setDeliveryMethodGQL);
+
+  const setDeliveryIdFunc = async (delivery: DeliveryCarriers) => {
+    if (!delivery?.productId) return;
+
+    // prevent duplicate calls for same delivery
+    if (deliveryId === delivery.id) return;
+
+    // optimistic UI: set local delivery id immediately
+    setDeliveryId(delivery.id);
+    setValue("deliveryId", delivery.id);
+
+    try {
+      const response = await executeDeliveryMethod({
+        variables: {
+          deliveryId: Number(delivery.id),
+          deliveryPid: Number(delivery.productId),
+        },
+        // optionally: set fetchPolicy or optimisticResponse
+      });
+
+      if (response?.data?.updateShipment?.isSuccess) {
+        // prefer partial cache update instead of full refetch if possible:
+        // await refetchCart();
+        dispatch(getCartAsync()); // or refetchCart()
+      } else {
+        // server returned failure: rollback optimistic state if needed
+        openNotification({
+          type: "error",
+          body: <div>Хүргэлтийн сонголт амжилтгүй боллоо</div>,
+        });
+        // optionally refetch to sync
+        await refetchCart();
+      }
+    } catch (err) {
+      console.error("setDelivery error:", err);
+      openNotification({
+        type: "error",
+        body: <div>Сервертэй холбогдох үед алдаа гарлаа</div>,
+      });
+      // rollback optimistic selection if desired:
+      setDeliveryId(undefined);
+      await refetchCart();
+    }
+  };
 
   // Set user info
   useEffect(() => {
@@ -271,11 +323,10 @@ const CheckoutScreen: React.FC = () => {
                   render={({ field, fieldState }) => (
                     <ShipmentMethods
                       cart={cart?.carts?.[0]}
-                      value={field.value}
-                      onChange={(id: number) => {
-                        field.onChange(id);
-                        setDeliveryId(id);
-                        /// setdeliveryIdFunc(id);
+                      onChange={(delivery: DeliveryCarriers) => {
+                        field.onChange(delivery.id);
+                        setDeliveryId(delivery.id);
+                        setDeliveryIdFunc(delivery);
                       }}
                       message={fieldState?.error?.message}
                     />

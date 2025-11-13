@@ -52,9 +52,10 @@ export const CartCreateUpdate = gql`
  */
 
 export const setDeliveryMethodGQL = gql`
-  mutation setDeliveryMethod($carrierId: Int!) {
-    setDeliveryMethod(carrierId: $carrierId) {
+  mutation updateShipment($deliveryId: Int!, $deliveryPid: Int!) {
+    updateShipment(deliveryId: $deliveryId, deliveryPid: $deliveryPid) {
       isSuccess
+      values
     }
   }
 `;
@@ -102,11 +103,12 @@ export const GET_CARTS = gql`
       amountUntaxed
       note
       isDeliverySelected
+      selectedDeliveryMethod
       selectedDelivery {
         fixedPrice
         name
         deliveryId
-        productId 
+        productId
       }
       orderLinesTotal
       orderLines {

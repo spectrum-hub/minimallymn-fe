@@ -49,6 +49,7 @@ export interface SelectedDelivery {
   productId?: number;
 }
 export interface Cart {
+  selectedDeliveryMethod?: number;
   carrierId: number;
   id?: number;
   name?: string;

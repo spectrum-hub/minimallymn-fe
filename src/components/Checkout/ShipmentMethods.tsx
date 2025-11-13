@@ -1,26 +1,33 @@
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { Cart, DeliveryCarriers } from "../../types/Cart";
 import { CheckCircle } from "lucide-react"; // Replacing Ant Design icon with Lucide for consistency
 import { formatPriceWithSign } from "../../lib/helpers";
 
 interface ShipmentMethodsProps {
   cart?: Cart;
-  onChange: (arg: number) => void;
-  value?: number;
+  onChange: (arg: DeliveryCarriers) => void;
   message?: string;
 }
 
 const ShipmentMethods: FC<ShipmentMethodsProps> = ({
   onChange,
-  value,
   cart,
   message,
 }) => {
+  const [selectedDeliveryMethodId, setSelectedDeliveryMethodId] = useState(
+    cart?.selectedDeliveryMethod
+  );
   useEffect(() => {
     if (cart?.deliveryCarriers?.length === 1) {
-      onChange(cart.deliveryCarriers[0].id);
+      onChange(cart.deliveryCarriers[0]);
     }
   }, [cart, onChange]);
+
+
+  useEffect(() => {
+    setSelectedDeliveryMethodId(cart?.selectedDeliveryMethod);
+    console.log(cart);
+  }, [cart]);
 
   if (!cart?.deliveryCarriers || cart.deliveryCarriers.length === 0) {
     return null;
@@ -28,15 +35,15 @@ const ShipmentMethods: FC<ShipmentMethodsProps> = ({
 
   return (
     <div className="flex flex-wrap gap-4 mx-auto">
-      {cart.deliveryCarriers.length}
       {cart?.deliveryCarriers?.map((delivery) => (
         <ShipmentButton
           key={delivery.id}
           shipping={delivery}
           isSelected={
-            value === delivery.id || cart?.deliveryCarriers?.length === 1
+            selectedDeliveryMethodId === delivery?.id ||
+            cart?.deliveryCarriers?.length === 1
           }
-          onClick={() => onChange(delivery.id)}
+          onClick={() => onChange(delivery)}
         />
       ))}
       {message && (
