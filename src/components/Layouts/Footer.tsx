@@ -9,7 +9,7 @@ interface FooterProps {
 
 const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
   return (
-    <footer className="w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-300">
+    <footer className="w-full bg-black text-gray-300">
       {/* Main footer content */}
       <div className="relative">
         {/* Background pattern overlay */}
@@ -23,23 +23,23 @@ const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
                 <img
                   src="/assets/footer_white_logo.png"
                   alt="Minimally Logo"
-                  className="h-12 lg:h-16 w-auto filter brightness-0 invert transition-all duration-300 group-hover:scale-105"
+                  className="h-10 lg:h-12 w-auto filter brightness-0 invert transition-all duration-300 group-hover:scale-105"
                 />
               </a>
 
               <div className="max-w-md">
-                <h3 className="text-lg font-semibold text-white mb-4">
+                <h3 className="text-sm font-semibold text-white mb-4">
                   Бидний тухай
                 </h3>
                 <RenderHtml
                   text={themeGrid?.companyDescription}
-                  className="text-sm leading-relaxed text-gray-400"
+                  className="text-xs leading-relaxed text-gray-400"
                 />
               </div>
 
               {/* Social Media */}
               <div className="flex items-center space-x-4">
-                <span className="text-sm font-medium text-white">
+                <span className="text-xs font-medium text-white">
                   Бидэнтэй хамт:
                 </span>
                 <div className="flex space-x-3">
@@ -51,7 +51,7 @@ const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
                     aria-label="Facebook хуудас"
                   >
                     <svg
-                      className="w-5 h-5 text-blue-400 group-hover:text-white transition-colors"
+                      className="w-4 h-4 text-blue-400 group-hover:text-white transition-colors"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
@@ -66,7 +66,7 @@ const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
                     aria-label="Instagram хуудас"
                   >
                     <svg
-                      className="w-5 h-5 text-pink-400 group-hover:text-white transition-colors"
+                      className="w-4 h-4 text-pink-400 group-hover:text-white transition-colors"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
@@ -79,12 +79,12 @@ const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
 
             {/* Contact Info */}
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-white">Холбоо барих</h3>
+              <h3 className="text-xs font-semibold text-white">Холбоо барих</h3>
 
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
                   <svg
-                    className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0"
+                    className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -97,18 +97,18 @@ const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
                     />
                   </svg>
                   <div>
-                    <p className="text-sm font-medium text-white">Утас</p>
+                    <p className="text-xs font-medium text-white">Утас</p>
 
                     <RenderHtml
                       text={themeGrid?.contactPhone}
-                      className="text-sm text-gray-400"
+                      className="text-xs text-gray-400"
                     />
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-3">
                   <svg
-                    className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0"
+                    className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -121,19 +121,19 @@ const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
                     />
                   </svg>
                   <div>
-                    <p className="text-sm font-medium text-white">
+                    <p className="text-xs font-medium text-white">
                       Цагийн хуваарь
                     </p>
                     <RenderHtml
                       text={themeGrid?.timetable}
-                      className="text-sm text-gray-400"
+                      className="text-xs text-gray-400"
                     />
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-3">
                   <svg
-                    className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0"
+                    className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -146,12 +146,12 @@ const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
                     />
                   </svg>
                   <div>
-                    <p className="text-sm font-medium text-white">
+                    <p className="text-xs font-medium text-white">
                       Цахим шуудан
                     </p>
                     <a
                       href={`mailto:${themeGrid?.contactEmail}`}
-                      className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                      className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
                     >
                       {themeGrid?.contactEmail}
                     </a>
@@ -160,7 +160,7 @@ const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
 
                 <div className="flex items-start space-x-3">
                   <svg
-                    className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0"
+                    className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -180,7 +180,7 @@ const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
                       onClick={() => {
                         window.scrollTo(0, 0);
                       }}
-                      className="text-sm font-medium text-white"
+                      className="text-xs font-medium text-white"
                     >
                       {page.pageName}
                     </NavLink>
@@ -191,11 +191,11 @@ const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
 
             {/* Location */}
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-white">Хаяг</h3>
+              <h3 className="text-xs font-semibold text-white">Хаяг</h3>
 
               <div className="flex items-start space-x-3">
                 <svg
-                  className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0"
+                  className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -216,13 +216,13 @@ const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
                 <div>
                   <RenderHtml
                     text={themeGrid?.address}
-                    className="text-sm text-gray-400"
+                    className="text-xs text-gray-400"
                   />
                 </div>
               </div>
 
               <div className="mt-6 p-4 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl border border-blue-600/20">
-                <p className="text-sm font-medium text-blue-300 italic">
+                <p className="text-xs font-medium text-blue-300 italic">
                   Minimally -тай ХАМТ
                 </p>
               </div>
@@ -235,7 +235,7 @@ const FooterComponent: FC<FooterProps> = ({ themeGrid }) => {
       <div className="border-t border-gray-700/50 bg-gray-900/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
-            <p className="text-sm text-gray-400">
+            <p className="text-xs text-gray-400">
               © {new Date().getFullYear()} {themeGrid?.copyrightText}
             </p>
           </div>
