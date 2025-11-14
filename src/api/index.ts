@@ -55,11 +55,13 @@ export const GET_PRODUCTS = gql`
       pageSize: $pageSize
       orderBy: $orderBy
       filters: {
-        name: $searchValue
-        cids: $cids
-        brandIds: $brandIds
-        onsale: $onsale
-        attributeValueIds: $attributeValueIds
+        # productIds: [415, 357]
+        # productTmplIds: [136, 156]
+        # name: "зэв"
+        # cids: [1, 2, 9]
+        # category: "А"
+        # cids:[9]
+        # brandIds: [1,3]
       }
     ) {
       pageInfo {
@@ -69,15 +71,24 @@ export const GET_PRODUCTS = gql`
         pageCount
         currentPage
         pageSize
+        slug
+        filters
       }
       items {
+        url
+        slug
         productTmplId
         productId
         productName
         isFrontListView
         attributes
         tags
-        categoryNames
+        category {
+          name
+          url
+          id
+        }
+        fullDescription
         templateAdditionalImages {
           main
           medium
@@ -89,9 +100,14 @@ export const GET_PRODUCTS = gql`
           small
         }
         brand {
+          url
           id
           name
-          logo
+          logo {
+            main
+            medium
+            small
+          }
         }
         mainImageUrl {
           main
@@ -106,6 +122,9 @@ export const GET_PRODUCTS = gql`
         price {
           price
           formatted
+          currency
+        }
+        discount {
           currency
         }
       }

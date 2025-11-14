@@ -1,4 +1,4 @@
-import { FC, Suspense, useMemo, useState } from "react";
+import { FC, Suspense, useMemo, useState, useEffect } from "react";
 import { Swiper as SwiperType } from "swiper";
 import { Swiper as SwiperComponent, SwiperSlide } from "swiper/react";
 import { Image } from "antd";
@@ -31,7 +31,14 @@ interface Props {
 }
 
 const ImageSlider: FC<Props> = ({ item, selectedProductId }) => {
+
+  console.log({item});
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
+
+  // Product эсвэл selectedProductId өөрчлөгдөх үед thumbsSwiper-ийг reset хийх
+  useEffect(() => {
+    setThumbsSwiper(null);
+  }, [item?.id, selectedProductId]);
 
   const imagesArray: VImage[] = useMemo(() => {
     if (!item) return [];

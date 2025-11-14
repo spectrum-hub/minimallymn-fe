@@ -203,7 +203,7 @@ const ProductDetailScreen = () => {
         {/* LEFT: Product Images + Category/Brand Links + Description */}
         <div className="border rounded-md overflow-hidden bg-white">
           <div className="m-4">
-            <h1 className="text-xl font-bold mb-1">{product.name}</h1>
+            <h1 className="text-sm md:text-xl font-bold mb-1">{product.name}</h1>
             <Suspense fallback={<span />}>
               <NLink
                 to={product.publicCategIds?.[0]?.id}
@@ -214,6 +214,7 @@ const ProductDetailScreen = () => {
           </div>
           <Suspense fallback={<Spin />}>
             <ImageSliderProductDetail
+              key={`${product.id}-${selectedProductId || 'default'}`}
               item={product}
               selectedProductId={selectedProductId}
             />
