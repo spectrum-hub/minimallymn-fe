@@ -12,32 +12,16 @@ export const GET_LOCATIONS = gql`
   }
 `;
 
-/** 
- * 
-query products {
-  products(page: 1, pageSize: 200, orderBy: "name_desc", 
-  filters: {
-    # name: "Будаатай"
-    # cids: [1, 2, 9]
-    # category: "А"
-    # cids:[2]
-    brandIds: [1,3]
-  }
-  ) {
-    pageInfo {
-      hasNextPage
-      hasPreviousPage
-      totalCount
-      pageCount
-      currentPage
-      pageSize
-    }
-    items {
-      productTmplId      
-      productId
-      productName
-
- */
+//  # filters: {
+//     # productIds: [415, 357]
+//     # productTmplIds: [136, 156]
+//     # name: "зэв"
+//     # cids: [1, 2, 9]
+//     # category: "А"
+//     # cids:[9]
+//     # brandIds: [1,3]
+//     # onsale: 1
+//     #    }
 
 export const GET_PRODUCTS = gql`
   query (
@@ -49,19 +33,21 @@ export const GET_PRODUCTS = gql`
     $onsale: Int
     $attributeValueIds: [Int]
     $brandIds: [Int]
+    $productTmplIds: [Int]
+    $productIds: [Int]
   ) {
     products(
       page: $page
       pageSize: $pageSize
       orderBy: $orderBy
       filters: {
-        # productIds: [415, 357]
-        # productTmplIds: [136, 156]
-        # name: "зэв"
-        # cids: [1, 2, 9]
-        # category: "А"
-        # cids:[9]
-        # brandIds: [1,3]
+        onsale: $onsale
+        productIds: $productIds
+        productTmplIds: $productTmplIds
+        name: $searchValue
+        cids: $cids
+        brandIds: $brandIds
+        attributeValueIds: $attributeValueIds
       }
     ) {
       pageInfo {
@@ -126,11 +112,23 @@ export const GET_PRODUCTS = gql`
         }
         discount {
           currency
+          rate
+          savingsFormatted
+          savings
+          currency
+          originalPrice
+          originalPriceFormatted
+        }
+        quantity {
+          quantity
+          description
         }
       }
     }
   }
 `;
+
+// fullDescription
 
 export const PRODUCT_DETAIL_PLATFORM = gql`
   query ($platformItemId: String = "", $platform: String = "amazon") {
