@@ -27,8 +27,6 @@ import FBMessenger from "../FBMessenger";
 // Lazy-loaded components for better performance
 const Header = lazy(() => import("../Header/HeaderMini"));
 
-const BottomNavbar = lazy(() => import("../Mobile/BottomNavbar"));
-
 interface Props {
   children: React.ReactNode;
 }
@@ -185,18 +183,7 @@ const MainLayout: FC<Props> = ({ children }) => {
           </div>
         </main>
 
-        {/* Footer/Bottom Navigation */}
-        {isMobile ? (
-          <div className="fixed bottom-0 left-0 right-0 z-40 backdrop-blur-md bg-white/95 border-t border-gray-200/50 shadow-lg">
-            <Suspense fallback={<LoadingSpinner />}>
-              <BottomNavbar />
-            </Suspense>
-          </div>
-        ) : (
-          <footer className="mt-auto border-t border-gray-200/50 bg-white/80 backdrop-blur-sm">
-            <Footer themeGrid={themeGrid ?? null} />
-          </footer>
-        )}
+        <Footer themeGrid={themeGrid ?? null} />
 
         {/* Back to top button with modern design */}
         {!isMobile && (

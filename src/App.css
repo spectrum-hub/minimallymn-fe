@@ -15,7 +15,8 @@ html {
 }
 
 * {
-  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif !important;
+  font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", sans-serif !important;
   box-sizing: border-box;
 }
 
@@ -60,8 +61,6 @@ body {
   --warning-foreground: 38 92% 50%;
 }
 
-
-
 /* Enhanced Swiper Styles */
 .swiper-button-next,
 .swiper-button-prev {
@@ -100,7 +99,7 @@ body {
 
 .swiper-pagination-bullet-active {
   opacity: 1 !important;
-  background: #3B82F6 !important;
+  background: #3b3b3b !important;
   transform: scale(1.3) !important;
 }
 
@@ -181,8 +180,6 @@ select {
   background-size: 1rem;
 }
 
-
-
 /* Ant Design Dark Mode Overrides */
 .dark .ant-input,
 .dark .ant-input-password {
@@ -240,13 +237,13 @@ select {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #3B82F6, #6366F1);
+  background: linear-gradient(135deg, #474747, #000000);
   border-radius: 6px;
   transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #2563EB, #4F46E5);
+  background: linear-gradient(135deg, #363636, #000000);
 }
 
 /* Scrollbar hide utility */
@@ -311,7 +308,7 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid #3B82F6;
+  outline: 2px solid #000000;
   outline-offset: 2px;
   border-radius: 6px;
 }
@@ -402,20 +399,20 @@ pre {
 }
 
 .form-address-title {
-  margin-bottom:10px;
-  margin-top:10px;
+  margin-bottom: 10px;
+  margin-top: 10px;
   font-size: 16px;
   font-weight: 500;
 }
 
-.payment-pay-button{
+.payment-pay-button {
   position: sticky !important;
   bottom: 0;
   z-index: 10;
 }
 
-table *{
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+table * {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
 }
 table.pocket-zero-response-table tbody tr td {
   padding: 4px;
@@ -428,12 +425,9 @@ table.pocket-zero-response-table tbody tr th {
   padding: 2px;
   border: 1px solid rgb(158, 158, 158);
   text-align: left;
-  
 
   font-size: 12px;
 }
-
-
 
 .autoplay-progress {
   position: absolute;
