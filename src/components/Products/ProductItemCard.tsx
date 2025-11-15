@@ -2,11 +2,10 @@
 
 import React, { FC, useEffect, useState } from "react";
 import { ProductAttribute, ProductItem } from "../../types/Products";
-import { ProductLink } from "../Links";
 import IconButton from "./IconButton";
 import Badge from "../Badge";
 import { useAddWishlist, useRemoveWishlist } from "../../Hooks/use-wishlist";
-import { useLocation } from "react-router";
+import { Link } from "react-router";
 import { baseURL } from "../../lib/configs";
 
 interface ProductItemProps {
@@ -84,7 +83,7 @@ const BrandBadge: FC<{ brand?: ProductItem["brand"] }> = ({ brand }) => {
     >
       {logo ? (
         <img
-          src={`data:image/png;base64,${brand.logo}`}
+          src={`${baseURL}${brand?.logo?.main}`}
           alt={name}
           className="w-11 h-8 object-contain"
           loading="lazy"
@@ -222,7 +221,6 @@ const ProductItemCard: FC<ProductItemProps> = ({
     Number(item.productId),
     item.productName
   );
-  const location = useLocation();
   const discount =
     discountPrice > price && discountPrice > 0
       ? (differnce * 100) / discountPrice
@@ -277,12 +275,9 @@ const ProductItemCard: FC<ProductItemProps> = ({
         </div>
       )}
 
-      <ProductLink
-        item={item}
+      <Link
+        to={item?.url ?? "/"}
         className="relative rounded-xl flex flex-col h-full w-full"
-        returnTo={`${location.pathname}${
-          location.search ? `/${location.search}` : ""
-        }`}
       >
         {/* Image */}
         <div className="relative rounded-t-xl bg-gradient-to-br from-gray-50 to-white overflow-hidden aspect-square">
@@ -315,7 +310,7 @@ const ProductItemCard: FC<ProductItemProps> = ({
             )}
           </div>
         </div>
-      </ProductLink>
+      </Link>
 
       {/* Mobile wishlist */}
       {isMobile && (

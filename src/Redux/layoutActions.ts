@@ -12,6 +12,12 @@ import {
   setCategoriesRequest,
   setCategoriesSuccess,
 } from "./slices/categorySlice";
+import { GET_PRODUCTS } from "../api";
+import {
+  setProductsFailure,
+  setProductsRequest,
+  setProductsSuccess,
+} from "./slices/productsSlice";
 
 export const GET_LAYOUTS = gql`
   query WebsiteBlocks($themeType: String!) {
@@ -35,8 +41,8 @@ export const GET_LAYOUTS = gql`
       footerItems
       domainName
       checkoutWarningMessages {
-       warningId
-       warningText
+        warningId
+        warningText
       }
       payments {
         paymentId
@@ -179,3 +185,28 @@ export const getCatgoriesAsync =
       return { success: false, message: "Мэдээлэл татахад алдаа гарлаа." };
     }
   };
+
+export const getAllProductsAsync = () => async (dispatch: Dispatch) => {
+  dispatch(setProductsRequest());
+  try {
+    const { data } = await apolloClient.query({
+      query: GET_PRODUCTS,
+      variables: {
+        page: 1,
+        pageSize: 3000,
+        orderBy: "name_desc",
+      },
+    });
+
+    if (data?.products) {
+      dispatch(setProductsSuccess(data?.products));
+    } else {
+      dispatch(setProductsFailure("Мэдээлэл олдсонгүй."));
+    }
+    return { success: true, message: "Мэдээлэл амжилттай татагдлаа." };
+  } catch (err) {
+    console.error("Fetch Error:", err);
+    dispatch(setProductsFailure("Мэдээлэл татахад алдаа гарлаа."));
+    return { success: false, message: "Мэдээлэл татахад алдаа гарлаа." };
+  }
+};

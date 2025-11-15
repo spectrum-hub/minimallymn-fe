@@ -1,32 +1,5 @@
 import { FC } from "react";
 import { Link } from "react-router";
-import { ProductItem } from "../types/Products";
-
-interface Props {
-  item?: ProductItem;
-  children: React.ReactNode;
-  className?: string;
-  returnTo?: string;
-}
-
-const ProductLink: FC<Props> = ({ item, children, className, returnTo }) => {
-  return (
-    <Link
-      to={
-        "/products/" +
-        (item?.productTmplId ?? "") +
-        "?name=" +
-        (item?.productName
-          ? item.productName.toLowerCase().replace(/\s+/g, "-")
-          : "") +
-        (returnTo ? "&returnTo=" + returnTo : "")
-      }
-      className={className}
-    >
-      {children}
-    </Link>
-  );
-};
 
 interface LogoProps {
   children: React.ReactNode;
@@ -62,4 +35,4 @@ export const MLink: FC<MLinkProps> = ({
     </Link>
   );
 };
-export { ProductLink, LogoLink };
+export { LogoLink };

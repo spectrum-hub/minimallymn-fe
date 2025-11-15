@@ -10,7 +10,7 @@ import { Swiper as SwiperComponent, SwiperSlide } from "swiper/react";
 
 import { BLOCK_PRODUCTS_DEFAULT_TOTAL } from "../../Constants";
 import { GET_PRODUCTS } from "../../api";
-import { ProductsQuery } from "../../types/Products";
+import { ProductsQueryData } from "../../types/Products";
 import useGqlQuery from "../../Hooks/Query";
 import ProductItemCard from "./ProductItemCard";
 import { Spin } from "antd";
@@ -28,7 +28,7 @@ const CaruselSliderProducts: FC<BlockProductsProps> = ({ row, isMobile }) => {
           .flatMap((item) => item.itemId)
           .filter((id): id is number => typeof id === "number")
       : [];
-  const { loading, error, data } = useGqlQuery<ProductsQuery>(
+  const { loading, error, data } = useGqlQuery<ProductsQueryData>(
     GET_PRODUCTS,
     {
       page: 1,
@@ -45,7 +45,7 @@ const CaruselSliderProducts: FC<BlockProductsProps> = ({ row, isMobile }) => {
     }
   );
 
-  const items = data?.products?.items;
+  const items = data?.products?.items || [];
 
   const renderCategoryTitle = () => {
     if (row?.sectionTitle) {

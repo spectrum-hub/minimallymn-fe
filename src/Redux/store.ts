@@ -6,6 +6,7 @@ import userInfoSlice from "./slices/userInfoSlice";
 import accountOrdersSlice from "./slices/accountOrdersSlice";
 import layoutSlice from "./slices/layoutSlice";
 import categorySlice from "./slices/categorySlice";
+import productsSlice from "./slices/productsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     accountOrders: accountOrdersSlice,
     layouts: layoutSlice,
     category: categorySlice,
+    products: productsSlice,
   },
 });
 

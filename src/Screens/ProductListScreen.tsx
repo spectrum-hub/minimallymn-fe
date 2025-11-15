@@ -1,23 +1,15 @@
 import { X } from "lucide-react";
-import { GET_PRODUCTS } from "../api";
-import useGqlQuery from "../Hooks/Query";
 import styles from "./screens.module.css";
 import { useSelector } from "react-redux";
 import { Breadcrumb, Button } from "antd";
 import { OrderBy } from "../types/General";
 import { RootState } from "../Redux/store";
-import useDebounce from "../Hooks/useDebounce";
 import Categories from "../components/Categories";
-import CircleLoader from "../components/CircleLoader";
-import { useInView } from "react-intersection-observer";
 import { NavLink, useSearchParams } from "react-router";
-import Attributes from "../components/Products/Attributes";
 import { useState, useEffect, useMemo } from "react";
-import { ProductsQuery, ProductItem } from "../types/Products";
-import SortOrderList from "../components/Products/SortOrderList";
+import { ProductItem } from "../types/Products";
 import { groupByAttributeId } from "../components/Products/helpers";
 import ProductItemCard from "../components/Products/ProductItemCard";
-import { PRODUCTS_SCREEN_DEFAULT_TOTAL } from "../Constants";
 import EmptySearch from "../components/Products/EmptySearch";
 import useWindowWidth from "../Hooks/use-window-width";
 import BrandBadge from "../components/BrandBadge";
@@ -30,6 +22,10 @@ const ProductListScreen: React.FC = () => {
     (state: RootState) => state.category?.data?.categories
   );
 
+  const allProducts = useSelector(
+    (state: RootState) => state.products?.data?.items
+  );
+  
   const [sortOrder, setSortOrder] = useState<OrderBy>(
     (searchParams.get("sort") as OrderBy) || "create_date desc"
   );
@@ -50,7 +46,6 @@ const ProductListScreen: React.FC = () => {
     [searchParams]
   );
 
-  console.log(existingBrandsFilters[0]);
   // State
   const [products, setProducts] = useState<ProductItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -59,65 +54,17 @@ const ProductListScreen: React.FC = () => {
     Number(selectedCategoryId) || undefined
   );
 
-  // Infinite scroll
-  const { ref, inView } = useInView({ threshold: 1 });
-  const debouncedInView = useDebounce(inView, 300);
-
-  // Fetch products
-  const { loading, error, data, refetch } = useGqlQuery<ProductsQuery>(
-    GET_PRODUCTS,
-    {
-      page: currentPage,
-      pageSize: PRODUCTS_SCREEN_DEFAULT_TOTAL,
-      orderBy: sortOrder,
-      ...(searchValue && { searchValue }),
-      ...(categoryId && { categoryId }),
-      ...(filterOnSale && { onsale: 1 }),
-      ...(filterAttributes.length > 0 && {
-        attributeValueIds: filterAttributes,
-      }),
-      ...(existingBrandsFilters.length > 0 && {
-        brandIds: existingBrandsFilters.map(Number),
-      }),
-    },
-    {
-      context: {
-        api: "minimally",
-      },
+  useEffect(() => {
+    if (allProducts) {
+      setProducts(allProducts);
     }
-  );
+  }, [allProducts]);
+
+  console.log(allProducts);
 
   useEffect(() => {
     setCategoryId(selectedCategoryId ? Number(selectedCategoryId) : undefined);
   }, [selectedCategoryId]);
-
-  useEffect(() => {
-    if (!loading && data) {
-      setProducts((prev) =>
-        currentPage === 1
-          ? data.products.items
-          : [...prev, ...(data.products.items ?? [])]
-      );
-      setHasMore(data.products.pageInfo.hasNextPage);
-    }
-  }, [data, currentPage, loading]);
-
-  useEffect(() => {
-    if (debouncedInView && hasMore && !loading) {
-      setCurrentPage((prev) => prev + 1);
-    }
-  }, [debouncedInView, hasMore, loading]);
-
-  useEffect(() => {
-    refetch();
-  }, [
-    searchValue,
-    categoryId,
-    filterAttributes,
-    existingBrandsFilters,
-    sortOrder,
-    refetch,
-  ]);
 
   // Filter management
   const removeFilter = (param: string, value?: string) => {
@@ -184,9 +131,9 @@ const ProductListScreen: React.FC = () => {
 
   // Render filter tags
   const renderFilterTags = () => {
-    const groupedItems = groupByAttributeId(data?.products?.attributes);
+    const groupedItems = groupByAttributeId(allProducts?.attributes);
     const hasFilters =
-      searchValue || filterAttributes.length || existingBrandsFilters.length;
+      searchValue || filterAttributes?.length || existingBrandsFilters?.length;
 
     return (
       <div className="flex gap-2 flex-wrap">
@@ -249,13 +196,13 @@ const ProductListScreen: React.FC = () => {
     );
   };
 
-  if (error) return <p>Error: {error.message}</p>;
+  if (!allProducts) return <p>Error:</p>;
 
   return (
     <section className="products  mx-auto">
       <Categories />
       <div className="flex flex-row gap-4">
-        <Attributes attributes={data?.products?.attributes} loading={loading} />
+        {/* <Attributes attributes={data?.products?.attributes} loading={loading} /> */}
         <div className="w-full">
           <div className={styles.containerItemHeader}>
             <BrandBadge
@@ -267,11 +214,11 @@ const ProductListScreen: React.FC = () => {
               <h3 className="text-sm text-gray-900 w-full mb-2">
                 Бүтээгдэхүүн
               </h3>
-              <SortOrderList
+              {/* <SortOrderList
                 sortOrder={sortOrder}
                 sortOnChange={setSortOrder}
                 productsLength={products.length}
-              />
+              /> */}
             </div>
             <div className={styles.containerActions}>
               {selectedCategoryId && (
@@ -281,7 +228,7 @@ const ProductListScreen: React.FC = () => {
             </div>
           </div>
 
-          {products.length === 0 ? <EmptySearch /> : null}
+          {(products ?? []).length === 0 ? <EmptySearch /> : null}
           <div className={styles.productsGrid}>
             {(products ?? []).map((item) => (
               <ProductItemCard
@@ -292,8 +239,8 @@ const ProductListScreen: React.FC = () => {
             ))}
           </div>
 
-          {hasMore && !loading && <div ref={ref} className="h-10" />}
-          <CircleLoader loading={loading} />
+          {/* {hasMore && !loading && <div ref={ref} className="h-10" />}
+          <CircleLoader loading={loading} /> */}
         </div>
       </div>
     </section>

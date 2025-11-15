@@ -15,7 +15,7 @@ import { AppDispatch, RootState } from "../../Redux/store";
 import { checkAuthStatus } from "../../Redux/slices/authSlice";
 import { getUserProfile } from "../../Redux/userActions";
 import { getCartAsync } from "../../Redux/cartActions";
-import { getCatgoriesAsync, getLayoutsAsync } from "../../Redux/layoutActions";
+import { getAllProductsAsync, getCatgoriesAsync, getLayoutsAsync } from "../../Redux/layoutActions";
 import useWindowWidth from "../../Hooks/use-window-width";
 import { decryptData } from "../../lib/helpers";
 import ErrorBoundary from "../ErrorBoundary";
@@ -75,6 +75,7 @@ const useFetchData = (
         await Promise.all([
           dispatch(getLayoutsAsync()),
           dispatch(getCatgoriesAsync()),
+          dispatch(getAllProductsAsync()),
           dispatch(getCartAsync()),
           isAuthenticated && !loading
             ? dispatch(getUserProfile())

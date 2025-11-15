@@ -11,6 +11,7 @@ import { OrderBy } from "../types/General";
 import { ApiContextType } from "../types/Common";
 
 interface UseGqlQueryVariables {
+  productIds?: number[]
   pageUrl?: string;
   websiteId?: string | number;
   orderBy?: OrderBy;

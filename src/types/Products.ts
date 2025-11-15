@@ -1,162 +1,100 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export interface Attribute {
-  id: number;
-  name: string;
-  sequence: number;
-  attributeId: string[] | undefined;
-  color: number;
-  htmlColor: boolean;
-  active: boolean;
-  defaultExtraPrice: number;
-  displayType: "select" | "radio" | "color" | "multi";
-}
-export interface ProductsQuery {
-  products: Products;
-}
-
-export interface WishlistsQuery {
-  wishlist: Products;
-}
-
-export interface PublicCategories {
-  id: number;
-  name: string;
-  parentPath: string;
-}
-
-export interface Products {
-  pageInfo: PageInfo;
-  items: ProductItem[];
-  publicCategories?: PublicCategories[];
-  attributes?: Attribute[];
-}
-
-export interface PageInfo {
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  totalCount: number;
-  pageCount: number;
-  pageSize: number;
-  currentPage: number;
-  __typename: string;
-}
-export interface PublicCategIds {
-  name: string;
-  id: number;
-  parentPath: string;
-}
-
-export interface ProductBrand {
-  id: number;
-  logo: string;
-  name: string;
-}
-
-export interface ProductPrice {
-  currency: string;
-  formatted: string;
-  price: number;
-}
-
-export interface ProductDiscount {
-  originalPrice: number;
-  originalPriceFormatted: string;
-  rate: number;
-  currency: string;
-  savingsFormatted: string;
-  savings: number;
-}
-
-export interface ProductImageUrl {
+interface ImageSize {
   main: string;
   medium: string;
   small: string;
 }
 
-export interface ProductAttribute {
+interface Tag {
+  tag_id: number;
+  name: string;
+  color: string;
+}
+
+interface Category {
+  name: string;
+  url: string;
+  id: number;
+}
+
+interface Brand {
+  url: string;
+  id: number;
+  name: string;
+  logo: ImageSize;
+}
+
+interface Price {
+  price: string;
+  formatted: string;
+  currency: string;
+  discount?: null;
+}
+
+interface Discount {
+  currency: string;
+  rate: string;
+  savingsFormatted: null | string;
+  savings: null | number;
+  originalPrice: null | number;
+  originalPriceFormatted: null | string;
+}
+
+interface Quantity {
+  quantity: number | null;
+  description: string;
+}
+
+interface Attribute {
   attribute_id: number;
   attribute: string;
   value_id: number;
   value: string;
 }
 
-// Тухайн талбарын төрөл:
-export type Attributes = ProductAttribute[];
-
 export interface ProductItem {
-  qtyAvailable: number;
-  id: number;
-  name: string;
-  category: string;
-  productTmplId: string;
-  productId: string;
+  url: string;
+  slug: string;
+  productTmplId: number;
+  productId: number;
   productName: string;
-  attributes?: Attributes;
-  categoryNames: string[];
-  priceExtraSum: number;
-  mainImageUrl: ProductImageUrl;
-  variantImageUrl: ProductImageUrl;
-  brand: ProductBrand;
-  price: ProductPrice;
-  discount: ProductDiscount;
-  tags: {
-    name: string;
-    tag_id: string;
-    color: string;
-  }[];
-  images: ProductImage[];
-  productTemplateImageIds: string[];
-  productVariantImageIds: string[];
-  productVariantId: string;
-  productVariantCount: string;
-  productVariantNum: string;
-  productVariantName: string;
-  productVariantIds: string[];
-  propertyStockProductionId: string;
-  productVariants: {
-    combinationIndicesValues: CombinationIndicesValues[];
+  isFrontListView: "Y" | "N";
+  attributes: Attribute[];
+  tags: Tag[];
+  category: Category;
+  fullDescription: string;
+  templateAdditionalImages: ImageSize[];
+  variantAdditionalImages: ImageSize[];
+  brand: Brand;
+  mainImageUrl: ImageSize;
+  variantImageUrl: ImageSize;
+  price: Price;
+  discount: Discount;
+  quantity: Quantity;
+}
+
+interface PageInfo {
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  totalCount: number;
+  pageCount: number;
+  currentPage: number;
+  pageSize: number;
+  slug: string;
+  filters: {
+    attribute_value_ids: number[];
   };
-  combinationIndicesValues: CombinationIndicesValues[];
-  combinationIndices: string;
-  templateAdditionalImages: ProductImageUrl[];
 }
 
-export interface AttributesList {
-  productVariantId?: number;
-  attributeName?: string;
-  id: number;
-  productAttributeValueId?: string;
-  attributeLineId: string;
-  productTmplId?: string;
-  attributeId?: string;
-  attributeDisplayType?: "select" | "radio" | "color" | "multi";
-  sequence?: string;
-  color?: string;
-  name?: string;
-  htmlColor?: string;
-  priceExtra?: string;
-}
-export interface CombinationIndicesValues {
-  combinationIndices: string;
-  productId: string;
-  qtyAvailable: number;
-  productTemplateImageIds?: string[];
-  productVariantImageIds?: string[];
+interface Products {
+  pageInfo: PageInfo;
+  items: ProductItem[];
 }
 
-export interface ProductImage {
-  id?: 32;
-  url?: string;
+
+export interface ProductsQueryData {
+  items: Products;
 }
 
-export interface Root {
-  data: Data;
-}
-
-export interface Data {
-  products: Products;
-}
-
-export interface ProductDetails {
-  productDetails?: ProductItem;
+export interface ProductsQueryResponseData {
+  items: ProductItem[];
 }

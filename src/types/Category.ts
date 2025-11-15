@@ -1,5 +1,3 @@
-import { PageInfo } from "./Products";
-
 interface ParentPaths {
   name: string
   cat_id: number
@@ -22,7 +20,8 @@ export interface Category {
 
 export interface CategoriesQuery {
   categories?: {
-    pageInfo?: PageInfo
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    pageInfo?: any
     categories?: Category[]
   };
 }
