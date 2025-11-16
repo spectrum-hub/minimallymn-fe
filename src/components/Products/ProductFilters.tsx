@@ -328,7 +328,6 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         onChange={(k) => setExpandedKeys((k as string[]) || [])}
         items={items}
         expandIconPosition="end"
-        defaultActiveKey={"brand"}
       />
     </>
   );
