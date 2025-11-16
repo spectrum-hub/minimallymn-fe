@@ -12,6 +12,7 @@ import EmptySearch from "../components/Products/EmptySearch";
 import useWindowWidth from "../Hooks/use-window-width";
 import BrandBadge from "../components/BrandBadge";
 import ProductFilters from "../components/Products/ProductFilters";
+import { Category } from "../types/Products";
 
 const FilterViewButton: FC<{
   attribute: string;
@@ -28,7 +29,7 @@ const FilterViewButton: FC<{
     >
       <span className="font-bold text-xs">{attribute}:</span>
       <span className="text-xs">{value}:</span>
-      <X size={14} className="font-bold " />
+      <X size={16} className="font-bold " />
     </button>
   );
 };
@@ -37,15 +38,23 @@ const ProductListScreen: React.FC = () => {
   const { isMobile } = useWindowWidth();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const allProducts = useSelector(
-    (state: RootState) => state.products?.data?.items
-  );
+  const items = useSelector((state: RootState) => state.products?.data?.items);
 
-  const categories = useSelector(
-    (state: RootState) => state.category?.data?.categories?.categories
-  );
+  const categories = useMemo((): Category[] => {
+    if (!items?.length) return [];
+    const map = new Map<number, Category>();
+    for (const it of items) {
+      const cat = it?.category;
+      if (cat?.id) map.set(cat.id, cat);
+    }
+    const arr = Array.from(map.values());
+    arr.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+    return arr;
+  }, [items]);
 
+  
   // query values
+
   const searchValue = searchParams.get("search") ?? "";
   const selectedCategoryId = Number(searchParams.get("category") ?? 0);
   const filterAttributes = useMemo(
@@ -60,8 +69,8 @@ const ProductListScreen: React.FC = () => {
 
   // Filtered products (single source of truth)
   const filteredProducts = useMemo(() => {
-    if (!allProducts) return [];
-    let list = allProducts;
+    if (!items) return [];
+    let list = items;
 
     if (searchValue) {
       const q = searchValue.toLowerCase();
@@ -90,7 +99,7 @@ const ProductListScreen: React.FC = () => {
 
     return list;
   }, [
-    allProducts,
+    items,
     searchValue,
     selectedCategoryId,
     existingBrandsFilters,
@@ -122,7 +131,7 @@ const ProductListScreen: React.FC = () => {
 
   // Render filter tags minimal
   const renderFilterTags = () => {
-    if (!allProducts) return null;
+    if (!items) return null;
     const hasFilters = Boolean(
       searchValue ||
         filterAttributes.length ||
@@ -156,7 +165,7 @@ const ProductListScreen: React.FC = () => {
 
         {filterAttributes.map((filter) => {
           const [attrId, valueId] = filter.split("-").map(Number);
-          const product = allProducts.find((p) =>
+          const product = items.find((p) =>
             p.attributes.some(
               (a) => a.attribute_id === attrId && a.value_id === valueId
             )
@@ -176,7 +185,7 @@ const ProductListScreen: React.FC = () => {
         })}
 
         {existingBrandsFilters.map((brandId) => {
-          const brand = allProducts.find(
+          const brand = items.find(
             (p) => p.brand?.id === Number(brandId)
           )?.brand;
           if (!brand) return null;
@@ -197,7 +206,7 @@ const ProductListScreen: React.FC = () => {
     );
   };
 
-  if (!allProducts) return <p>Loading...</p>;
+  if (!items) return <p>Loading...</p>;
 
   return (
     <section className="products mx-auto">
@@ -206,16 +215,19 @@ const ProductListScreen: React.FC = () => {
       {/* Mobile filter FAB */}
       {isMobile && (
         <ProductFilters
-          products={allProducts}
+          products={items}
+          availableProducts={filteredProducts}
           isMobile
-          categories={categories}
         />
       )}
 
       <div className="flex gap-4">
         {!isMobile && (
           <aside className="w-72 flex-shrink-0">
-            <ProductFilters products={allProducts} categories={categories} />
+            <ProductFilters
+              products={items}
+              availableProducts={filteredProducts}
+            />
           </aside>
         )}
 
@@ -239,7 +251,7 @@ const ProductListScreen: React.FC = () => {
           {filteredProducts.length === 0 ? <EmptySearch /> : null}
 
           <div className={styles.productsGrid}>
-            {filteredProducts.map((item) => (
+            {(filteredProducts ?? []).map((item) => (
               <ProductItemCard
                 key={item.productId}
                 item={item}

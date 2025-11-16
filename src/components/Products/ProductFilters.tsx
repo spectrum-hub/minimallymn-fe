@@ -7,9 +7,9 @@ import { useSearchParams } from "react-router";
 import { baseURL } from "../../lib/configs";
 
 interface ProductFiltersProps {
-  products: ProductItem[];
+  products: ProductItem[]; // All products for counting
+  availableProducts?: ProductItem[]; // Filtered products to determine available options
   isMobile?: boolean;
-  categories?: { id: number; name?: string }[];
 }
 
 interface GroupedAttribute {
@@ -40,6 +40,7 @@ const updateQueryParamArray = (
 
 const ProductFilters: React.FC<ProductFiltersProps> = ({
   products,
+  availableProducts,
   isMobile = false,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -50,6 +51,27 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
     () => searchParams.get("category") ?? "",
     [searchParams]
   );
+
+  // Compute available options from availableProducts (or fallback to all products)
+  const productsToCheck = availableProducts || products;
+
+  const availableAttributeValues = useMemo(() => {
+    const set = new Set<string>();
+    for (const p of productsToCheck) {
+      for (const a of p.attributes || []) {
+        set.add(`${a.attribute_id}-${a.value_id}`);
+      }
+    }
+    return set;
+  }, [productsToCheck]);
+
+  const availableBrands = useMemo(() => {
+    const set = new Set<number>();
+    for (const p of productsToCheck) {
+      if (p.brand?.id) set.add(p.brand.id);
+    }
+    return set;
+  }, [productsToCheck]);
 
   // Group attributes by attribute_id + counts
   const groupedAttributes = useMemo<GroupedAttribute[]>(() => {
@@ -141,6 +163,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
     updateQueryParamArray(params, FILTER_BRAND_KEY, String(brandId), checked);
     setSearchParams(params);
   };
+
   const clearAll = () => {
     const params = new URLSearchParams(searchParams.toString());
     params.delete(FILTER_ATTR_KEY);
@@ -172,28 +195,33 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
       ),
       children: (
         <div className="space-y-2 max-h-64 overflow-auto">
-          {groupedBrands.map((brand) => (
-            <div key={brand.id} className="flex items-center justify-between">
-              <Checkbox
-                checked={selectedBrands.includes(String(brand.id))}
-                onChange={(e) => toggleBrand(brand.id, e.target.checked)}
+          {groupedBrands.map((brand) => {
+            const isAvailable = availableBrands.has(brand.id);
+            const isSelected = selectedBrands.includes(String(brand.id));
+            const isDisabled = !isAvailable && !isSelected;
+            return (
+              <div
+                key={brand.id}
+                className={`flex items-center justify-between ${
+                  isDisabled ? "text-black": ""
+                }`}
               >
-                <div className="flex items-center gap-2">
-                  {brand.logo && (
-                    <img
-                      src={brand.logo}
-                      alt={brand.name}
-                      className="w-6 h-6 object-contain"
-                    />
-                  )}
-                  <span className="text-sm">{brand.name}</span>
-                </div>
-              </Checkbox>
-              <span className="text-xs text-muted-foreground">
-                {brand.count}
-              </span>
-            </div>
-          ))}
+                <Checkbox
+                  checked={isSelected}
+                  disabled={isDisabled}
+                  onChange={(e) => toggleBrand(brand.id, e.target.checked)}
+                  className="flex items-center gap-1"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs">{brand.name}</span>
+                  </div>
+                </Checkbox>
+                <span className="text-xs text-muted-foreground">
+                  {brand.count}
+                </span>
+              </div>
+            );
+          })}
         </div>
       ),
     },
@@ -218,10 +246,19 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         <div className="space-y-2 max-h-64 overflow-auto">
           {attr.values.map((v) => {
             const key = `${attr.id}-${v.id}`;
+            const isAvailable = availableAttributeValues.has(key);
+            const isSelected = selectedAttributes.includes(key);
+            const isDisabled = !isAvailable && !isSelected;
             return (
-              <div key={v.id} className="flex items-center justify-between">
+              <div
+                key={v.id}
+                className={`flex items-center justify-between ${
+                  isDisabled ? "opacity-50" : ""
+                }`}
+              >
                 <Checkbox
-                  checked={selectedAttributes.includes(key)}
+                  checked={isSelected}
+                  disabled={isDisabled}
                   onChange={(e) =>
                     toggleAttribute(attr.id, v.id, e.target.checked)
                   }
@@ -252,7 +289,20 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
             }}
           />
           <h3 className="font-semibold text-sm text-gray-600">Шүүлтүүр</h3>
+          {totalFilters > 0 && (
+            <Badge count={totalFilters} color="#1890ff" size="small" />
+          )}
         </div>
+        {totalFilters > 0 && (
+          <Button
+            type="link"
+            size="small"
+            onClick={clearAll}
+            className="text-red-500 hover:text-red-600 text-xs"
+          >
+            Цэвэрлэх
+          </Button>
+        )}
       </div>
 
       <Collapse
