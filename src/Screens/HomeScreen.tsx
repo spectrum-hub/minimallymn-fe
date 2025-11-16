@@ -27,7 +27,7 @@ const RenderRow = ({
       if (row?.itemViewType === "item_products") {
         return <CaruselSliderProducts row={row} isMobile={isMobile} />;
       }
-      return <></>; // шаардлагагүй тохиолдолд хоосон баримт буцаана
+      return <></>;
 
     case "video":
       return <RowYTFBVideoPLayer row={row} isMobile={isMobile} />;
