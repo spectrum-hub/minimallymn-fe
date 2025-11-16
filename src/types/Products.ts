@@ -16,7 +16,7 @@ interface Category {
   id: number;
 }
 
-interface Brand {
+export interface Brand {
   url: string;
   id: number;
   name: string;

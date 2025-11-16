@@ -1,111 +1,79 @@
-import { useState, Key } from "react";
-import { useQuery, gql } from "@apollo/client";
+import { useMemo } from "react";
 import { NavLink } from "react-router";
-import { Button } from "antd";
+import { useSelector } from "react-redux";
+import type { RootState } from "../Redux/store";
+import { baseURL } from "../lib/configs";
+import RowTitle from "../components/RowTitle";
+import { Brand } from "../types/Products";
 
-// GraphQL Query for Brands (matches your schema)
-const GET_BRANDS = gql`
-  query Brands($page: Int, $pageSize: Int, $orderBy: String, $websiteId: Int) {
-    brands(
-      page: $page
-      pageSize: $pageSize
-      orderBy: $orderBy
-      websiteId: $websiteId
-    ) {
-      pageInfo {
-        totalCount
-        pageCount
-        currentPage
-        pageSize
-      }
-      brands {
-        id
-        name
-        description
-        partnerId
-        logo
-        productCount
-        websiteId
+function BrandsScreen(): JSX.Element {
+  const items = useSelector((state: RootState) => state.products?.data?.items);
+
+  const brands = useMemo(() => {
+    if (!items?.length) return [];
+
+    const map = new Map<string, Brand>();
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      const id = item?.brand?.id;
+      const brand = item?.brand;
+      if (id && brand) {
+        // Map-ийн key-г string болгох нь илүү найдвартай
+        // (sparse array-оос зайлсхийх)
+        map.set(String(id), brand);
       }
     }
-  }
-`;
+    // Хүсвэл нэрээр эрэмбэлэх (optional)
+    const arr = Array.from(map.values());
+    arr.sort((a, b) => {
+      const an = (a.name ?? "").toString().toLowerCase();
+      const bn = (b.name ?? "").toString().toLowerCase();
+      return an.localeCompare(bn);
+    });
 
-function BrandsScreen() {
-  const [page, setPage] = useState(1);
-  const pageSize = 40; // Default page size
-  const orderBy = "name asc"; // Default sorting
-  const websiteId = 1; // Example website ID; adjust as needed or make dynamic
-  const { loading, error, data } = useQuery(GET_BRANDS, {
-    variables: { page, pageSize, orderBy, websiteId },
-  });
-
-  if (loading)
-    return <p className="text-center text-gray-500">Loading brands...</p>;
-  if (error)
-    return <p className="text-center text-red-500">Error: {error.message}</p>;
-
-  const { brands } = data;
-
-  type Brand = {
-    id: Key | null | undefined;
-    logo: string | null;
-    name: string;
-    description: string;
-    productCount: number;
-    websiteId: number;
-  };
+    return arr;
+  }, [items]);
 
   return (
-    <section className="products  mx-auto ">
-      <h1 className="text-center md:text-left text-md md:text-2xl 
-      font-bold font-sans  text-gray-800 my-5">
-        Брендүүд
-      </h1>
-      <div className="flex flex-wrap gap-2 justify-center md:justify-normal ">
-        {brands?.brands?.map((brand: Brand) => (
-          <NavLink
-            to={`/products?brands=${brand.id}`}
-            key={brand.id}
-            className={`
-                border border-gray-200 rounded-lg p-2 md:p-4 shadow-md 
-                flex  flex-col gap-2 md:gap-4 justify-center items-center 
+    <section className="products mx-auto">
+      <RowTitle title="Брэндүүд" />
+      <div className="flex flex-wrap gap-2 justify-center md:justify-normal">
+        {brands.map((brand) => {
+          const href = brand?.url ?? `/products?brands=${brand.id}`;
+          const imgSrc = brand?.logo?.main
+            ? `${baseURL}${brand.logo.main}`
+            : undefined;
+
+          return (
+            <NavLink
+              to={href}
+              key={String(brand.id)}
+              className={`
+                border border-gray-200 rounded p-2 md:p-4 shadow 
+                flex flex-col gap-2 md:gap-4 justify-center items-center 
                 bg-white hover:shadow-lg transition-shadow
                 min-w-36 md:min-w-48
-            `}
-          >
-            {brand?.logo && (
-              <img
-                src={`data:image/png;base64,${brand.logo}`}
-                alt={`${brand.name} Logo`}
-                className="w-28 h-16 md:w-38 md:h-32 object-contain"
-              />
-            )}
+              `}
+              aria-label={`Брэнд ${brand.name ?? brand.id}`}
+            >
+              {imgSrc ? (
+                <img
+                  src={imgSrc}
+                  alt={`${brand.name ?? ""} Logo`}
+                  className="w-28 h-16 md:w-38 md:h-32 object-contain"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <div className="w-28 h-16 md:w-38 md:h-32 flex items-center justify-center bg-gray-100 text-xs text-gray-500"></div>
+              )}
 
-            <h2 className="text-lg font-semibold text-gray-900 font-sans ">
-              {brand.name}
-            </h2>
-          </NavLink>
-        ))}
-      </div>
-      {/* Pagination */}
-      <div className="mt-5 text-center text-xs">
-        {page === 1 ? null : (
-          <Button onClick={() => setPage(page - 1)} disabled={page === 1}>
-            Өмнөх
-          </Button>
-        )}
-
-        <span className="px-4 py-2 text-gray-700">
-          Хуудас {page} -ээс {brands.pageInfo.pageCount || 1}
-        </span>
-        {page === brands.pageInfo.pageCount ? null : <Button
-          onClick={() => setPage(page + 1)}
-          disabled={page === brands.pageInfo.pageCount}
-        >
-          Дараах
-        </Button>}
-        
+              <h2 className="mt-4 text-sm font-semibold text-gray-600 font-sans">
+                {brand.name}
+              </h2>
+            </NavLink>
+          );
+        })}
       </div>
     </section>
   );

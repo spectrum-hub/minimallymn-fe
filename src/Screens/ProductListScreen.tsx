@@ -2,17 +2,16 @@ import { X } from "lucide-react";
 import styles from "./screens.module.css";
 import { useSelector } from "react-redux";
 import { Breadcrumb, Button } from "antd";
-import { OrderBy } from "../types/General";
 import { RootState } from "../Redux/store";
 import Categories from "../components/Categories";
 import { NavLink, useSearchParams } from "react-router";
 import { useState, useEffect, useMemo } from "react";
 import { ProductItem } from "../types/Products";
-import { groupByAttributeId } from "../components/Products/helpers";
 import ProductItemCard from "../components/Products/ProductItemCard";
 import EmptySearch from "../components/Products/EmptySearch";
 import useWindowWidth from "../Hooks/use-window-width";
 import BrandBadge from "../components/BrandBadge";
+import ProductFilters from "../components/Products/ProductFilters";
 
 const ProductListScreen: React.FC = () => {
   const { isMobile } = useWindowWidth();
@@ -25,16 +24,10 @@ const ProductListScreen: React.FC = () => {
   const allProducts = useSelector(
     (state: RootState) => state.products?.data?.items
   );
-  
-  const [sortOrder, setSortOrder] = useState<OrderBy>(
-    (searchParams.get("sort") as OrderBy) || "create_date desc"
-  );
 
   // Memoized URL params
   const searchValue = searchParams.get("search") ?? "";
-
   const selectedCategoryId = searchParams.get("category") ?? "";
-  const filterOnSale = searchParams.get("onsale") ?? "";
 
   const filterAttributes = useMemo(
     () => searchParams.get("filter-attributes")?.split(",") ?? [],
@@ -48,11 +41,6 @@ const ProductListScreen: React.FC = () => {
 
   // State
   const [products, setProducts] = useState<ProductItem[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [categoryId, setCategoryId] = useState<number | undefined>(
-    Number(selectedCategoryId) || undefined
-  );
 
   useEffect(() => {
     if (allProducts) {
@@ -60,11 +48,53 @@ const ProductListScreen: React.FC = () => {
     }
   }, [allProducts]);
 
-  console.log(allProducts);
+  // Filter products based on selected filters
+  const filteredProducts = useMemo(() => {
+    if (!allProducts) return [];
+    
+    let filtered = [...allProducts];
+
+    // Filter by search
+    if (searchValue) {
+      filtered = filtered.filter((product) =>
+        product.productName.toLowerCase().includes(searchValue.toLowerCase())
+      );
+    }
+
+    // Filter by category
+    if (selectedCategoryId) {
+      filtered = filtered.filter((product) =>
+        product.category?.id === Number(selectedCategoryId)
+      );
+    }
+
+    // Filter by brands
+    if (existingBrandsFilters.length > 0) {
+      filtered = filtered.filter((product) =>
+        product.brand?.id && existingBrandsFilters.includes(String(product.brand.id))
+      );
+    }
+
+    // Filter by attributes
+    if (filterAttributes.length > 0) {
+      filtered = filtered.filter((product) => {
+        return filterAttributes.every((filter) => {
+          const [attrId, valueId] = filter.split("-").map(Number);
+          return product.attributes.some(
+            (attr) => attr.attribute_id === attrId && attr.value_id === valueId
+          );
+        });
+      });
+    }
+
+    return filtered;
+  }, [allProducts, searchValue, selectedCategoryId, existingBrandsFilters, filterAttributes]);
 
   useEffect(() => {
-    setCategoryId(selectedCategoryId ? Number(selectedCategoryId) : undefined);
-  }, [selectedCategoryId]);
+    if (filteredProducts) {
+      setProducts(filteredProducts);
+    }
+  }, [filteredProducts]);
 
   // Filter management
   const removeFilter = (param: string, value?: string) => {
@@ -77,7 +107,6 @@ const ProductListScreen: React.FC = () => {
       currentParams.delete(param);
     }
     setSearchParams(currentParams);
-    setCurrentPage(1);
   };
 
   const clearAllFilters = () => {
@@ -86,7 +115,6 @@ const ProductListScreen: React.FC = () => {
     currentParams.delete("brands");
     currentParams.delete("search");
     setSearchParams(currentParams);
-    setCurrentPage(1);
   };
 
   const getCategoryPath = useMemo(() => {
@@ -131,7 +159,8 @@ const ProductListScreen: React.FC = () => {
 
   // Render filter tags
   const renderFilterTags = () => {
-    const groupedItems = groupByAttributeId(allProducts?.attributes);
+    if (!allProducts) return null;
+    
     const hasFilters =
       searchValue || filterAttributes?.length || existingBrandsFilters?.length;
 
@@ -151,11 +180,18 @@ const ProductListScreen: React.FC = () => {
           </Button>
         )}
         {filterAttributes.map((filter) => {
-          const [attrId, optionId] = filter.split("-");
-          const option = Object.values(groupedItems[attrId]?.items || {}).find(
-            (opt) => opt.id === +optionId
+          const [attrId, valueId] = filter.split("-").map(Number);
+          // Find the attribute value name from any product that has it
+          const product = allProducts.find((p) =>
+            p.attributes.some(
+              (attr) => attr.attribute_id === attrId && attr.value_id === valueId
+            )
           );
-          return option ? (
+          const attribute = product?.attributes.find(
+            (attr) => attr.attribute_id === attrId && attr.value_id === valueId
+          );
+          
+          return attribute ? (
             <Button
               key={filter}
               size="small"
@@ -164,15 +200,13 @@ const ProductListScreen: React.FC = () => {
               onClick={() => removeFilter("filter-attributes", filter)}
               className="flex gap-1"
             >
-              <span className="leading-3">{option.name}</span>
+              <span className="leading-3">{attribute.value}</span>
               <X size={16} />
             </Button>
           ) : null;
         })}
         {existingBrandsFilters.map((brandId) => {
-          const brand = Object.values(groupedItems["brands"]?.items || {}).find(
-            (opt) => opt.id === +brandId
-          );
+          const brand = allProducts.find((p) => p.brand?.id === Number(brandId))?.brand;
           return brand ? (
             <Button
               key={brandId}
@@ -201,9 +235,22 @@ const ProductListScreen: React.FC = () => {
   return (
     <section className="products  mx-auto">
       <Categories />
+      
+      {/* Mobile Filter Button */}
+      {isMobile && allProducts && (
+        <ProductFilters products={allProducts} isMobile={true} />
+      )}
+
       <div className="flex flex-row gap-4">
-        {/* <Attributes attributes={data?.products?.attributes} loading={loading} /> */}
-        <div className="w-full">
+        {/* Filter Sidebar - Зүүн тал - Desktop only */}
+        {!isMobile && allProducts && (
+          <div className="w-[280px] flex-shrink-0">
+            <ProductFilters products={allProducts} />
+          </div>
+        )}
+
+        {/* Main Content Area */}
+        <div className="flex-1 min-w-0">
           <div className={styles.containerItemHeader}>
             <BrandBadge
               brand={products?.[0]?.brand}
@@ -241,6 +288,8 @@ const ProductListScreen: React.FC = () => {
 
           {/* {hasMore && !loading && <div ref={ref} className="h-10" />}
           <CircleLoader loading={loading} /> */}
+
+          
         </div>
       </div>
     </section>
