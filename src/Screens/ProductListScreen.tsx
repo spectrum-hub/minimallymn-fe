@@ -22,7 +22,7 @@ const FilterViewButton: FC<{
     <button
       onClick={() => onClick()}
       className="
-      flex gap-2 border border-gray-200 py-2 px-3 rounded-2xl
+      flex gap-2 border border-gray-400 py-2 px-3 rounded-2xl
       hover:bg-gray-100 hover:border-gray-300 justify-center
     "
     >
