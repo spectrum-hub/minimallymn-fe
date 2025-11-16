@@ -209,9 +209,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                     toggleAttribute(attr.id, v.id, e.target.checked)
                   }
                 >
-                  <span className="text-sm">{v.name}</span>
+                  <span className="text-xs">{v.name}</span>
                 </Checkbox>
-                <span className="text-xs text-muted-foreground">{v.count}</span>
+                <span className="text-muted-foreground text-xs">{v.count}</span>
               </div>
             );
           })}
@@ -222,16 +222,29 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
 
   const filterContent = (
     <>
-      <div className="flex items-center justify-between mb-3">
+      <div
+        className="
+      flex items-center 
+      justify-between mb-3 border border-gray-100
+      bg-gray-50 rounded-md p-2"
+      >
         <div className="flex items-center gap-2">
-          <FilterOutlined />
-          <h3 className="font-semibold">Шүүлтүүр</h3>
-          {totalFilters > 0 && <Badge count={totalFilters} />}
+          <FilterOutlined
+            style={{
+              fontSize: "14px",
+            }}
+          />
+          <h3 className="font-semibold text-sm text-gray-600">Шүүлтүүр</h3>
         </div>
         {totalFilters > 0 && (
-          <Button type="link" size="small" onClick={clearAll}>
+          <button
+            className="text-xs text-blue-600 font-semibold
+            hover:text-black
+            "
+            onClick={clearAll}
+          >
             Цэвэрлэх
-          </Button>
+          </button>
         )}
       </div>
 
@@ -278,7 +291,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
     );
   }
 
-  return <div className="bg-white rounded p-4 shadow-sm">{filterContent}</div>;
+  return <div className="bg-white rounded p-1 shadow-sm">{filterContent}</div>;
 };
 
 export default ProductFilters;

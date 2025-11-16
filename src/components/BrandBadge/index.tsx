@@ -1,20 +1,21 @@
 import { FC } from "react";
-import { ProductBrand } from "../../types/Products";
 import style from "./style.module.css";
+import { Brand } from "../../types/Products";
+import { baseURL } from "../../lib/configs";
 
 interface Props {
-  brand?: ProductBrand;
-  isViewBrand: boolean;
+  brand?: Brand;
+  isViewBrand?: boolean;
 }
-const BrandBadge: FC<Props> = ({ brand, isViewBrand }) => {
-  if (isViewBrand) {
+const BrandBadge: FC<Props> = ({ brand, isViewBrand = false }) => {
+  if (isViewBrand || !brand?.name) {
     return null;
   }
 
-  if (brand?.logo && brand.logo.length > 10) {
+  if (brand?.logo && brand.logo?.main?.length > 10) {
     return (
       <img
-        src={`data:image/png;base64,${brand?.logo}`}
+        src={`${baseURL}${brand?.logo?.main}`}
         alt={`${brand?.name} Logo`}
         className={style.brandLogo}
       />
