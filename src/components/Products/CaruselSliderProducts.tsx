@@ -12,6 +12,7 @@ import ProductItemCard from "./ProductItemCard";
 import { GridRow } from "../../types";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Redux/store";
+import RowTitle from "../RowTitle";
 
 interface BlockProductsProps {
   row?: GridRow;
@@ -29,11 +30,7 @@ const SliderItems: FC<BlockProductsProps> = ({ row, isMobile }) => {
 
     return (
       <section className={`${row?.className}  mx-auto my-4 `} key={row.itemId}>
-        {row?.itemName ? (
-          <h2 className="text-lg md:text-2xl my-8 md:my-14 mx-auto w-full text-center">
-            {row?.itemName}
-          </h2>
-        ) : null}
+        <RowTitle title={row?.itemName} />
         <SwiperComponent
           // install Swiper modules
           modules={[Navigation, Pagination, Scrollbar, Autoplay, Grid]}
