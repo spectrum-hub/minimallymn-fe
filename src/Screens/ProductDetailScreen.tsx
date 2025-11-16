@@ -24,6 +24,7 @@ import { RootState } from "../Redux/store";
 import FacebookLink from "../components/FacebookLink";
 import { ProductItem } from "../types/Products";
 import ProductItemCard from "../components/Products/ProductItemCard";
+import RowTitle from "../components/RowTitle";
 
 // Lazy imports for better code-splitting
 const ImageSliderProductDetail = lazy(
@@ -289,7 +290,7 @@ const ProductDetailScreen = () => {
       {/* Category Products - Related */}
       <section className="mx-auto my-4">
         {(similarProducts ?? [])?.length > 0 ? (
-          <h5 className="my-6">Ижил төстэй бараа </h5>
+          <RowTitle title={"Ижил төстэй бараа "} />
         ) : null}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
           {(similarProducts ?? []).map((item) => (
