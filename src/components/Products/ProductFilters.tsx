@@ -45,7 +45,24 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [expandedKeys, setExpandedKeys] = useState<string[]>(["brands"]);
+  
+  // Generate initial expanded keys based on available items
+  const initialExpandedKeys = useMemo(() => {
+    const keys = ["brands"];
+    // Add all attribute keys
+    const attrMap = new Map<number, boolean>();
+    for (const p of products || []) {
+      for (const a of p.attributes || []) {
+        if (!attrMap.has(a.attribute_id)) {
+          attrMap.set(a.attribute_id, true);
+          keys.push(`attr-${a.attribute_id}`);
+        }
+      }
+    }
+    return keys;
+  }, [products]);
+
+  const [expandedKeys, setExpandedKeys] = useState<string[]>(initialExpandedKeys);
 
   const selectedCategory = useMemo(
     () => searchParams.get("category") ?? "",
@@ -311,6 +328,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         onChange={(k) => setExpandedKeys((k as string[]) || [])}
         items={items}
         expandIconPosition="end"
+        defaultActiveKey={"brand"}
       />
     </>
   );
