@@ -1,5 +1,5 @@
 // screens/ProductListScreen.tsx
-import React, { useMemo } from "react";
+import React, { FC, useMemo } from "react";
 import { X } from "lucide-react";
 import styles from "./screens.module.css";
 import { useSelector } from "react-redux";
@@ -12,6 +12,26 @@ import EmptySearch from "../components/Products/EmptySearch";
 import useWindowWidth from "../Hooks/use-window-width";
 import BrandBadge from "../components/BrandBadge";
 import ProductFilters from "../components/Products/ProductFilters";
+
+const FilterViewButton: FC<{
+  attribute: string;
+  value: string;
+  onClick: () => void;
+}> = ({ onClick, value, attribute }) => {
+  return (
+    <button
+      onClick={() => onClick()}
+      className="
+      flex gap-2 border border-gray-200 py-2 px-3 rounded-2xl
+      hover:bg-gray-100 hover:border-gray-300 justify-center
+    "
+    >
+      <span className="font-bold text-xs">{attribute}:</span>
+      <span className="text-xs">{value}:</span>
+      <X size={14} className="font-bold " />
+    </button>
+  );
+};
 
 const ProductListScreen: React.FC = () => {
   const { isMobile } = useWindowWidth();
@@ -104,22 +124,24 @@ const ProductListScreen: React.FC = () => {
   const renderFilterTags = () => {
     if (!allProducts) return null;
     const hasFilters = Boolean(
-      searchValue || filterAttributes.length || existingBrandsFilters.length || selectedCategoryId
+      searchValue ||
+        filterAttributes.length ||
+        existingBrandsFilters.length ||
+        selectedCategoryId
     );
     if (!hasFilters) return null;
 
     return (
       <div className="flex gap-2 flex-wrap items-center">
         {selectedCategoryId > 0 && (
-          <Button
-            size="small"
-            type="default"
+          <FilterViewButton
+            attribute="Ангилал"
+            value={
+              categories?.find((c) => c.id === selectedCategoryId)?.name ||
+              `ID ${selectedCategoryId}`
+            }
             onClick={() => removeFilter("category")}
-          >
-            <strong className="mr-1">Ангилал:</strong>{" "}
-            {categories?.find((c) => c.id === selectedCategoryId)?.name || `ID ${selectedCategoryId}`}{" "}
-            <X size={14} />
-          </Button>
+          />
         )}
         {searchValue && (
           <Button
@@ -144,14 +166,12 @@ const ProductListScreen: React.FC = () => {
           );
           if (!attribute) return null;
           return (
-            <Button
-              key={filter}
-              size="small"
-              type="default"
+            <FilterViewButton
               onClick={() => removeFilter("filter-attributes", filter)}
-            >
-              {attribute.value} <X size={14} />
-            </Button>
+              attribute={attribute.attribute}
+              value={attribute.value}
+              key={filter}
+            />
           );
         })}
 
@@ -161,14 +181,12 @@ const ProductListScreen: React.FC = () => {
           )?.brand;
           if (!brand) return null;
           return (
-            <Button
+            <FilterViewButton
               key={brandId}
-              size="small"
-              type="default"
+              attribute="Брэнд"
+              value={brand.name}
               onClick={() => removeFilter("brands", brandId)}
-            >
-              {brand.name} <X size={14} />
-            </Button>
+            />
           );
         })}
 
@@ -186,7 +204,13 @@ const ProductListScreen: React.FC = () => {
       <Categories />
 
       {/* Mobile filter FAB */}
-      {isMobile && <ProductFilters products={allProducts} isMobile categories={categories} />}
+      {isMobile && (
+        <ProductFilters
+          products={allProducts}
+          isMobile
+          categories={categories}
+        />
+      )}
 
       <div className="flex gap-4">
         {!isMobile && (

@@ -253,16 +253,6 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
           />
           <h3 className="font-semibold text-sm text-gray-600">Шүүлтүүр</h3>
         </div>
-        {totalFilters > 0 && (
-          <button
-            className="text-xs text-blue-600 font-semibold
-            hover:text-b
-            "
-            onClick={clearAll}
-          >
-            Цэвэрлэх
-          </button>
-        )}
       </div>
 
       <Collapse
