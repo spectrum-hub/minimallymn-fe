@@ -21,6 +21,10 @@ const ProductListScreen: React.FC = () => {
     (state: RootState) => state.products?.data?.items
   );
 
+  const categories = useSelector(
+    (state: RootState) => state.category?.data?.categories?.categories
+  );
+
   // query values
   const searchValue = searchParams.get("search") ?? "";
   const selectedCategoryId = Number(searchParams.get("category") ?? 0);
@@ -92,6 +96,7 @@ const ProductListScreen: React.FC = () => {
     params.delete("filter-attributes");
     params.delete("brands");
     params.delete("search");
+    params.delete("category");
     setSearchParams(params);
   };
 
@@ -99,12 +104,23 @@ const ProductListScreen: React.FC = () => {
   const renderFilterTags = () => {
     if (!allProducts) return null;
     const hasFilters = Boolean(
-      searchValue || filterAttributes.length || existingBrandsFilters.length
+      searchValue || filterAttributes.length || existingBrandsFilters.length || selectedCategoryId
     );
     if (!hasFilters) return null;
 
     return (
       <div className="flex gap-2 flex-wrap items-center">
+        {selectedCategoryId > 0 && (
+          <Button
+            size="small"
+            type="default"
+            onClick={() => removeFilter("category")}
+          >
+            <strong className="mr-1">Ангилал:</strong>{" "}
+            {categories?.find((c) => c.id === selectedCategoryId)?.name || `ID ${selectedCategoryId}`}{" "}
+            <X size={14} />
+          </Button>
+        )}
         {searchValue && (
           <Button
             size="small"
@@ -170,12 +186,12 @@ const ProductListScreen: React.FC = () => {
       <Categories />
 
       {/* Mobile filter FAB */}
-      {isMobile && <ProductFilters products={allProducts} isMobile />}
+      {isMobile && <ProductFilters products={allProducts} isMobile categories={categories} />}
 
       <div className="flex gap-4">
         {!isMobile && (
           <aside className="w-72 flex-shrink-0">
-            <ProductFilters products={allProducts} />
+            <ProductFilters products={allProducts} categories={categories} />
           </aside>
         )}
 

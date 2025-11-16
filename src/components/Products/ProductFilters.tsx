@@ -9,6 +9,7 @@ import { baseURL } from "../../lib/configs";
 interface ProductFiltersProps {
   products: ProductItem[];
   isMobile?: boolean;
+  categories?: { id: number; name?: string }[];
 }
 
 interface GroupedAttribute {
@@ -44,6 +45,11 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
   const [searchParams, setSearchParams] = useSearchParams();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [expandedKeys, setExpandedKeys] = useState<string[]>(["brands"]);
+
+  const selectedCategory = useMemo(
+    () => searchParams.get("category") ?? "",
+    [searchParams]
+  );
 
   // Group attributes by attribute_id + counts
   const groupedAttributes = useMemo<GroupedAttribute[]>(() => {
@@ -135,15 +141,18 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
     updateQueryParamArray(params, FILTER_BRAND_KEY, String(brandId), checked);
     setSearchParams(params);
   };
-
   const clearAll = () => {
     const params = new URLSearchParams(searchParams.toString());
     params.delete(FILTER_ATTR_KEY);
     params.delete(FILTER_BRAND_KEY);
+    params.delete("category");
     setSearchParams(params);
   };
 
-  const totalFilters = selectedAttributes.length + selectedBrands.length;
+  const totalFilters =
+    selectedAttributes.length +
+    selectedBrands.length +
+    (selectedCategory ? 1 : 0);
 
   // Build Collapse items
   const items = [
@@ -152,7 +161,13 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
       label: (
         <div className="flex items-center justify-between">
           <span className="font-medium">Брэнд</span>
-          {selectedBrands.length > 0 && <Badge count={selectedBrands.length} />}
+          {selectedBrands.length > 0 && (
+            <Badge
+              color={"magenta"}
+              size={"small"}
+              count={selectedBrands.length}
+            />
+          )}
         </div>
       ),
       children: (
@@ -189,6 +204,8 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
           <span className="font-medium">{attr.name}</span>
           {selectedAttributes.some((s) => s.startsWith(`${attr.id}-`)) && (
             <Badge
+              color={"magenta"}
+              size={"small"}
               count={
                 selectedAttributes.filter((s) => s.startsWith(`${attr.id}-`))
                   .length
@@ -239,7 +256,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         {totalFilters > 0 && (
           <button
             className="text-xs text-blue-600 font-semibold
-            hover:text-black
+            hover:text-b
             "
             onClick={clearAll}
           >
@@ -269,7 +286,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
           shape="circle"
           size="large"
         >
-          {totalFilters > 0 && <Badge count={totalFilters} />}
+          {totalFilters > 0 && (
+            <Badge color={"magenta"} size={"small"} count={totalFilters} />
+          )}
         </Button>
 
         <Drawer
