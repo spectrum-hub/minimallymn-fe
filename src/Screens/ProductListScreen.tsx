@@ -12,7 +12,6 @@ import EmptySearch from "../components/Products/EmptySearch";
 import useWindowWidth from "../Hooks/use-window-width";
 import BrandBadge from "../components/BrandBadge";
 import ProductFilters from "../components/Products/ProductFilters";
-import { Category } from "../types/Products";
 import { useCategories } from "../Hooks/use-categories";
 
 const FilterViewButton: FC<{
