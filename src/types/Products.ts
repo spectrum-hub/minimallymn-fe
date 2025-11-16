@@ -10,7 +10,7 @@ interface Tag {
   color: string;
 }
 
-interface Category {
+export interface Category {
   name: string;
   url: string;
   id: number;

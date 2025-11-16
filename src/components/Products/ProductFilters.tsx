@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+// components/Products/ProductFilters.tsx
+import React, { useMemo, useState } from "react";
 import { Collapse, Checkbox, Badge, Button, Drawer } from "antd";
 import { FilterOutlined } from "@ant-design/icons";
 import { ProductItem } from "../../types/Products";
@@ -13,170 +14,154 @@ interface ProductFiltersProps {
 interface GroupedAttribute {
   id: number;
   name: string;
-  values: {
-    id: number;
-    name: string;
-    count: number;
-  }[];
+  values: { id: number; name: string; count: number }[];
 }
 
-const ProductFilters: React.FC<ProductFiltersProps> = ({ products, isMobile = false }) => {
+const FILTER_ATTR_KEY = "filter-attributes";
+const FILTER_BRAND_KEY = "brands";
+
+const parseArrayParam = (params: URLSearchParams, key: string) =>
+  params.get(key)?.split(",").filter(Boolean) ?? [];
+
+const updateQueryParamArray = (
+  params: URLSearchParams,
+  key: string,
+  value: string,
+  add: boolean
+) => {
+  const list = parseArrayParam(params, key);
+  const set = new Set(list);
+  if (add) set.add(value);
+  else set.delete(value);
+  if (set.size) params.set(key, Array.from(set).join(","));
+  else params.delete(key);
+};
+
+const ProductFilters: React.FC<ProductFiltersProps> = ({
+  products,
+  isMobile = false,
+}) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [expandedKeys, setExpandedKeys] = useState<string[]>(["attributes", "brands"]);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [expandedKeys, setExpandedKeys] = useState<string[]>(["brands"]);
 
-  // Attribute-уудаас хамгийн их тохиолдсон утгуудыг групп хийх
-  const groupedAttributes = useMemo(() => {
-    const attrMap = new Map<number, Map<number, { name: string; count: number }>>();
+  // Group attributes by attribute_id + counts
+  const groupedAttributes = useMemo<GroupedAttribute[]>(() => {
+    const map = new Map<number, Map<number, { name: string; count: number }>>();
 
-    products.forEach((product) => {
-      product.attributes.forEach((attr) => {
-        if (!attrMap.has(attr.attribute_id)) {
-          attrMap.set(attr.attribute_id, new Map());
-        }
-        const valueMap = attrMap.get(attr.attribute_id)!;
-        const existing = valueMap.get(attr.value_id);
-        
-        if (existing) {
-          existing.count++;
-        } else {
-          valueMap.set(attr.value_id, { name: attr.value, count: 1 });
-        }
+    for (const p of products || []) {
+      for (const a of p.attributes || []) {
+        if (!map.has(a.attribute_id)) map.set(a.attribute_id, new Map());
+        const vmap = map.get(a.attribute_id)!;
+        const existing = vmap.get(a.value_id);
+        if (existing) existing.count++;
+        else vmap.set(a.value_id, { name: a.value, count: 1 });
+      }
+    }
+
+    const result: GroupedAttribute[] = [];
+    map.forEach((vmap, attrId) => {
+      // Take attribute name from first product that has it
+      const productWithAttr = products.find((p) =>
+        p.attributes.some((x) => x.attribute_id === attrId)
+      );
+      const attrName =
+        productWithAttr?.attributes.find((x) => x.attribute_id === attrId)
+          ?.attribute ?? `Атрибут ${attrId}`;
+      result.push({
+        id: attrId,
+        name: attrName,
+        values: Array.from(vmap.entries())
+          .map(([id, d]) => ({ id, name: d.name, count: d.count }))
+          .sort((a, b) => b.count - a.count),
       });
     });
 
-    const result: GroupedAttribute[] = [];
-    attrMap.forEach((valueMap, attrId) => {
-      const firstProduct = products.find((p) => 
-        p.attributes.some((a) => a.attribute_id === attrId)
-      );
-      
-      if (firstProduct) {
-        const attrName = firstProduct.attributes.find(
-          (a) => a.attribute_id === attrId
-        )?.attribute || "";
-
-        result.push({
-          id: attrId,
-          name: attrName,
-          values: Array.from(valueMap.entries())
-            .map(([id, data]) => ({ id, ...data }))
-            .sort((a, b) => b.count - a.count),
-        });
-      }
-    });
-
-    return result;
+    return result.sort((a, b) => a.name.localeCompare(b.name));
   }, [products]);
 
-  // Брэндүүдийг групп хийх
   const groupedBrands = useMemo(() => {
-    const brandMap = new Map<number, { name: string; count: number; logo?: string }>();
-
-    products.forEach((product) => {
-      if (product.brand?.id) {
-        const existing = brandMap.get(product.brand.id);
-        if (existing) {
-          existing.count++;
-        } else {
-          brandMap.set(product.brand.id, {
-            name: product.brand.name,
-            count: 1,
-            logo: baseURL + product?.brand?.logo?.medium,
-          });
-        }
-      }
-    });
-
-    return Array.from(brandMap.entries())
+    const map = new Map<
+      number,
+      { name: string; count: number; logo?: string }
+    >();
+    for (const p of products || []) {
+      const b = p.brand;
+      if (!b?.id) continue;
+      const existing = map.get(b.id);
+      if (existing) existing.count++;
+      else
+        map.set(b.id, {
+          name: b.name,
+          count: 1,
+          logo: b.logo?.medium ? baseURL + b.logo.medium : undefined,
+        });
+    }
+    return Array.from(map.entries())
       .map(([id, data]) => ({ id, ...data }))
       .sort((a, b) => b.count - a.count);
   }, [products]);
 
-  // Сонгогдсон filter-үүд
   const selectedAttributes = useMemo(
-    () => searchParams.get("filter-attributes")?.split(",") || [],
+    () =>
+      parseArrayParam(
+        new URLSearchParams(searchParams.toString()),
+        FILTER_ATTR_KEY
+      ),
     [searchParams]
   );
-
   const selectedBrands = useMemo(
-    () => searchParams.get("brands")?.split(",").map(Number) || [],
+    () =>
+      parseArrayParam(
+        new URLSearchParams(searchParams.toString()),
+        FILTER_BRAND_KEY
+      ),
     [searchParams]
   );
 
-  // Attribute filter toggle
-  const handleAttributeChange = (attrId: number, valueId: number) => {
-    const filterKey = `${attrId}-${valueId}`;
-    const currentParams = new URLSearchParams(searchParams.toString());
-    const currentFilters = currentParams.get("filter-attributes")?.split(",") || [];
-
-    if (currentFilters.includes(filterKey)) {
-      const updated = currentFilters.filter((f) => f !== filterKey);
-      if (updated.length > 0) {
-        currentParams.set("filter-attributes", updated.join(","));
-      } else {
-        currentParams.delete("filter-attributes");
-      }
-    } else {
-      currentFilters.push(filterKey);
-      currentParams.set("filter-attributes", currentFilters.join(","));
-    }
-
-    setSearchParams(currentParams);
+  const toggleAttribute = (
+    attrId: number,
+    valueId: number,
+    checked: boolean
+  ) => {
+    const params = new URLSearchParams(searchParams.toString());
+    const key = `${attrId}-${valueId}`;
+    updateQueryParamArray(params, FILTER_ATTR_KEY, key, checked);
+    setSearchParams(params);
   };
 
-  // Brand filter toggle
-  const handleBrandChange = (brandId: number) => {
-    const currentParams = new URLSearchParams(searchParams.toString());
-    const currentBrands = currentParams.get("brands")?.split(",").map(Number) || [];
-
-    if (currentBrands.includes(brandId)) {
-      const updated = currentBrands.filter((id) => id !== brandId);
-      if (updated.length > 0) {
-        currentParams.set("brands", updated.join(","));
-      } else {
-        currentParams.delete("brands");
-      }
-    } else {
-      currentBrands.push(brandId);
-      currentParams.set("brands", currentBrands.join(","));
-    }
-
-    setSearchParams(currentParams);
+  const toggleBrand = (brandId: number, checked: boolean) => {
+    const params = new URLSearchParams(searchParams.toString());
+    updateQueryParamArray(params, FILTER_BRAND_KEY, String(brandId), checked);
+    setSearchParams(params);
   };
 
-  // Бүх filter цэвэрлэх
-  const clearAllFilters = () => {
-    const currentParams = new URLSearchParams(searchParams.toString());
-    currentParams.delete("filter-attributes");
-    currentParams.delete("brands");
-    setSearchParams(currentParams);
+  const clearAll = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete(FILTER_ATTR_KEY);
+    params.delete(FILTER_BRAND_KEY);
+    setSearchParams(params);
   };
 
   const totalFilters = selectedAttributes.length + selectedBrands.length;
 
+  // Build Collapse items
   const items = [
     {
       key: "brands",
       label: (
         <div className="flex items-center justify-between">
-          <span className="font-semibold text-gray-800">Брэнд</span>
-          {selectedBrands.length > 0 && (
-            <Badge count={selectedBrands.length} color="#1890ff" />
-          )}
+          <span className="font-medium">Брэнд</span>
+          {selectedBrands.length > 0 && <Badge count={selectedBrands.length} />}
         </div>
       ),
       children: (
-        <div className="space-y-2 max-h-[300px] overflow-y-auto">
+        <div className="space-y-2 max-h-64 overflow-auto">
           {groupedBrands.map((brand) => (
-            <div
-              key={brand.id}
-              className="flex items-center justify-between hover:bg-gray-50 p-2 rounded cursor-pointer"
-              onClick={() => handleBrandChange(brand.id)}
-            >
+            <div key={brand.id} className="flex items-center justify-between">
               <Checkbox
-                checked={selectedBrands.includes(brand.id)}
-                onChange={() => handleBrandChange(brand.id)}
+                checked={selectedBrands.includes(String(brand.id))}
+                onChange={(e) => toggleBrand(brand.id, e.target.checked)}
               >
                 <div className="flex items-center gap-2">
                   {brand.logo && (
@@ -189,7 +174,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ products, isMobile = fa
                   <span className="text-sm">{brand.name}</span>
                 </div>
               </Checkbox>
-              <Badge count={brand.count} showZero color="#f0f0f0" style={{ color: "#666" }} />
+              <span className="text-xs text-muted-foreground">
+                {brand.count}
+              </span>
             </div>
           ))}
         </div>
@@ -199,32 +186,35 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ products, isMobile = fa
       key: `attr-${attr.id}`,
       label: (
         <div className="flex items-center justify-between">
-          <span className="font-semibold text-gray-800">{attr.name}</span>
-          {selectedAttributes.some((f) => f.startsWith(`${attr.id}-`)) && (
+          <span className="font-medium">{attr.name}</span>
+          {selectedAttributes.some((s) => s.startsWith(`${attr.id}-`)) && (
             <Badge
-              count={selectedAttributes.filter((f) => f.startsWith(`${attr.id}-`)).length}
-              color="#1890ff"
+              count={
+                selectedAttributes.filter((s) => s.startsWith(`${attr.id}-`))
+                  .length
+              }
             />
           )}
         </div>
       ),
       children: (
-        <div className="space-y-2 max-h-[300px] overflow-y-auto">
-          {attr.values.map((value) => (
-            <div
-              key={value.id}
-              className="flex items-center justify-between hover:bg-gray-50 p-2 rounded cursor-pointer"
-              onClick={() => handleAttributeChange(attr.id, value.id)}
-            >
-              <Checkbox
-                checked={selectedAttributes.includes(`${attr.id}-${value.id}`)}
-                onChange={() => handleAttributeChange(attr.id, value.id)}
-              >
-                <span className="text-sm">{value.name}</span>
-              </Checkbox>
-              <Badge count={value.count} showZero color="#f0f0f0" style={{ color: "#666" }} />
-            </div>
-          ))}
+        <div className="space-y-2 max-h-64 overflow-auto">
+          {attr.values.map((v) => {
+            const key = `${attr.id}-${v.id}`;
+            return (
+              <div key={v.id} className="flex items-center justify-between">
+                <Checkbox
+                  checked={selectedAttributes.includes(key)}
+                  onChange={(e) =>
+                    toggleAttribute(attr.id, v.id, e.target.checked)
+                  }
+                >
+                  <span className="text-sm">{v.name}</span>
+                </Checkbox>
+                <span className="text-xs text-muted-foreground">{v.count}</span>
+              </div>
+            );
+          })}
         </div>
       ),
     })),
@@ -232,21 +222,14 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ products, isMobile = fa
 
   const filterContent = (
     <>
-      <div className="flex items-center justify-between mb-4 pb-3 border-b">
+      <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <FilterOutlined className="text-blue-500" />
-          <h3 className="font-bold text-lg text-gray-800">Шүүлтүүр</h3>
-          {totalFilters > 0 && (
-            <Badge count={totalFilters} color="#1890ff" />
-          )}
+          <FilterOutlined />
+          <h3 className="font-semibold">Шүүлтүүр</h3>
+          {totalFilters > 0 && <Badge count={totalFilters} />}
         </div>
         {totalFilters > 0 && (
-          <Button
-            type="link"
-            size="small"
-            onClick={clearAllFilters}
-            className="text-red-500 hover:text-red-600"
-          >
+          <Button type="link" size="small" onClick={clearAll}>
             Цэвэрлэх
           </Button>
         )}
@@ -255,10 +238,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ products, isMobile = fa
       <Collapse
         ghost
         activeKey={expandedKeys}
-        onChange={(keys) => setExpandedKeys(keys as string[])}
+        onChange={(k) => setExpandedKeys((k as string[]) || [])}
         items={items}
         expandIconPosition="end"
-        className="bg-transparent"
       />
     </>
   );
@@ -269,37 +251,34 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ products, isMobile = fa
         <Button
           icon={<FilterOutlined />}
           onClick={() => setDrawerOpen(true)}
-          className="fixed bottom-20 right-4 z-50 shadow-lg"
+          className="fixed bottom-6 right-4 z-50"
           type="primary"
-          size="large"
           shape="circle"
+          size="large"
         >
-          {totalFilters > 0 && (
-            <Badge
-              count={totalFilters}
-              offset={[-5, 5]}
-              className="absolute top-0 right-0"
-            />
-          )}
+          {totalFilters > 0 && <Badge count={totalFilters} />}
         </Button>
+
         <Drawer
           title="Шүүлтүүр"
           placement="left"
           onClose={() => setDrawerOpen(false)}
           open={drawerOpen}
-          width={300}
+          width={320}
         >
           {filterContent}
+          <div className="mt-4 flex justify-end gap-2">
+            <Button onClick={() => setDrawerOpen(false)}>Хаах</Button>
+            <Button type="primary" onClick={() => setDrawerOpen(false)}>
+              Харах
+            </Button>
+          </div>
         </Drawer>
       </>
     );
   }
 
-  return (
-    <div className="bg-white rounded-lg shadow-sm p-4 sticky top-4">
-      {filterContent}
-    </div>
-  );
+  return <div className="bg-white rounded p-4 shadow-sm">{filterContent}</div>;
 };
 
 export default ProductFilters;

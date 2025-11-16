@@ -1,119 +1,98 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo } from "react";
 import { NavLink, useSearchParams } from "react-router";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Virtual, Navigation } from "swiper/modules";
 import { useSelector } from "react-redux";
-import useWindowWidth from "../../Hooks/use-window-width";
 import { RootState } from "../../Redux/store";
+import { Category } from "../../types/Products";
+
+/**
+ * Minimal, responsive, accessible categories component.
+ * - Desktop: compact grid with subtle hover and focus styles
+ * - Mobile: single-row horizontal scroller (touch-friendly)
+ * - Uses only native scrolling (no heavy swiper dependency)
+ */
 
 const RenderCategories: React.FC = () => {
-  const { windowWidth } = useWindowWidth();
-
+  const items = useSelector((s: RootState) => s.products?.data?.items || []);
   const [searchParams] = useSearchParams();
-  const categoryId = searchParams.get("category") ?? "";
+  const activeCategoryId = Number(searchParams.get("category") || 0);
 
-  const { loading, error, data } = useSelector(
-    (state: RootState) => state.category
-  );
+  const categories = useMemo((): Category[] => {
+    if (!items.length) return [];
+    const map = new Map<number, Category>();
+    for (const it of items) {
+      const cat = it?.category;
+      if (cat?.id) map.set(cat.id, cat);
+    }
+    const arr = Array.from(map.values());
+    arr.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+    return arr;
+  }, [items]);
 
-  const [slidesPerView, setSlidesPerView] = useState(3);
+  if (!categories.length) return null;
 
-  useEffect(() => {
-    const getSlidesPerView = () => {
-      if (windowWidth > 1200) return 10;
-      if (windowWidth > 1000) return 9;
-      if (windowWidth > 900) return 7;
-      if (windowWidth > 800) return 7;
-      if (windowWidth > 600) return 5;
-      return 3;
-    };
-    setSlidesPerView(getSlidesPerView());
-  }, [windowWidth]);
+  // Small-screen: horizontal, touch friendly
+  // Large-screen: grid of pills
+  return (
+    <section aria-labelledby="categories-heading" className="w-full my-4">
+      <h2
+        id="categories-heading"
+        className="text-lg font-semibold mb-3 text-gray-800"
+      >
+        Ангилалууд
+      </h2>
 
-  if (loading) {
-    return (
-      <div className="h-12 w-full bg-gray-200 rounded animate-pulse mb-4"></div>
-    );
-  }
-
-  if (error) {
-    return <p className="text-red-500">Error: {JSON.stringify(error)}</p>;
-  }
-
-  if (
-    data?.categories?.categories &&
-    data?.categories?.categories?.length < 7
-  ) {
-    return (
-      <div className="w-full">
-        <h2 className="text-lg py-4 ">Ангилалууд</h2>
-
-        <div className="bg-white rounded-xl shadow p-4 flex flex-wrap gap-3 justify-center">
-          {data?.categories?.categories?.map(({ id, name }, index) => (
+      {/* Mobile / narrow: horizontal scroller */}
+      <div className="sm:hidden">
+        <div className="flex flex-wrap gap-1 py-1 px-1 scrollbar overflow-scroll">
+          {categories.map((c) => (
             <NavLink
-              key={id || index}
-              to={{ search: `category=${id}` }}
-              className={`
-                border border-gray-200 rounded-xl h-9 px-4 w-36 text-center my-1 max-w-36 mx-1 line-clamp-1
-                transition-all duration-200 ease-in-out transform hover:scale-105 hover:bg-blue-50 hover:border-blue-400 hover:shadow-md
+              key={c.id}
+              to={{ search: `category=${c.id}` }}
+              className={() =>
+                `text-xs
+                flex-shrink-0 px-2 leading-6 rounded-full whitespace-nowrap border 
+                transition-transform transform-gpu hover:scale-105 focus:scale-105 
+                focus:outline-none focus:ring-2 focus:ring-gray-300 " +
                 ${
-                  Number(categoryId) === id
-                    ? "bg-blue-100 shadow-lg scale-105"
-                    : "bg-white text-gray-900"
-                }
-              `}
+                  activeCategoryId === c.id
+                    ? "bg-gray-600 text-white "
+                    : "bg-white text-gray-900 "
+                }`
+              }
+              aria-current={activeCategoryId === c.id ? "page" : undefined}
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             >
-              <span className="text-sm text-inherit text-center leading-9 line-clamp-1 ">
-                {name}
-              </span>
+              {c.name}
             </NavLink>
           ))}
         </div>
       </div>
-    );
-  }
 
-  return (
-    <div className="w-full">
-      <h2 className="text-lg py-4 uppercase">Ангилалууд</h2>
-
-      <div className="bg-white rounded-xl shadow-md p-4">
-        <Swiper
-          modules={[Virtual, Navigation]}
-          navigation
-          slidesPerView={slidesPerView}
-          className="categories-swiper"
-          grid={{
-            rows: 2,
-            fill: "row",
-          }}
-        >
-          {data?.categories?.categories?.map(({ id, name }, index) => (
-            <SwiperSlide key={id || index}>
-              <NavLink
-                to={{ search: `category=${id}` }}
-                className={`
-                  border border-gray-200 rounded-xl h-9 px-4 w-36 text-center my-1 mx-1 line-clamp-1
-                  transition-all duration-200 ease-in-out transform hover:scale-105 hover:bg-blue-50 hover:border-blue-400 hover:shadow-md
-                  ${
-                    Number(categoryId) === id
-                      ? "bg-blue-100 border-blue-500 text-blue-700 shadow-lg scale-105"
-                      : "bg-white text-gray-900"
-                  }
-                `}
-                onClick={() => {
-                  window.scrollTo(0, 0);
-                }}
-              >
-                <span className="text-sm text-inherit text-center leading-9 line-clamp-1 font-medium">
-                  {name}
-                </span>
-              </NavLink>
-            </SwiperSlide>
+      {/* Desktop / wide: grid with two rows if many items */}
+      <div className="hidden sm:block bg-white rounded-xl shadow-sm p-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          {categories.map((c) => (
+            <NavLink
+              key={c.id}
+              to={{ search: `category=${c.id}` }}
+              className={() =>
+                `block text-center py-2 px-3 rounded-lg transition transform border border-gray-300
+                hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-gray-300 " +
+                ${
+                  activeCategoryId === c.id
+                    ? "bg-gray-500 border shadow-sm text-white"
+                    : "bg-white  text-gray-800"
+                }`
+              }
+              aria-current={activeCategoryId === c.id ? "page" : undefined}
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            >
+              <span className="truncate block text-xs">{c.name}</span>
+            </NavLink>
           ))}
-        </Swiper>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
